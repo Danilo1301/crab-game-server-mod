@@ -1,0 +1,186 @@
+#include <iostream>
+#include <Windows.h>
+#include <tlhelp32.h>
+#include <Psapi.h>
+#include <stdio.h>
+
+
+/*
+struct String
+{
+	int m_Empty = 0;
+	int m_Padding = 0;
+	int m_Length = 0;
+	wchar_t m_Name[10]{ };
+	String(const wchar_t* name) : m_Length(wcslen(name)) { for (unsigned char i = 0; i < 10; i++) { if (!name[i]) break; m_Name[i] = name[i]; } }
+	void setEmpty(int empty) { this->m_Empty = empty; }
+};
+*/
+
+typedef void* (*tForceGiveAllWeapon)(int weaponId); tForceGiveAllWeapon oForceGiveAllWeapon = nullptr;
+
+typedef void* (*tForceRemoveAllWeapons)(); tForceRemoveAllWeapons oForceRemoveAllWeapons = nullptr;
+
+void* myChatBox = nullptr;
+
+typedef void* (*tChatBoxUpdate)(void* ChatBox ); tChatBoxUpdate oChatBoxUpdate = nullptr;
+
+typedef void* (*tForceGiveItem)(long long toClient, int itemId, int objectId); tForceGiveItem oForceGiveItem = nullptr;
+
+typedef void* (*tReceiveChatMessage)(long long fromClient, void* packet); tReceiveChatMessage oReceiveChatMessage = nullptr;
+
+
+typedef void* (*tWeirdTest)(); tWeirdTest oWeirdTest = nullptr;
+typedef void* (*tTestFn)(long long fromClient, void* message); tTestFn oTestFn = nullptr;
+
+//https://www.unknowncheats.me/forum/programming-for-beginners/118141-own-dll-hack-1-memory-patching-editing.html
+
+
+
+DWORD jumpAddress = 0;
+
+void hTestFn(long long fromClient, void* message)
+{
+	char szTest[256];
+	sprintf_s(szTest, "hTestFn\n fromClient= %lld\n message=%p", fromClient, message);
+	MessageBoxA(NULL, szTest, NULL, NULL);
+
+	//oForceGiveItem(toClient, itemId, objectId);
+	return;
+};
+
+#define rsp 0
+#define rbx 1
+
+__declspec(naked) void hReceiveChatMessage(long long fromClient, void* packet)
+{
+	__asm
+	{
+		MOV DWORD PTR SS : [rsp + 0x8] , rbx;
+		JMP[jumpAddress]
+	}
+
+
+	char szTest[256];
+	sprintf_s(szTest, "hReceiveChatMessage\n toClient= %lld\n packet=%p", fromClient, packet);
+	MessageBoxA(NULL, szTest, NULL, NULL);
+
+	__asm
+	{
+		JMP[jumpAddress]
+	}
+}
+
+void Hook(void* src, void* dst, unsigned int len)
+{
+	if (len < 5) return;
+
+	DWORD curProtection;
+	VirtualProtect(src, len, PAGE_EXECUTE_READWRITE, &curProtection);
+
+	memset(src, 0x90, len);
+
+	uintptr_t relativeAddress = (uintptr_t)dst - (uintptr_t)src - 5;
+
+	*(BYTE*)src = 0xE9;
+
+	*(uintptr_t*)((BYTE*)src + 1) = relativeAddress;
+	VirtualProtect(src, len, curProtection, &curProtection);
+}
+
+BYTE* TrampHook(void* src, void* dst, unsigned int len)
+{
+	if (len < 5) return 0;
+
+	//Create Gateway.
+	BYTE* gateway = (BYTE*)VirtualAlloc(0, len, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+
+	//Write stolen bytes.
+	memcpy_s(gateway, len, src, len);
+
+	//Get the gateway to destination address.
+	uintptr_t gatewayRelativeAddr = (BYTE*)src - gateway - 5;
+	*(gateway + len) = 0xE9;
+
+	//Write address of gateway to jmp.
+	*(uintptr_t*)((uintptr_t)gateway + len + 1) = gatewayRelativeAddr;
+
+	//Perform HOOK.
+	Hook(src, dst, len);
+	return gateway;
+}
+
+DWORD WINAPI MainThread(LPVOID param) {
+	MessageBox(NULL, L"INJECTED", L"MESSAGE FROM DLL", NULL);
+
+	uintptr_t moduleAssembly = (uintptr_t)GetModuleHandleW(L"GameAssembly.dll");
+
+	oForceGiveAllWeapon = (tForceGiveAllWeapon)(moduleAssembly + 0xC56B90);
+	oForceRemoveAllWeapons = (tForceRemoveAllWeapons)(moduleAssembly + 0xC57050);
+	oChatBoxUpdate = (tChatBoxUpdate)(moduleAssembly + 0x1131A00);
+	oForceGiveItem = (tForceGiveItem)(moduleAssembly + 0x1062A70);
+	oReceiveChatMessage = (tReceiveChatMessage)(moduleAssembly + 0xEC0750);
+	
+	jumpAddress = moduleAssembly + 0xEC0750 + 5;
+
+	oWeirdTest = (tWeirdTest)(moduleAssembly + 0xEC084C);
+
+	Hook(oReceiveChatMessage, hReceiveChatMessage, 10);
+
+
+
+
+	//TrampHook(oReceiveChatMessage, hReceiveChatMessage, 5);
+
+	/*
+	char szTest[256];
+	sprintf_s(szTest, "Base : %X\nTest: %X\nMust be Demo: %X\nDiff: %d", base, test, demoAddress, diff);
+	MessageBoxA(NULL, szTest, NULL, NULL);
+	*/
+
+	bool running = true;
+	while (running)
+	{
+		if (GetAsyncKeyState(VK_NUMPAD1)) {
+			//oForceGiveAllWeapon(1);
+
+			//oForceGiveItem(76561198092596612, 3, 0);
+
+
+			Sleep(200);
+		}
+
+		if (GetAsyncKeyState(VK_NUMPAD2)) {
+			oForceRemoveAllWeapons();
+			Sleep(200);
+
+		}
+		if (GetAsyncKeyState(VK_NUMPAD0)) {
+			running = false;
+			MessageBox(NULL, L"VK_NUMPAD0", L"VK_NUMPAD0", NULL);
+			Sleep(200);
+
+		}
+		Sleep(10);
+	}
+	FreeLibraryAndExitThread((HMODULE)param, 0);
+	return 0;
+}
+
+BOOL APIENTRY DllMain(HMODULE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved
+)
+{
+	switch (ul_reason_for_call)
+	{
+	case DLL_PROCESS_ATTACH:
+		CreateThread(NULL, NULL, MainThread, hModule, NULL, NULL);
+		break;
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+	return TRUE;
+}
