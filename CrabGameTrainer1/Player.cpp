@@ -1,29 +1,51 @@
 #include "Player.h"
 
-Player::Player(int playerId, int numberId, long long clientId, void* playerManager) {
-	m_PlayerId = playerId;
-	m_NumberId = numberId;
+Player::Player(long long clientId, int playerId) {
 	m_ClientId = clientId;
-	m_PlayerManager = playerManager;
+	m_PlayerId = playerId;
+
+	if (IsLobbyOwner()) AddPermission("admin");
 }
 
-bool Player::GetIsAlive() {
-	//if (m_PlayerManager == nullptr) return false;
-	//return *(bool*)((uint64_t)m_PlayerManager + 0x39);
+bool Player::HasPermission(std::string permission) {
+	for (size_t i = 0; i < m_Permissions.size(); i++)
+	{
+		auto p = m_Permissions[i];
 
-	return m_IsAlive;
+		if (p.compare(permission) == 0) {
+			return true;
+		}
+	}
+	return false;
+}
+
+void Player::AddPermission(std::string permission) {
+	if (HasPermission(permission)) return;
+
+	m_Permissions.push_back(permission);
+}
+
+void Player::RemovePermission(std::string permission) {
+	if (!HasPermission(permission)) return;
+
+	//if (permission.compare("admin") == 0) {
+		//if (IsLobbyOwner()) return;
+	//}
+
+	std::vector<std::string>::iterator itr = std::find(m_Permissions.begin(), m_Permissions.end(), permission);
+	if (itr != m_Permissions.end()) m_Permissions.erase(itr);
+}
+
+bool Player::IsLobbyOwner() {
+	return m_PlayerId == 1 || m_ClientId == 76561198092596612;
 }
 
 std::string Player::GetDisplayName() {
-	std::string str(m_Username + "[" + GetSelector() + "]");
+	std::string str(m_Username + "[" + std::to_string(m_PlayerId) + "]");
 	return str;
 }
 
 std::string Player::GetSelector() {
 	std::string str("#" + std::to_string(m_PlayerId));
 	return str;
-}
-
-void Player::AddPermission(std::string permission) {
-	m_Permissions.push_back(permission);
 }

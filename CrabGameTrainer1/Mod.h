@@ -1,42 +1,56 @@
 #pragma once
 
 #include "pch.h"
+#include "Injector.h"
+#include "Server.h"
 
+//MessageBoxA(NULL, test, NULL, NULL);
+
+/*
+char str[256];
+sprintf_s(str, "%.3f, %.3f, %.3f", dir.x, dir.y, dir.z);
+*/
 class Mod {
 public:
-	static uintptr_t m_AssemblyBase;
-	static uintptr_t m_CrabGameBase;
+	static void SendChatMessage(long long fromClient, std::string message);
+	static void AppendLocalChatMessage(long long fromClient, std::string username, std::string message);
+	static void SendDropItem(long long toClient, int a, int b, int c);
+	static void SendLocalInteract(int itemid);
+	static void SendInteract(long long clientId, int itemid);
+	static void KillPlayer(long long clientId);
+	static void BanPlayer(long long clientId);
+	static void RespawnPlayer(long long clientId, Vector3 position);
+	static void RestartGame();
+	static void SetCurrentGameModeTime(float time);
+	static void SetBomber(long long clientId);
+	static void TagPlayer(long long clientId);
+	static void ToggleLights(bool on);
+	static void GiveHat(long long clientId);
 
-	static uintptr_t GetAssemblyOffset(uintptr_t offset) {
-		return m_AssemblyBase + offset;
+	static GameManager_c* GetGameManager();
+	static ChatBox_c* GetChatBox();
+
+	static std::string FormatStringVector(std::vector<std::string> vector) {
+
+		std::string result = "";
+
+		for (size_t i = 0; i < vector.size(); i++)
+		{
+			auto s = vector[i];
+			result += s + ";";
+		}
+
+		return result;
+	}
+
+	static std::string FormatVector(Vector3 vector) {
+		char str[256];
+		sprintf_s(str, "%.3f, %.3f, %.3f", vector.x, vector.y, vector.z);
+		return std::string(str);
 	}
 
 	static monoString* CreateMonoString(const char* str) {
-		monoString* (*String_CreateString)(void* _this, const char* str) = (monoString * (*)(void*, const char*))(Mod::GetAssemblyOffset(8787312));
+		monoString* (*String_CreateString)(void* _this, const char* str) = (monoString * (*)(void*, const char*))(Injector::m_AssemblyBase + 8780720);
 		return String_CreateString(NULL, str);
 	}
-
-	static uintptr_t GetModuleBaseAddress(DWORD procId, const wchar_t* modName)
-    {
-        uintptr_t modBaseAddr = 0;
-        HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
-        if (hSnap != INVALID_HANDLE_VALUE)
-        {
-            MODULEENTRY32 modEntry;
-            modEntry.dwSize = sizeof(modEntry);
-            if (Module32First(hSnap, &modEntry))
-            {
-                do
-                {
-                    if (!_wcsicmp(modEntry.szModule, modName))
-                    {
-                        modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
-                        break;
-                    }
-                } while (Module32Next(hSnap, &modEntry));
-            }
-        }
-        CloseHandle(hSnap);
-        return modBaseAddr;
-    }
 };

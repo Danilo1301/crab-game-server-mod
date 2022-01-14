@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "Player.h"
 
 enum class MessageSendType {
 	NORMAL,
@@ -18,6 +19,12 @@ public:
 
 	Message(long long fromClient, std::string content) {
 		m_FromClient = fromClient;
+		m_Content = content;
+	}
+
+	Message(Player* player, std::string content) {
+		m_Player = player;
+		m_FromClient = player->m_ClientId;
 		m_Content = content;
 	}
 };

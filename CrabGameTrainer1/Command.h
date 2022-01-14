@@ -1,20 +1,12 @@
 #pragma once
 
+#include "pch.h"
 #include <string>
 #include <sstream>
 #include <vector>
 #include <iterator>
 #include <algorithm>
 #include <iterator>
-
-template <typename Out>
-void split(const std::string& s, char delim, Out result) {
-    std::istringstream iss(s);
-    std::string item;
-    while (std::getline(iss, item, delim)) {
-        *result++ = item;
-    }
-}
 
 class Command {
 	std::string m_Text;
@@ -64,7 +56,7 @@ public:
 	}
 
 	bool Check(std::string str) {
-		if (!str.compare(m_Cmd)) return true;
+		if (str.compare(m_Cmd) == 0) return true;
 		return false;
 	}
 
