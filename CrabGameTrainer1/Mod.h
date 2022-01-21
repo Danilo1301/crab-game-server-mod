@@ -28,6 +28,7 @@ public:
 	static void GiveHat(long long clientId);
 
 	static GameManager_c* GetGameManager();
+	static SteamManager_c* GetSteamManager();
 	static ChatBox_c* GetChatBox();
 
 	static std::string FormatStringVector(std::vector<std::string> vector) {

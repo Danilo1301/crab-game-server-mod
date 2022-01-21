@@ -10,7 +10,7 @@ private:
 	static void ProcessCommand(Player* player, Message* message, Command* command);
 public:
 	static std::vector<Message*> m_Messages;
-	static float m_BroadCastHelpTime;
+	static std::string m_HelpMessage;
 
 	static Message* SendServerMessage(std::string text);
 	static void SendAllMessagesInQuery();

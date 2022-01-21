@@ -14,6 +14,7 @@ public:
 	static bool m_LightState;
 	static Vector3 m_SpawnPosition;
 	static bool m_CanUpdateSpawnPosition;
+	static bool m_FirstTimeJoin;
 
 	static std::map<std::string, int> m_WeaponList;
 

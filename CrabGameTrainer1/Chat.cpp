@@ -5,6 +5,8 @@
 
 std::vector<Message*> Chat::m_Messages;
 
+std::string Chat::m_HelpMessage = "!ak !glock !revolver !dual !bat !granada !bomb;!katana !knife !pipe !stick !pizza !milk;!jumppunch !forcefield !superpunch;Test: !hat !light !bomber !tag";
+
 Message* Chat::SendServerMessage(std::string text) {
 	Message* message = new Message((long long)1, text);
 
@@ -175,6 +177,7 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 	if(command->Check("i2")) {
 		auto a = command->GetArgInt(0);
 
+
 		Mod::SendInteract(player->m_ClientId, a);
 		SendServerMessage("SendInteract");
 	}
@@ -251,11 +254,28 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 				message->m_SendType = MessageSendType::FORCE_PRIVATE;
 			}
 
+			if (command->Check("discord")) {
+				SendServerMessage("Danilo#7798");
+			}
+
+			if (command->Check("sethelp")) {
+				std::string text = command->GetArgText(0);
+
+				if (command->HasArg(0)) {
+					m_HelpMessage = std::string(text);
+				}
+			}
+
+
 			if (command->Check("help")) {
-				SendServerMessage("!ak !glock !revolver !dual !bat !granada !bomb");
-				SendServerMessage("!katana !knife !pipe !stick !pizza !milk");
-				SendServerMessage("!jumppunch !forcefield !superpunch !god");
-				SendServerMessage("Test: !hat !light !bomber !tag");
+				std::vector<std::string> strVec;
+				split(m_HelpMessage, ';', std::back_inserter(strVec));
+
+				//SendServerMessage(m_HelpMessage);
+
+				for (auto i = 0; i < strVec.size(); i++) {
+					SendServerMessage(strVec.at(i));
+				}
 			}
 
 			if (command->Check("r")) {

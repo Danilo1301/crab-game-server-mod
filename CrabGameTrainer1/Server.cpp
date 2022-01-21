@@ -2,6 +2,7 @@
 #include "Mod.h"
 #include "Chat.h"
 #include "Commands.h"
+#include "SocketServer.h"
 
 std::map<long long, Player*> Server::m_Players;
 std::chrono::system_clock::time_point Server::m_LastUpdatedTime;
@@ -11,6 +12,7 @@ bool Server::m_LightState = false;
 Player* Server::m_LobbyOwner = nullptr;	
 Vector3 Server::m_SpawnPosition = Vector3(0, 5, 0);
 bool Server::m_CanUpdateSpawnPosition = true;
+bool Server::m_FirstTimeJoin = true;
 
 std::map<std::string, int> Server::m_WeaponList = {
 	{ "ak", 0 },
@@ -30,13 +32,18 @@ std::map<std::string, int> Server::m_WeaponList = {
 };
 
 void Server::OnPlayerAddedToLobby(long long clientId) {
-
+	
 }
 
 void Server::OnPlayerRemovedFromLobby(long long clientId) {
 	if (Server::HasPlayer(clientId)) {
 		Server::m_Players.erase(clientId);
 	}
+	/*
+	if (SocketServer::m_IsConnected) {
+		SocketServer::Emit(std::to_string(clientId) + " left the game");
+	}
+	*/
 }
 
 bool Server::OnPlayerAttemptBanned(long long clientId) {
@@ -44,6 +51,8 @@ bool Server::OnPlayerAttemptBanned(long long clientId) {
 }
 
 void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager) {
+
+
 	if (!HasPlayer(clientId)) {
 		Player* player = new Player(clientId, playerId);
 
@@ -86,7 +95,9 @@ void Server::Init() {
 	Commands::RegisterCommand("tp", "tp.use");
 	Commands::RegisterCommand("respawndead", "respawndead.use");
 	Commands::RegisterCommand("ctoggle", "ctoggle.use");
+	Commands::RegisterCommand("sethelp", "sethelp.use");
 
+	Commands::RegisterCommand("discord", "");
 	Commands::RegisterCommand("test1", "");
 	Commands::RegisterCommand("w", "");
 	Commands::RegisterCommand("help", "");
@@ -110,11 +121,28 @@ void Server::Update(float dt) {
 	if (m_BroadCastHelpTime >= 50000) {
 		m_BroadCastHelpTime = 0;
 
-		Chat::SendServerMessage(" Digite !help para ver os comandos");
+		Chat::SendServerMessage(" Type !help for a list of commands");
+		//Chat::SendServerMessage(" Digite !help para ver os comandos");
+
+
+	}
+
+	
+
+	if (m_FirstTimeJoin) {
+		m_FirstTimeJoin = false;
+
+
+	}
+
+	if (SocketServer::m_IsConnected) {
+		
 	}
 
 	Chat::Update(dt);
 }
+
+
 
 void Server::GiveWeapon(long long toClient, int weaponId) {
 	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);

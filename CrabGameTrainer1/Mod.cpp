@@ -1,5 +1,6 @@
 #include "Mod.h"
 #include "Tests.h"
+#include "SocketServer.h"
 
 /*
 Template
@@ -134,6 +135,24 @@ void Template_ServerSend_PunchPlayer(uint64_t a, uint64_t b, Vector3 dir)
 auto ServerSend_SendChatMessage = new HookFunction<uint64_t, monoString*>(19779104);
 void Template_ServerSend_SendChatMessage(uint64_t fromClient, monoString* message)
 {
+	/*
+	if (SocketServer::m_IsConnected) {
+		
+		long long currentLobby = Mod::GetSteamManager()->static_fields->Instance->fields.currentLobby.fields.m_SteamID;
+		long long originalLobbyOwnerId = Mod::GetSteamManager()->static_fields->Instance->fields.originalLobbyOwnerId.fields.m_SteamID;
+
+		//SocketServer::SendLobbyInfo(lobbyId);
+
+		SocketServer::Emit("currentLobby:" + std::to_string(currentLobby));
+		SocketServer::Emit("originalLobbyOwnerId:" + std::to_string(originalLobbyOwnerId));
+
+		Mod::AppendLocalChatMessage(0, "currentLobby", std::to_string(currentLobby));
+		Mod::AppendLocalChatMessage(0, "originalLobbyOwnerId", std::to_string(originalLobbyOwnerId));
+		
+	}
+	*/
+	
+
 	if (Server::m_LobbyOwner->m_ClientId == fromClient) {
 		if (!Server::m_LobbyOwner->m_HideMessages) {
 			Mod::AppendLocalChatMessage(2, Server::m_LobbyOwner->GetDisplayName(), message->toCPPString().c_str());
@@ -160,7 +179,26 @@ void Template_LobbyManager_BanPlayer(void* _this, uint64_t steamId, const void* 
 auto LobbyManager_AddPlayerToLobby = new HookFunction<void*, void*>(13700096);
 void Template_LobbyManager_AddPlayerToLobby(void* _this, void* CSteamID)
 {
+	uintptr_t ptr1 = (uintptr_t)_this;
+	uintptr_t ptr2 = ptr1 + 0x18;
+	long long lobbyId = *(long long*)ptr2;
+
+
+	/*
+	char buffer[256];
+	sprintf_s(buffer, "add= %lld\n%p\nval=%lld", id, _this, lobbyId);
+	MessageBoxA(NULL, buffer, NULL, NULL);
+	*/
+
 	LobbyManager = _this;
+
+	if (SocketServer::m_IsConnected) {
+
+		if (SocketServer::m_LastSentLobbyId != lobbyId) {
+			SocketServer::m_LastSentLobbyId = lobbyId;
+			SocketServer::Emit("New lobby created " + std::to_string(lobbyId) + ", owner: " + std::to_string((long long)CSteamID));
+		}
+	}
 
 	LobbyManager_AddPlayerToLobby->original(_this, CSteamID);
 	Server::OnPlayerAddedToLobby((long long)CSteamID);
@@ -343,6 +381,13 @@ GameManager_c* Mod::GetGameManager() {
 	return c;
 }
 
+SteamManager_c* Mod::GetSteamManager() {
+	uintptr_t ptr1 = Injector::m_AssemblyBase + 30961704;
+	uintptr_t ptr1_val = *reinterpret_cast<uintptr_t*>(ptr1);
+	SteamManager_c* c = reinterpret_cast<SteamManager_c*>(ptr1_val);
+	return c;
+}
+
 ChatBox_c* Mod::GetChatBox() {
 	uintptr_t ptr1 = Injector::m_AssemblyBase + 30956328;
 	uintptr_t ptr1_val = *reinterpret_cast<uintptr_t*>(ptr1);
@@ -351,9 +396,17 @@ ChatBox_c* Mod::GetChatBox() {
 }
 
 int main() {
-	Server::Init();
+	SocketServer::Connect();
 
-	Tests::Test1();
+
+	std::cout << ("exit") << std::endl;
+
+
+	//
+
+	//Server::Init();
+
+	//Tests::Test1();
 
 	return 1;
 }
@@ -378,8 +431,10 @@ DWORD WINAPI MainThread(LPVOID param) {
 
 	LobbyManager_AddPlayerToLobby->SetTemplate(&Template_LobbyManager_AddPlayerToLobby);
 	Injector::Inject(LobbyManager_AddPlayerToLobby);
+
 	LobbyManager_RemovePlayerFromLobby->SetTemplate(&Template_LobbyManager_RemovePlayerFromLobby);
 	Injector::Inject(LobbyManager_RemovePlayerFromLobby);
+
 
 	ChatBox_AppendMessage->SetTemplate(&Template_ChatBox_AppendMessage);
 	Injector::Inject(ChatBox_AppendMessage);
@@ -405,6 +460,8 @@ DWORD WINAPI MainThread(LPVOID param) {
 	
 
 	Server::Init();
+
+	SocketServer::Connect();
 
 	bool running = true;
 	while (running)

@@ -17,17 +17,21 @@
 
 #if _WIN64
 #pragma comment(lib, "libMinHook.x64.lib")
+#pragma comment(lib, "sioclient.lib")
 #else
 #pragma comment(lib, "libMinHook.x86.lib")
 #endif
 
+
 #include "il2cpp.h"
+#include "sio_client.h"
 
 using Packet = ____________470_o;
 using PlayerManager = ____________465_o;
 
 using GameManager_c = ____________443_c;
 using ChatBox_c = ____________262_c;
+using SteamManager_c = ____________556_c;
 
 struct Vector3 {
 	float x = 0;
