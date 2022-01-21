@@ -4,19 +4,30 @@
 
 class Player {
 public:
-	int m_PlayerId;
-	int m_NumberId;
 	long long m_ClientId;
-	void* m_PlayerManager;
+	int m_PlayerId;
 	std::string m_Username = "";
-	bool m_IsAlive = false;
-	bool m_HideMyMessages = false;
+
+	bool m_IsAlive = true;
+	
+	float m_UnmuteTime = 0;
+	bool m_Muted = false;
+	bool m_HideMessages = false;
+	bool m_JumpPunchEnabled = false;
+	bool m_SuperPunchEnabled = false;
+	bool m_ForceFieldEnabled = false;
+	bool m_GodEnabled = false;
+
 	std::vector<std::string> m_Permissions;
 
-	Player(int playerId, int numberId, long long clientId, void* playerManager);
+	Player(long long clientId, int playerId);
 
-	bool GetIsAlive();
+	bool HasPermission(std::string permission);
+	void AddPermission(std::string permission);
+	void RemovePermission(std::string permission);
+
+	bool IsLobbyOwner();
+
 	std::string GetDisplayName();
 	std::string GetSelector();
-	void AddPermission(std::string permission);
 };

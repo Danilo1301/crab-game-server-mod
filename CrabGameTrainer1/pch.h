@@ -9,16 +9,29 @@
 #include <vector>
 #include <sstream>
 #include <chrono>
-
+#include <functional>
 #include <MinHook.h>
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 #if _WIN64
 #pragma comment(lib, "libMinHook.x64.lib")
+#pragma comment(lib, "sioclient.lib")
 #else
 #pragma comment(lib, "libMinHook.x86.lib")
 #endif
 
+
 #include "il2cpp.h"
+#include "sio_client.h"
+
+using Packet = ____________470_o;
+using PlayerManager = ____________465_o;
+
+using GameManager_c = ____________443_c;
+using ChatBox_c = ____________262_c;
+using SteamManager_c = ____________556_c;
 
 struct Vector3 {
 	float x = 0;
@@ -50,13 +63,10 @@ typedef struct _monoString
 		char fullStr[128];
 
 		for (int i = 0; i < getLength(); i++) {
-
 			int index = i * 2;
 			char b = *(p + index);
 
 			fullStr[i] = b;
-
-
 		}
 
 		fullStr[getLength()] = 0;
@@ -64,3 +74,12 @@ typedef struct _monoString
 		return std::string(fullStr);
 	}
 } monoString;
+
+template <typename Out>
+void split(const std::string& s, char delim, Out result) {
+	std::istringstream iss(s);
+	std::string item;
+	while (std::getline(iss, item, delim)) {
+		*result++ = item;
+	}
+}
