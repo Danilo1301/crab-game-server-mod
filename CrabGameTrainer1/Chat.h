@@ -19,4 +19,6 @@ public:
 
 	static void ProcessRawMessage(long long clientId, std::string text);
 	static void ProcessMessage(Message* message);
+
+	static void SendHelpMessage(int page);
 };

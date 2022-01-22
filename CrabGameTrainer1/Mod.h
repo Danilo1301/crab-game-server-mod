@@ -26,6 +26,7 @@ public:
 	static void TagPlayer(long long clientId);
 	static void ToggleLights(bool on);
 	static void GiveHat(long long clientId);
+	static void SendWinner(long long clientId, long long money);
 
 	static GameManager_c* GetGameManager();
 	static SteamManager_c* GetSteamManager();

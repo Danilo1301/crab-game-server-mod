@@ -13,6 +13,7 @@ Player* Server::m_LobbyOwner = nullptr;
 Vector3 Server::m_SpawnPosition = Vector3(0, 5, 0);
 bool Server::m_CanUpdateSpawnPosition = true;
 bool Server::m_FirstTimeJoin = true;
+long long Server::m_LobbyId = 0;
 
 std::map<std::string, int> Server::m_WeaponList = {
 	{ "ak", 0 },
@@ -30,6 +31,7 @@ std::map<std::string, int> Server::m_WeaponList = {
 	{ "pizza", 12 },
 	{ "granada", 13 }
 };
+std::vector<int> Server::m_DisabledWeapons;
 
 void Server::OnPlayerAddedToLobby(long long clientId) {
 	
@@ -80,32 +82,33 @@ Player* Server::GetPlayer(long long clientId) {
 void Server::Init() {
 	std::cout << "[Server::Init]\n";
 
-	Commands::RegisterCommand("r", "r.use");
-	Commands::RegisterCommand("v", "v.use");
-	Commands::RegisterCommand("bc", "bc.use");
-	Commands::RegisterCommand("test", "test.use");
-	Commands::RegisterCommand("ctest", "ctest.use");
-	Commands::RegisterCommand("perm", "perm.use");
-	Commands::RegisterCommand("cperm", "cperm.use");
-	Commands::RegisterCommand("ban", "ban.use");
-	Commands::RegisterCommand("kill", "kill.use");
-	Commands::RegisterCommand("time", "time.use");
-	Commands::RegisterCommand("mute", "mute.use");
-	Commands::RegisterCommand("god", "god.use");
-	Commands::RegisterCommand("tp", "tp.use");
-	Commands::RegisterCommand("respawndead", "respawndead.use");
-	Commands::RegisterCommand("ctoggle", "ctoggle.use");
-	Commands::RegisterCommand("sethelp", "sethelp.use");
+	Commands::RegisterCommand("r", "r");
+	Commands::RegisterCommand("v", "v", true);
+	Commands::RegisterCommand("win", "win", true);
+	Commands::RegisterCommand("bc", "bc");
+	Commands::RegisterCommand("test", "test");
+	Commands::RegisterCommand("ctest", "ctest");
+	Commands::RegisterCommand("perm", "perm");
+	Commands::RegisterCommand("cperm", "cperm");
+	Commands::RegisterCommand("ban", "ban");
+	Commands::RegisterCommand("kill", "kill");
+	Commands::RegisterCommand("time", "time");
+	Commands::RegisterCommand("mute", "mute");
+	Commands::RegisterCommand("god", "god");
+	Commands::RegisterCommand("tp", "tp");
+	//Commands::RegisterCommand("respawndead", "respawndead.use"); to remove
+	Commands::RegisterCommand("ctoggle", "ctoggle");
+	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
 
-	Commands::RegisterCommand("discord", "");
-	Commands::RegisterCommand("test1", "");
-	Commands::RegisterCommand("w", "");
+	Commands::RegisterCommand("download", "");
+	Commands::RegisterCommand("test1", "", true);
+	Commands::RegisterCommand("w", "", true);
 	Commands::RegisterCommand("help", "");
 	Commands::RegisterCommand("respawn", "");
 	Commands::RegisterCommand("jumppunch", "");
 	Commands::RegisterCommand("superpunch", "");
 	Commands::RegisterCommand("forcefield", "");
-	Commands::RegisterCommand("rconadmin", "");
+	Commands::RegisterCommand("rconadmin", "", true);
 
 	Commands::RegisterCommand("hat", "");
 	Commands::RegisterCommand("light", "");
@@ -118,7 +121,7 @@ void Server::Update(float dt) {
 	std::cout << "[Server::Update] " << dt << "\n";
 
 	m_BroadCastHelpTime += dt;
-	if (m_BroadCastHelpTime >= 50000) {
+	if (m_BroadCastHelpTime >= 50000 && m_Players.size() > 1) {
 		m_BroadCastHelpTime = 0;
 
 		Chat::SendServerMessage(" Type !help for a list of commands");
@@ -136,7 +139,13 @@ void Server::Update(float dt) {
 	}
 
 	if (SocketServer::m_IsConnected) {
-		
+		if (m_Players.size() > 0) {
+			if (SocketServer::m_LastSentLobbyId != m_LobbyId) {
+				SocketServer::m_LastSentLobbyId = m_LobbyId;
+				SocketServer::Emit("New lobby created " + std::to_string(m_LobbyId) + ", owner: " + std::to_string(m_LobbyOwner->m_ClientId));
+			}
+		}
+
 	}
 
 	Chat::Update(dt);
@@ -205,4 +214,20 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 	}
 
 	return players;
+}
+
+bool Server::IsWeaponDisabled(int weaponId) {
+	return (std::find(Server::m_DisabledWeapons.begin(), Server::m_DisabledWeapons.end(), weaponId) != Server::m_DisabledWeapons.end());
+}
+
+void Server::DisableWeapon(int weaponId) {
+	if (IsWeaponDisabled(weaponId)) return;
+	m_DisabledWeapons.push_back(weaponId);
+}
+
+void Server::EnableWeapon(int weaponId) {
+	if (!IsWeaponDisabled(weaponId)) return;
+
+	std::vector<int>::iterator itr = std::find(m_DisabledWeapons.begin(), m_DisabledWeapons.end(), weaponId);
+	if (itr != m_DisabledWeapons.end()) m_DisabledWeapons.erase(itr);
 }

@@ -15,8 +15,10 @@ public:
 	static Vector3 m_SpawnPosition;
 	static bool m_CanUpdateSpawnPosition;
 	static bool m_FirstTimeJoin;
+	static long long m_LobbyId;
 
 	static std::map<std::string, int> m_WeaponList;
+	static std::vector<int> m_DisabledWeapons;
 
 	static void OnPlayerAddedToLobby(long long clientId);
 	static void OnPlayerRemovedFromLobby(long long clientId);
@@ -33,4 +35,8 @@ public:
 	static void GiveWeapon(long long toClient, int weaponId);
 
 	static std::vector<Player*> FindPlayers(std::string selector);
+
+	static bool IsWeaponDisabled(int weaponId);
+	static void DisableWeapon(int weaponId);
+	static void EnableWeapon(int weaponId);
 };

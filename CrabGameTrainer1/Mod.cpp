@@ -183,6 +183,7 @@ void Template_LobbyManager_AddPlayerToLobby(void* _this, void* CSteamID)
 	uintptr_t ptr2 = ptr1 + 0x18;
 	long long lobbyId = *(long long*)ptr2;
 
+	Server::m_LobbyId = lobbyId;
 
 	/*
 	char buffer[256];
@@ -191,14 +192,6 @@ void Template_LobbyManager_AddPlayerToLobby(void* _this, void* CSteamID)
 	*/
 
 	LobbyManager = _this;
-
-	if (SocketServer::m_IsConnected) {
-
-		if (SocketServer::m_LastSentLobbyId != lobbyId) {
-			SocketServer::m_LastSentLobbyId = lobbyId;
-			SocketServer::Emit("New lobby created " + std::to_string(lobbyId) + ", owner: " + std::to_string((long long)CSteamID));
-		}
-	}
 
 	LobbyManager_AddPlayerToLobby->original(_this, CSteamID);
 	Server::OnPlayerAddedToLobby((long long)CSteamID);
@@ -354,6 +347,7 @@ void Mod::SetCurrentGameModeTime(float time) {
 void Mod::SetBomber(long long clientId) {
 	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19787040);
 	Fn(clientId, clientId);
+	Fn(clientId, 0);
 }
 
 void Mod::TagPlayer(long long clientId) {
@@ -369,6 +363,11 @@ void Mod::ToggleLights(bool on) {
 void Mod::GiveHat(long long clientId) {
 	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19770272);
 	Fn(clientId, clientId);
+}
+
+void Mod::SendWinner(long long clientId, long long money) {
+	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19786784);
+	Fn(clientId, money);
 }
 
 //ChatBox_AppendMessage->original(_this, fromClient, message, username);
@@ -396,12 +395,19 @@ ChatBox_c* Mod::GetChatBox() {
 }
 
 int main() {
-	SocketServer::Connect();
+	//SocketServer::Connect();
+
+	Server::Init();
+
+	Chat::SendHelpMessage(0);
+	Chat::SendHelpMessage(1);
+	Chat::SendHelpMessage(2);
+	Chat::SendHelpMessage(3);
 
 
 	std::cout << ("exit") << std::endl;
 
-
+	Tests::Test2();
 	//
 
 	//Server::Init();

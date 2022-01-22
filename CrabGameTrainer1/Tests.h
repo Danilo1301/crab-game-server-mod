@@ -33,6 +33,12 @@ public:
 	}
 
 	static void Test2() {
-		
+		auto player1 = Server::AddPlayer(new Player(11111111111, 1));
+		auto player2 = Server::AddPlayer(new Player(22222222222, 2));
+
+		player2->AddPermission("gay");
+		player2->RemovePermission("gay");
+
+		Chat::ProcessRawMessage(player1->m_ClientId, "!win #1 17823");
 	}
 };

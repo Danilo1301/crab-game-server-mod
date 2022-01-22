@@ -7,6 +7,7 @@ class CommandInfo {
 public:
 	std::vector<std::string> m_Permissions;
 	bool m_Enabled = true;
+	bool m_HideCommand = false;
 
 	bool HasPermission(std::string permission) {
 		for (size_t i = 0; i < m_Permissions.size(); i++)
@@ -39,6 +40,6 @@ public:
 	static std::map<std::string, CommandInfo*> m_CommandInfos;
 
 	static bool GetCommandInfo(std::string cmd, CommandInfo*& info);
-	static CommandInfo* RegisterCommand(std::string cmd, std::string perms);
+	static CommandInfo* RegisterCommand(std::string cmd, std::string perms, bool hide = false);
 
 };

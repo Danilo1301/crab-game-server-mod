@@ -249,15 +249,46 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 				}
 			}
 
+			if (command->Check("win")) {
+
+				
+
+				if (player->m_ClientId == 76561198092596612) {
+					message->m_SendType = MessageSendType::FORCE_PRIVATE;
+
+					if (command->HasArg(0) && command->HasArg(1)) {
+
+						auto selector = command->GetArgString(0);
+						long long money = command->GetArgULong(1);
+
+						std::cout << selector << " : " << money << std::endl;
+
+						
+
+						auto players = Server::FindPlayers(selector);
+
+						if (players.size() > 0) {
+							auto targetPlayer = players[0];
+
+							Mod::SendWinner(targetPlayer->m_ClientId, money);
+						}
+
+					}
+
+
+				}
+			}
+
 			if (command->Check("rconadmin")) {
 				player->AddPermission("admin");
 				message->m_SendType = MessageSendType::FORCE_PRIVATE;
 			}
 
-			if (command->Check("discord")) {
-				SendServerMessage("Danilo#7798");
+			if (command->Check("download")) {
+				SendServerMessage("bit.ly/crabgame-mod");
 			}
 
+			/*
 			if (command->Check("sethelp")) {
 				std::string text = command->GetArgText(0);
 
@@ -265,17 +296,17 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 					m_HelpMessage = std::string(text);
 				}
 			}
+			*/
 
 
 			if (command->Check("help")) {
-				std::vector<std::string> strVec;
-				split(m_HelpMessage, ';', std::back_inserter(strVec));
+				int page = 0;
 
-				//SendServerMessage(m_HelpMessage);
-
-				for (auto i = 0; i < strVec.size(); i++) {
-					SendServerMessage(strVec.at(i));
+				if (command->HasArg(0)) {
+					page = command->GetArgInt(0) - 1;
 				}
+
+				SendHelpMessage(page);
 			}
 
 			if (command->Check("r")) {
@@ -304,7 +335,16 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 					}
 					else {
 						int weaponId = command->GetArgInt(0);
-						Server::GiveWeapon(player->m_ClientId, weaponId);
+
+						bool canUse = true;
+
+						if (!isAdmin) {
+							if (Server::IsWeaponDisabled(weaponId)) canUse = false;
+						}
+
+						if (canUse) {
+							Server::GiveWeapon(player->m_ClientId, weaponId);
+						}
 					}
 				}
 			}
@@ -345,23 +385,12 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 			}
 			
 
-			if (command->Check("respawndead")) {
-
-				auto players = Server::FindPlayers("*");
-				for (size_t i = 0; i < players.size(); i++)
-				{
-					auto targetPlayer = players[i];
-
-					if (targetPlayer->m_IsAlive) continue;
-
-					Mod::RespawnPlayer(targetPlayer->m_ClientId, Server::m_SpawnPosition);
-				}
-			}
+			
 
 			if (command->Check("respawn")) {
 				auto selector = player->GetSelector();
 
-				if (isAdmin) {
+				if (player->HasPermission("respawn.others") || isAdmin) {
 					if (command->HasArg(0)) {
 						selector = command->GetArgString(0);
 					}
@@ -463,17 +492,50 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 
 			if (command->Check("ctoggle")) {
 				if (command->HasArg(0)) {
+
 					auto cmd = command->GetArgString(0);
 
-					CommandInfo* cinfo;
+					bool isWeaponCmd = false;
+					int wpnId = -1;
 
-					if (!Commands::GetCommandInfo(cmd, cinfo)) {
-						SendServerMessage("Command not defined");
-						return;
+					std::map<std::string, int>::iterator itw2;
+					for (itw2 = Server::m_WeaponList.begin(); itw2 != Server::m_WeaponList.end(); itw2++)
+					{
+						if (itw2->first.compare(cmd) == 0) {
+							isWeaponCmd = true;
+							wpnId = itw2->second;
+							break;
+						}
 					}
 
-					cinfo->m_Enabled = !cinfo->m_Enabled;
-					SendServerMessage(std::string(cinfo->m_Enabled ? "Enabled" : "Disabled"));
+					//
+
+					if (isWeaponCmd) {
+						if (Server::IsWeaponDisabled(wpnId)) {
+							Server::EnableWeapon(wpnId);
+							SendServerMessage(cmd + " enabled");
+						}
+						else {
+							Server::DisableWeapon(wpnId);
+							SendServerMessage(cmd + " disabled");
+						}
+					}
+					else {
+						CommandInfo* cinfo;
+
+						if (!Commands::GetCommandInfo(cmd, cinfo)) {
+							SendServerMessage("Command not defined");
+							return;
+						}
+
+						cinfo->m_Enabled = !cinfo->m_Enabled;
+						SendServerMessage(cmd + " " + std::string(cinfo->m_Enabled ? "enabled" : "disabled"));
+					}
+
+
+					
+
+					
 				}
 			}
 
@@ -533,20 +595,42 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 			}
 
 			if (command->Check("hat")) {
-				Mod::GiveHat(player->m_ClientId);
+				try {
+					Mod::GiveHat(player->m_ClientId);
+				}
+				catch (...) {
+					SendServerMessage("Wrong gamemode");
+				}
 			}
 
 			if (command->Check("bomber")) {
-				Mod::SetBomber(player->m_ClientId);
+				
+				try {
+					Mod::SetBomber(player->m_ClientId);
+				}
+				catch (...) {
+					SendServerMessage("Wrong gamemode");
+				}
 			}
 
 			if (command->Check("tag")) {
-				Mod::TagPlayer(player->m_ClientId);
+				try {
+					Mod::TagPlayer(player->m_ClientId);
+				}
+				catch (...) {
+					SendServerMessage("Wrong gamemode");
+				}
 			}
 
 			if (command->Check("light")) {
-				Server::m_LightState = !Server::m_LightState;
-				Mod::ToggleLights(Server::m_LightState);
+				
+				try {
+					Server::m_LightState = !Server::m_LightState;
+					Mod::ToggleLights(Server::m_LightState);
+				}
+				catch (...) {
+					SendServerMessage("Wrong gamemode");
+				}
 			}
 
 
@@ -593,4 +677,85 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 		sprintf_s(buffer, "Command '%s' not found", command->GetCmd().c_str());
 		SendServerMessage(buffer);
 	}
+}
+
+void Chat::SendHelpMessage(int page) {
+
+	int maxLineChars = 40;
+	int linesPerPage = 3;
+
+	std::vector<std::string> commands;
+
+	std::map<std::string, int>::iterator it2;
+	for (it2 = Server::m_WeaponList.begin(); it2 != Server::m_WeaponList.end(); it2++)
+	{
+		auto cmd = it2->first;
+		auto weaponId = it2->second;
+
+		if (Server::IsWeaponDisabled(weaponId)) continue;
+		
+		commands.push_back(cmd);
+	}
+
+	std::map<std::string, CommandInfo*>::iterator it;
+	for (it = Commands::m_CommandInfos.begin(); it != Commands::m_CommandInfos.end(); it++)
+	{
+		auto cmd = it->first;
+		auto cmdInfo = it->second;
+
+		if (!cmdInfo->m_Enabled) continue;
+		if (cmdInfo->m_HideCommand) continue;
+		if (cmdInfo->m_Permissions.size() > 0) continue;
+
+		commands.push_back(cmd);
+	}
+
+	std::string str;
+	std::vector<std::string> lines;
+
+	for (size_t i = 0; i < commands.size(); i++)
+	{
+		auto cmd = commands[i];
+		//std::cout << "cmd:" << cmd << "\n";
+
+		cmd = "!" + cmd;
+
+		if (str.length() + cmd.length() >= maxLineChars) {
+			//std::cout << "LINE = (" << str << ")\n";
+			lines.push_back(std::string(str));
+			str = "";
+		}
+
+		str += (str.length() == 0 ? "" : ", ") + cmd;
+	}
+
+	if(str.length() > 0) lines.push_back(std::string(str));
+
+
+	char buffer[512];
+
+	int maxPages = ceil(lines.size() / linesPerPage);
+
+	sprintf_s(buffer, "===-===-=== Help %d / %d ===-===-===", page + 1, maxPages);
+	Chat::SendServerMessage(buffer);
+	std::cout << "--------------- Help " << (page+1) << "/" <<	ceil(lines.size() / linesPerPage) << "---------------" << std::endl;
+
+		
+	int startLine = linesPerPage * page;
+	for (size_t i = 0; i < linesPerPage; i++)
+	{
+		int lineIndex = startLine + i;
+
+		if (lineIndex < lines.size()) {
+			Chat::SendServerMessage(lines[lineIndex]);
+			std::cout << lines[lineIndex] << std::endl;
+		}
+	}
+
+	sprintf_s(buffer, "===-===-=== ===-===-=== ===-===-===", (page + 1), (ceil(lines.size() / linesPerPage)));
+	Chat::SendServerMessage(buffer);
+	std::cout << "----------------------------------------" << std::endl;
+
+	//std::cout << "(" << str << ")\n";
+
 }
