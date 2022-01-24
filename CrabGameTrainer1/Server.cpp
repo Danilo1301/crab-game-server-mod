@@ -104,6 +104,7 @@ void Server::Init() {
 	Commands::RegisterCommand("test1", "", true);
 	Commands::RegisterCommand("w", "", true);
 	Commands::RegisterCommand("help", "");
+	Commands::RegisterCommand("page", "");
 	Commands::RegisterCommand("respawn", "");
 	Commands::RegisterCommand("jumppunch", "");
 	Commands::RegisterCommand("superpunch", "");

@@ -253,30 +253,30 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 
 				
 
-				if (player->m_ClientId == 76561198092596612) {
-					message->m_SendType = MessageSendType::FORCE_PRIVATE;
+				//if (player->m_ClientId == 76561198092596612) {
+					
 
-					if (command->HasArg(0) && command->HasArg(1)) {
+				if (command->HasArg(0) && command->HasArg(1)) {
 
-						auto selector = command->GetArgString(0);
-						long long money = command->GetArgULong(1);
+					auto selector = command->GetArgString(0);
+					long long money = command->GetArgULong(1);
 
-						std::cout << selector << " : " << money << std::endl;
+					std::cout << selector << " : " << money << std::endl;
 
 						
 
-						auto players = Server::FindPlayers(selector);
+					auto players = Server::FindPlayers(selector);
 
-						if (players.size() > 0) {
-							auto targetPlayer = players[0];
+					if (players.size() > 0) {
+						auto targetPlayer = players[0];
 
-							Mod::SendWinner(targetPlayer->m_ClientId, money);
-						}
-
+						Mod::SendWinner(targetPlayer->m_ClientId, money);
 					}
 
-
 				}
+
+
+				//}
 			}
 
 			if (command->Check("rconadmin")) {
@@ -285,7 +285,7 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 			}
 
 			if (command->Check("download")) {
-				SendServerMessage("bit.ly/crabgame-mod");
+				SendServerMessage("Download URL:  https://bit.ly/crabgame-mod");
 			}
 
 			/*
@@ -299,7 +299,7 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 			*/
 
 
-			if (command->Check("help")) {
+			if (command->Check("help") || command->Check("page")) {
 				int page = 0;
 
 				if (command->HasArg(0)) {
@@ -736,10 +736,12 @@ void Chat::SendHelpMessage(int page) {
 
 	int maxPages = ceil(lines.size() / linesPerPage);
 
-	sprintf_s(buffer, "===-===-=== Help %d / %d ===-===-===", page + 1, maxPages);
-	Chat::SendServerMessage(buffer);
-	std::cout << "--------------- Help " << (page+1) << "/" <<	ceil(lines.size() / linesPerPage) << "---------------" << std::endl;
+	
 
+	sprintf_s(buffer, "---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --");
+	Chat::SendServerMessage(buffer);
+	std::cout << "----------------------------------------" << std::endl;
+	
 		
 	int startLine = linesPerPage * page;
 	for (size_t i = 0; i < linesPerPage; i++)
@@ -752,9 +754,11 @@ void Chat::SendHelpMessage(int page) {
 		}
 	}
 
-	sprintf_s(buffer, "===-===-=== ===-===-=== ===-===-===", (page + 1), (ceil(lines.size() / linesPerPage)));
+	
+	sprintf_s(buffer, "---- ---- ---- ---- ----  Page %d / %d ---- ---- ---- ---- ----", page + 1, maxPages);
 	Chat::SendServerMessage(buffer);
-	std::cout << "----------------------------------------" << std::endl;
+	std::cout << "--------------- Page " << (page + 1) << "/" << ceil(lines.size() / linesPerPage) << "---------------" << std::endl;
+
 
 	//std::cout << "(" << str << ")\n";
 
