@@ -6,6 +6,7 @@
 
 class Server {
 public:
+	static std::string m_Version;
 	static Player* m_LobbyOwner;
 	static std::map<long long, Player*> m_Players;
 	static std::chrono::system_clock::time_point m_LastUpdatedTime;

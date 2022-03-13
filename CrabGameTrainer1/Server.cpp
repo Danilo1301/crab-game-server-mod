@@ -4,12 +4,13 @@
 #include "Commands.h"
 #include "SocketServer.h"
 
+std::string Server::m_Version = "1.2.2";
 std::map<long long, Player*> Server::m_Players;
 std::chrono::system_clock::time_point Server::m_LastUpdatedTime;
 int Server::m_UniqueObjectId = 100;
 float Server::m_BroadCastHelpTime = 0;
 bool Server::m_LightState = false;
-Player* Server::m_LobbyOwner = nullptr;	
+Player* Server::m_LobbyOwner = NULL;	
 Vector3 Server::m_SpawnPosition = Vector3(0, 5, 0);
 bool Server::m_CanUpdateSpawnPosition = true;
 bool Server::m_FirstTimeJoin = true;
@@ -143,7 +144,7 @@ void Server::Update(float dt) {
 		if (m_Players.size() > 0) {
 			if (SocketServer::m_LastSentLobbyId != m_LobbyId) {
 				SocketServer::m_LastSentLobbyId = m_LobbyId;
-				SocketServer::Emit("New lobby created " + std::to_string(m_LobbyId) + ", owner: " + std::to_string(m_LobbyOwner->m_ClientId));
+				SocketServer::Emit("New lobby created " + std::to_string(m_LobbyId));
 			}
 		}
 

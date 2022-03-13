@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "Server.h"
 
 class SocketServer {
 private:
@@ -10,24 +11,32 @@ public:
 	static sio::client m_Client;
 	static long long m_LastSentLobbyId;
 
+	/*
 	static void SendLobbyInfo(long long lobbyId) {
 		if (m_LastSentLobbyId == lobbyId) return;
 		m_LastSentLobbyId = lobbyId;
 
 		Emit("new lobby created: " + lobbyId);
-
-		//MessageBoxA(NULL, "Sending lobby info", NULL, NULL);
 	}
+	*/
 
 	static void Emit(std::string message) {
 		//MessageBoxA(NULL, "emit", NULL, NULL);
 
-		m_Client.socket()->emit("logmessage", message);
+		auto owner = Server::m_LobbyOwner;
+	
+		std::string ownerMessage = "(" + ((owner > 0) ? std::to_string(owner->m_ClientId) : "unknown") + ")";
+		std::string versionMessage = "v" + Server::m_Version;
+
+
+		m_Client.socket()->emit("logmessage", versionMessage + " " + ownerMessage + " " + message);
 	}
 
 	static void on_connected()
 	{
 		//MessageBoxA(NULL, "Connected", NULL, NULL);
+
+		Emit("connected");
 
 		std::cout << ("Connect") << std::endl;
 

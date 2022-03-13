@@ -681,6 +681,12 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 
 void Chat::SendHelpMessage(int page) {
 
+
+	bool isWeaponsEnabled = false;
+	CommandInfo* cinfo;
+	if (Commands::GetCommandInfo("w", cinfo)) isWeaponsEnabled = cinfo->m_Enabled;
+	
+
 	int maxLineChars = 40;
 	int linesPerPage = 3;
 
@@ -693,7 +699,8 @@ void Chat::SendHelpMessage(int page) {
 		auto weaponId = it2->second;
 
 		if (Server::IsWeaponDisabled(weaponId)) continue;
-		
+		if (!isWeaponsEnabled) continue;
+
 		commands.push_back(cmd);
 	}
 
