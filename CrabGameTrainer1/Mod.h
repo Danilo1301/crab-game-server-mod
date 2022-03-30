@@ -14,7 +14,8 @@ class Mod {
 public:
 	static void SendChatMessage(long long fromClient, std::string message);
 	static void AppendLocalChatMessage(long long fromClient, std::string username, std::string message);
-	static void SendDropItem(long long toClient, int a, int b, int c);
+	static void SendDropItem(long long toClient, int objectId, int itemId, int ammo);
+	static void ForceGiveItem(long long toClient, int objectId, int itemId);
 	static void SendLocalInteract(int itemid);
 	static void SendInteract(long long clientId, int itemid);
 	static void KillPlayer(long long clientId);
