@@ -622,6 +622,14 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 				}
 			}
 
+			if (command->Check("helpmsg")) {
+				Server::m_ShowHelpMessage = !Server::m_ShowHelpMessage;
+
+				if (Server::m_ShowHelpMessage) SendServerMessage("Help message enabled");
+				else SendServerMessage("Help message disabled");
+			}
+			
+
 			if (command->Check("light")) {
 				
 				try {

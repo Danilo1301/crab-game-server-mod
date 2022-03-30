@@ -228,6 +228,18 @@ void Template_ChatBox_Update(void* _this)
 	ChatBox_Update->original(_this);
 }
 
+
+auto ClientHandle_UseItem = new HookFunction<void*, void*>(13938432);
+void Template_ClientHandle_UseItem(____________470_o* packet, void* method)
+{
+	std::cout << "use item" << std::endl;
+	std::cout << packet->fields._1____________->bounds->length << std::endl;
+	std::cout << packet->fields._2____________ << std::endl;
+	std::cout << (packet->fields._3____________ ? "Y" : "N") << std::endl;
+
+	ClientHandle_UseItem->original(packet, method);
+}
+
 //-------------------------------------------------
 
 
@@ -288,8 +300,14 @@ void Mod::SendDropItem(long long toClient, int objectId, int itemId, int ammo) {
 
 	if (Injector::m_AssemblyBase == 0) return;
 
-	void (*DropItem)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3) = (void (*)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3))(Injector::m_AssemblyBase + 19767472);
-	DropItem(toClient, objectId, itemId, ammo);
+
+	void (*ForceGiveItem)(uint64_t clientId, int32_t int1, int32_t int2) = (void (*)(uint64_t clientId, int32_t int1, int32_t int2))(Injector::m_AssemblyBase + 19768080);
+	ForceGiveItem(toClient, objectId, itemId);
+
+	
+
+	//void (*DropItem)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3) = (void (*)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3))(Injector::m_AssemblyBase + 19767472);
+	//DropItem(toClient, objectId, itemId, ammo);
 }
 
 void Mod::SendLocalInteract(int itemid) {
@@ -445,7 +463,12 @@ DWORD WINAPI MainThread(LPVOID param) {
 	ChatBox_AppendMessage->SetTemplate(&Template_ChatBox_AppendMessage);
 	Injector::Inject(ChatBox_AppendMessage);
 
-	
+
+
+	ClientHandle_UseItem->SetTemplate(&Template_ClientHandle_UseItem);
+	Injector::Inject(ClientHandle_UseItem);
+
+
 
 	ChatBox_Update->SetTemplate(&Template_ChatBox_Update);
 	Injector::Inject(ChatBox_Update);

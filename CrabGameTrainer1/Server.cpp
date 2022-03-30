@@ -4,7 +4,7 @@
 #include "Commands.h"
 #include "SocketServer.h"
 
-std::string Server::m_Version = "1.2.2";
+std::string Server::m_Version = "1.2.3";
 std::map<long long, Player*> Server::m_Players;
 std::chrono::system_clock::time_point Server::m_LastUpdatedTime;
 int Server::m_UniqueObjectId = 100;
@@ -13,7 +13,7 @@ bool Server::m_LightState = false;
 Player* Server::m_LobbyOwner = NULL;	
 Vector3 Server::m_SpawnPosition = Vector3(0, 5, 0);
 bool Server::m_CanUpdateSpawnPosition = true;
-bool Server::m_FirstTimeJoin = true;
+bool Server::m_ShowHelpMessage = true;
 long long Server::m_LobbyId = 0;
 
 std::map<std::string, int> Server::m_WeaponList = {
@@ -30,7 +30,7 @@ std::map<std::string, int> Server::m_WeaponList = {
 	{ "stick", 10 },
 	{ "milk", 11 },
 	{ "pizza", 12 },
-	{ "granada", 13 }
+	{ "grenade", 13 }
 };
 std::vector<int> Server::m_DisabledWeapons;
 
@@ -42,11 +42,6 @@ void Server::OnPlayerRemovedFromLobby(long long clientId) {
 	if (Server::HasPlayer(clientId)) {
 		Server::m_Players.erase(clientId);
 	}
-	/*
-	if (SocketServer::m_IsConnected) {
-		SocketServer::Emit(std::to_string(clientId) + " left the game");
-	}
-	*/
 }
 
 bool Server::OnPlayerAttemptBanned(long long clientId) {
@@ -54,8 +49,6 @@ bool Server::OnPlayerAttemptBanned(long long clientId) {
 }
 
 void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager) {
-
-
 	if (!HasPlayer(clientId)) {
 		Player* player = new Player(clientId, playerId);
 
@@ -97,10 +90,7 @@ void Server::Init() {
 	Commands::RegisterCommand("mute", "mute");
 	Commands::RegisterCommand("god", "god");
 	Commands::RegisterCommand("tp", "tp");
-	//Commands::RegisterCommand("respawndead", "respawndead.use"); to remove
 	Commands::RegisterCommand("ctoggle", "ctoggle");
-	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
-
 	Commands::RegisterCommand("download", "");
 	Commands::RegisterCommand("test1", "", true);
 	Commands::RegisterCommand("w", "", true);
@@ -111,33 +101,24 @@ void Server::Init() {
 	Commands::RegisterCommand("superpunch", "");
 	Commands::RegisterCommand("forcefield", "");
 	Commands::RegisterCommand("rconadmin", "", true);
-
+	Commands::RegisterCommand("helpmsg", "", true);
 	Commands::RegisterCommand("hat", "");
 	Commands::RegisterCommand("light", "");
 	Commands::RegisterCommand("bomber", "");
 	Commands::RegisterCommand("tag", "");
-	
+
+	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
 }
 
 void Server::Update(float dt) {
 	std::cout << "[Server::Update] " << dt << "\n";
 
 	m_BroadCastHelpTime += dt;
-	if (m_BroadCastHelpTime >= 50000 && m_Players.size() > 1) {
+	if (m_BroadCastHelpTime >= 50000 && m_ShowHelpMessage) {
 		m_BroadCastHelpTime = 0;
 
 		Chat::SendServerMessage(" Type !help for a list of commands");
 		//Chat::SendServerMessage(" Digite !help para ver os comandos");
-
-
-	}
-
-	
-
-	if (m_FirstTimeJoin) {
-		m_FirstTimeJoin = false;
-
-
 	}
 
 	if (SocketServer::m_IsConnected) {
@@ -147,13 +128,10 @@ void Server::Update(float dt) {
 				SocketServer::Emit("New lobby created " + std::to_string(m_LobbyId));
 			}
 		}
-
 	}
 
 	Chat::Update(dt);
 }
-
-
 
 void Server::GiveWeapon(long long toClient, int weaponId) {
 	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);
