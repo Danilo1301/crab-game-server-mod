@@ -4,7 +4,7 @@
 #include "Commands.h"
 #include "SocketServer.h"
 
-std::string Server::m_Version = "1.2.3";
+std::string Server::m_Version = "1.2.4";
 std::map<long long, Player*> Server::m_Players;
 std::chrono::system_clock::time_point Server::m_LastUpdatedTime;
 int Server::m_UniqueObjectId = 100;
