@@ -1,4 +1,5 @@
 #include "Player.h"
+#include "Server.h"
 
 Player::Player(long long clientId, int playerId) {
 	m_ClientId = clientId;
@@ -41,7 +42,8 @@ bool Player::IsLobbyOwner() {
 }
 
 std::string Player::GetDisplayName() {
-	std::string str(m_Username + "[" + std::to_string(m_PlayerId) + "]");
+	std::string str = m_Username;
+	if(Server::m_ShowPlayerIds) str += "[" + std::to_string(m_PlayerId) + "]";
 	return str;
 }
 

@@ -14,6 +14,7 @@ Player* Server::m_LobbyOwner = NULL;
 Vector3 Server::m_SpawnPosition = Vector3(0, 5, 0);
 bool Server::m_CanUpdateSpawnPosition = true;
 bool Server::m_ShowHelpMessage = true;
+bool Server::m_ShowPlayerIds = true;
 long long Server::m_LobbyId = 0;
 
 std::map<std::string, int> Server::m_WeaponList = {
@@ -102,6 +103,7 @@ void Server::Init() {
 	Commands::RegisterCommand("forcefield", "");
 	Commands::RegisterCommand("rconadmin", "", true);
 	Commands::RegisterCommand("helpmsg", "", true);
+	Commands::RegisterCommand("playerids", "", true);
 	Commands::RegisterCommand("hat", "");
 	Commands::RegisterCommand("light", "");
 	Commands::RegisterCommand("bomber", "");

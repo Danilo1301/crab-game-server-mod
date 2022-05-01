@@ -16,6 +16,7 @@ public:
 	static Vector3 m_SpawnPosition;
 	static bool m_CanUpdateSpawnPosition;
 	static bool m_ShowHelpMessage;
+	static bool m_ShowPlayerIds;
 	static long long m_LobbyId;
 
 	static std::map<std::string, int> m_WeaponList;

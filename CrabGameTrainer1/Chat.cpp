@@ -25,9 +25,14 @@ void Chat::SendAllMessagesInQuery() {
 		if (message->m_Player != NULL) {
 			auto player = message->m_Player;
 
-			char buffer[512];
-			sprintf_s(buffer, "%s[%d] %s", player->m_IsAlive ? "" : "(dead) ", player->m_PlayerId, content.c_str());
-			content = std::string(buffer);
+			bool showAliveState = false;
+
+			std::string str = "";
+			if (showAliveState) str += player->m_IsAlive ? "" : "(dead) ";
+			if (Server::m_ShowPlayerIds) str += "[" + std::to_string(player->m_PlayerId) + "] ";
+			str += content;
+
+			content = str;
 		}
 
 		std::cout << "[Message : " << (int)message->m_SendType << "] from=" << message->m_FromClient << ", content='" << content << "'\n";
@@ -627,6 +632,13 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 
 				if (Server::m_ShowHelpMessage) SendServerMessage("Help message enabled");
 				else SendServerMessage("Help message disabled");
+			}
+
+			if (command->Check("playerids")) {
+				Server::m_ShowPlayerIds = !Server::m_ShowPlayerIds;
+
+				if (Server::m_ShowPlayerIds) SendServerMessage("Showing player ids in chat");
+				else SendServerMessage("Hidding player ids in chat");
 			}
 			
 
