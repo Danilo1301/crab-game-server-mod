@@ -83,6 +83,7 @@ void Server::Init() {
 	Commands::RegisterCommand("bc", "bc");
 	Commands::RegisterCommand("test", "test");
 	Commands::RegisterCommand("ctest", "ctest");
+	Commands::RegisterCommand("cinfo", "cinfo");
 	Commands::RegisterCommand("perm", "perm");
 	Commands::RegisterCommand("cperm", "cperm");
 	Commands::RegisterCommand("ban", "ban");
