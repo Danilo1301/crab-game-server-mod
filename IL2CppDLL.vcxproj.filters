@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="user\main.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\dllmain.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\helpers.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\il2cpp-init.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="framework\pch-il2cpp.cpp">
+      <Filter>framework</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Mod.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Injector.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\pch.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Server.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Commands.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Player.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Chat.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\SocketServer.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="include\json_reader.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="include\json_value.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="include\json_writer.cpp">
+      <Filter>json</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="user\main.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-api-functions.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-api-functions-ptr.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-functions.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-metadata-version.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-types.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="appdata\il2cpp-types-ptr.h">
+      <Filter>appdata</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\helpers.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\il2cpp-appdata.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\il2cpp-init.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="framework\pch-il2cpp.h">
+      <Filter>framework</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Mod.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Injector.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\pch.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\il2cpp.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Server.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Command.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Commands.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Message.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Player.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Chat.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\SocketServer.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="include\json_tool.h">
+      <Filter>json</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="appdata">
+      <UniqueIdentifier>{7c93fd84-40f1-48f8-b4f4-0df2a586b928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="framework">
+      <UniqueIdentifier>{2f9cf9a3-4253-4988-821e-670bc04bd1b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="user">
+      <UniqueIdentifier>{854691db-2966-4d6f-a67d-dfd2f0d67842}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="json">
+      <UniqueIdentifier>{db25e3df-de74-4d11-abf8-221c2a2b4570}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="include\json_valueiterator.inl">
+      <Filter>json</Filter>
+    </None>
+  </ItemGroup>
+</Project>

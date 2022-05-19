@@ -1,0 +1,4 @@
+Edit Mod::m_Version
+Edit dll name
+Create release on github
+Edit version at https://studio.youtube.com/video/RYJ-X5zeroM/edit
