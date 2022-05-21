@@ -72,7 +72,7 @@ void Chat::Update(float dt) {
 }
 
 void Chat::ProcessRawMessage(long long clientId, std::string text) {
-	if (!Server::m_HasCheckedForUpdate) return;
+	//if (!Server::m_HasCheckedForUpdate) return;
 
 	Message* message = new Message(clientId, text);
 

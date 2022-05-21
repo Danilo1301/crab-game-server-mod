@@ -86,60 +86,59 @@ void Server::Init() {
 void Server::Update(float dt) {
 	//std::cout << "[Server::Update] " << dt << "\n";
 
-	if (!SocketServer::m_IsConnected) return;
+	if (SocketServer::m_IsConnected) {
+		if (m_LobbyId != m_LastLobbyId) {
+			m_LastLobbyId = m_LobbyId;
+			m_HasCheckedForUpdate = false;
 
-	if (m_LobbyId != m_LastLobbyId) {
-		m_LastLobbyId = m_LobbyId;
-		m_HasCheckedForUpdate = false;
+			std::cout << "[Server] Joined lobby " << m_LobbyId << std::endl;
 
-		std::cout << "[Server] Joined lobby " << m_LobbyId << std::endl;
+			Json::Value data;
+			data["version"] = Mod::m_Version;
+			data["lobbyId"] = m_LobbyId;
+			data["ownerId"] = m_LobbyOwner ? m_LobbyOwner->m_ClientId : NULL;
 
-		Json::Value data;
-		data["version"] = Mod::m_Version;
-		data["lobbyId"] = m_LobbyId;
-		data["ownerId"] = m_LobbyOwner ? m_LobbyOwner->m_ClientId : NULL;
+			SocketServer::Emit("joinLobby", data);
 
-		SocketServer::Emit("joinLobby", data);
+			Mod::AppendLocalChatMessage(0, "Mod", "Checking for updates...");
+		}
 
-		Mod::AppendLocalChatMessage(0, "Mod", "Checking for updates...");
-	}
+		if (!m_HasCheckedForUpdate) {
+			if (!SocketServer::m_LastPacket.isNull()) {
+				auto packet = SocketServer::m_LastPacket;
 
-	if (!m_HasCheckedForUpdate) {
-		if (!SocketServer::m_LastPacket.isNull()) {
-			auto packet = SocketServer::m_LastPacket;
+				if (packet["id"].asString().compare("update") == 0) {
+					auto data = packet["data"];
 
-			if (packet["id"].asString().compare("update") == 0) {
-				auto data = packet["data"];
+					auto version = data["version"].asString();
+					auto required = data["required"].asBool();
+					auto changelog = data["changelog"].asString();
 
-				auto version = data["version"].asString();
-				auto required = data["required"].asBool();
-				auto changelog = data["changelog"].asString();
+					if (version.compare(Mod::m_Version) == 0) {
+						Mod::AppendLocalChatMessage(0, "Mod", "Mod started!");
 
-				if (version.compare(Mod::m_Version) == 0) {
-					Mod::AppendLocalChatMessage(0, "Mod", "Mod started!");
-
-					m_HasCheckedForUpdate = true;
-				}
-				else {
-					std::string requiredText = (required ? "REQUIRED" : "optional");
-
-					Mod::AppendLocalChatMessage(1, "Mod", "-----------------------------------");
-					Mod::AppendLocalChatMessage(1, "Mod", "New version available (" + requiredText + ")");
-					Mod::AppendLocalChatMessage(1, "Mod", "Current: v" + Mod::m_Version + ", new: v" + version);
-					Mod::AppendLocalChatMessage(1, "Mod", "About: " + changelog);
-					Mod::AppendLocalChatMessage(1, "Mod", "Download URL:  https://bit.ly/crabgame-mod");
-
-					if (!required) {
 						m_HasCheckedForUpdate = true;
 					}
+					else {
+						std::string requiredText = (required ? "REQUIRED" : "optional");
+
+						Mod::AppendLocalChatMessage(1, "Mod", "-----------------------------------");
+						Mod::AppendLocalChatMessage(1, "Mod", "New version available (" + requiredText + ")");
+						Mod::AppendLocalChatMessage(1, "Mod", "Current: v" + Mod::m_Version + ", new: v" + version);
+						Mod::AppendLocalChatMessage(1, "Mod", "About: " + changelog);
+						Mod::AppendLocalChatMessage(1, "Mod", "Download URL:  https://bit.ly/crabgame-mod");
+
+						if (!required) {
+							m_HasCheckedForUpdate = true;
+						}
+					}
+
+					SocketServer::m_LastPacket = Json::nullValue;
 				}
-
-				SocketServer::m_LastPacket = Json::nullValue;
 			}
+			//return;
 		}
-		return;
 	}
-
 
 	m_BroadCastHelpTime += dt;
 	if (m_BroadCastHelpTime >= 50000 && m_ShowHelpMessage) {

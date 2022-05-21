@@ -66,7 +66,7 @@ void SocketServer::Connect()
 	m_Client.set_close_listener(&on_close);
 	m_Client.set_fail_listener(&on_fail);
 
-	std::cout << "[SocketServer] Connecting..." << std::endl;
+	//std::cout << "[SocketServer] Connecting..." << std::endl;
 
 	m_Client.connect("http://crabgame-server.herokuapp.com");
 	//m_Client.connect("http://127.0.0.1:3000");
