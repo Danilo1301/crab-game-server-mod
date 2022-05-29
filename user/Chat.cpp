@@ -189,6 +189,7 @@ void Chat::RegisterCommands() {
 	Commands::RegisterCommand("tag", "");
 	Commands::RegisterCommand("pos", "");
 	Commands::RegisterCommand("setrespawn", "setrespawn");
+	Commands::RegisterCommand("start", "start");
 
 	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
 }
@@ -772,6 +773,28 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 				SendServerMessage(str);
 			}
 
+			if (command->Check("start")) {
+				auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
+				auto activePlayers = gameManager->fields.activePlayers;
+
+				for (size_t i = 0; i < activePlayers->fields.count; i++)
+				{
+					//auto key = activePlayers->fields.entries->vector[i].key;
+					auto playerManager = activePlayers->fields.entries->vector[i].value;
+
+					playerManager->fields.waitingReady = true;
+
+					//SendServerMessage("set ready");
+				}
+
+				//SendServerMessage("interact 2x");
+				//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
+				//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
+				Mod::SendLocalInteract(4);
+				Mod::SendLocalInteract(4);
+
+				SendServerMessage("Starting game in 3 seconds");
+			}
 		}
 		else {
 			SendServerMessage("No perm");

@@ -220,7 +220,9 @@ void Template_ChatBox_Update(u109Du10A6u109Eu10A3u10A7u10A2u10A3u10A8u10A8u109Eu
 {
 	auto now = std::chrono::system_clock::now();
 	std::chrono::duration<float, std::milli> diff = now - Server::m_LastUpdatedTime;
-	Server::Update(diff.count());
+	auto dt = diff.count();
+
+	Server::Update(dt > 16 ? 16 : dt); //CHANGE LATER
 	Server::m_LastUpdatedTime = now;
 
 	ChatBox_Update->original(_this);

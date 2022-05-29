@@ -5,7 +5,7 @@
 #include "SocketServer.h"
 #include "templates.h"
 
-std::string Mod::m_Version = "1.3.1";
+std::string Mod::m_Version = "1.3.2";
 
 void Mod::Init() {
 	std::cout << "[Mod] Init v" << m_Version << std::endl;

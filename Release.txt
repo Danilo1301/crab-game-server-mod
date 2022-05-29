@@ -1,4 +1,7 @@
 Edit Mod::m_Version
+Edit version.json
 Edit dll name
 Create release on github
 Edit version at https://studio.youtube.com/video/RYJ-X5zeroM/edit
+
+test
