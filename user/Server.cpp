@@ -142,7 +142,7 @@ void Server::Update(float dt) {
 
 	m_BroadCastHelpTime += dt;
 	if (m_BroadCastHelpTime >= 50000 && m_ShowHelpMessage) {
-		std::cout << "[Server] Sending help message " << m_BroadCastHelpTime << " dt" << dt << std::endl;
+		//std::cout << "[Server] Sending help message " << m_BroadCastHelpTime << " dt" << dt << std::endl;
 
 		m_BroadCastHelpTime = 0;
 
