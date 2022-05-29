@@ -1,5 +1,5 @@
 {
-    "version": "1.3.1",
+    "version": "1.3.2",
     "required": false,
-    "changelog": "Updated server"
+    "changelog": "Added !start, fixed help message issue"
 }
