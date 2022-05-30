@@ -21,6 +21,12 @@ public:
 	static long long m_LastLobbyId;
 	static bool m_HasCheckedForUpdate;
 
+	static bool m_AutoStartEnabled;
+	static int m_AutoStartTime;
+	static float m_TimeUntilAutoStart;
+
+	static bool m_IsAtLobby;
+
 	static std::map<std::string, int> m_WeaponList;
 	static std::vector<int> m_DisabledWeapons;
 

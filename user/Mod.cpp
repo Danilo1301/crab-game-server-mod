@@ -5,7 +5,7 @@
 #include "SocketServer.h"
 #include "templates.h"
 
-std::string Mod::m_Version = "1.3.2";
+std::string Mod::m_Version = "1.3.3";
 
 void Mod::Init() {
 	std::cout << "[Mod] Init v" << m_Version << std::endl;
@@ -159,6 +159,27 @@ void Mod::GiveHat(long long clientId) {
 void Mod::SendWinner(long long clientId, long long money) {
 	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19786784);
 	Fn(clientId, money);
+}
+
+void Mod::SetAllPlayersReady() {
+	auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
+	auto activePlayers = gameManager->fields.activePlayers;
+
+	for (size_t i = 0; i < activePlayers->fields.count; i++)
+	{
+		//auto key = activePlayers->fields.entries->vector[i].key;
+		auto playerManager = activePlayers->fields.entries->vector[i].value;
+
+		playerManager->fields.waitingReady = true;
+
+		//SendServerMessage("set ready");
+	}
+
+	//SendServerMessage("interact 2x");
+	//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
+	//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
+	Mod::SendLocalInteract(4);
+	Mod::SendLocalInteract(4);
 }
 
 u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__Class* Mod::GetGameManager() {

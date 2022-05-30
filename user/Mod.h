@@ -25,6 +25,7 @@ public:
 	static void ToggleLights(bool on);
 	static void GiveHat(long long clientId);
 	static void SendWinner(long long clientId, long long money);
+	static void SetAllPlayersReady();
 
 	static u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__Class* GetGameManager();
 	static u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__Class* GetSteamManager();

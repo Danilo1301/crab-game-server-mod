@@ -18,20 +18,37 @@ Injector::Inject(CLASSNAME_METHODNAME);
 */
 
 
-auto ServerSend_LoadMap = new HookFunction<void*>(19771072);
-void Template_ServerSend_LoadMap(void* _this)
+auto ServerSend_LoadMap = new HookFunction<int32_t, int32_t>(19771072);
+void Template_ServerSend_LoadMap(int32_t map, int32_t mode)
 {
 	Server::m_CanUpdateSpawnPosition = true;
 
-	ServerSend_LoadMap->original(_this);
+	std::cout << "[Mod] Load map " << map << ", mode " << mode << std::endl;
+
+	if (mode == 0)
+	{
+		std::cout << "[Mod] At lobby" << std::endl;
+
+		Server::m_IsAtLobby = true;
+		Server::m_TimeUntilAutoStart = Server::m_AutoStartTime * 1000.0f;
+
+		if (Server::m_AutoStartEnabled)
+		{
+			std::cout << "[Mod] Starting game in " << std::to_string(Server::m_AutoStartTime) << " seconds" << std::endl;
+		}
+	}
+	else {
+		Server::m_IsAtLobby = false;
+		Server::m_TimeUntilAutoStart = 0;
+	}
+
+	ServerSend_LoadMap->original(map, mode);
 }
 
 
 auto ServerSend_GameSpawnPlayer = new HookFunction<uint64_t, uint64_t, Vector3, int32_t, bool, void*, int32_t>(19769408);
 void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedClientId, Vector3 spawnPos, int32_t param_3, bool streamerMode, void* byteArray, int32_t numberId)
 {
-
-
 	if (Server::m_CanUpdateSpawnPosition) {
 		Server::m_CanUpdateSpawnPosition = false;
 		Server::m_SpawnPosition = spawnPos;

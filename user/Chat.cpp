@@ -190,6 +190,7 @@ void Chat::RegisterCommands() {
 	Commands::RegisterCommand("pos", "");
 	Commands::RegisterCommand("setrespawn", "setrespawn");
 	Commands::RegisterCommand("start", "start");
+	Commands::RegisterCommand("autostart", "autostart");
 
 	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
 }
@@ -774,26 +775,29 @@ void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
 			}
 
 			if (command->Check("start")) {
-				auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
-				auto activePlayers = gameManager->fields.activePlayers;
-
-				for (size_t i = 0; i < activePlayers->fields.count; i++)
-				{
-					//auto key = activePlayers->fields.entries->vector[i].key;
-					auto playerManager = activePlayers->fields.entries->vector[i].value;
-
-					playerManager->fields.waitingReady = true;
-
-					//SendServerMessage("set ready");
-				}
-
-				//SendServerMessage("interact 2x");
-				//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
-				//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
-				Mod::SendLocalInteract(4);
-				Mod::SendLocalInteract(4);
+				Mod::SetAllPlayersReady();
 
 				SendServerMessage("Starting game in 3 seconds");
+			}
+
+			if (command->Check("autostart")) {
+
+				if (!command->HasArg(0)) {
+
+					Server::m_AutoStartEnabled = !Server::m_AutoStartEnabled;
+
+					if (Server::m_AutoStartEnabled) SendServerMessage("Auto start enabled");
+					else SendServerMessage("Auto start disabled");
+				}
+				else {
+					int time = command->GetArgInt(0);
+
+					Server::m_AutoStartTime = time;
+
+					if(Server::m_IsAtLobby) Server::m_TimeUntilAutoStart = time * 1000.0f;
+
+					SendServerMessage("Auto start time set to " + std::to_string(time));
+				}
 			}
 		}
 		else {

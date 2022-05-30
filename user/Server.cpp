@@ -20,6 +20,12 @@ long long Server::m_LobbyId = 0;
 long long Server::m_LastLobbyId = 0;
 bool Server::m_HasCheckedForUpdate = false;
 
+bool Server::m_AutoStartEnabled = false;
+int Server::m_AutoStartTime = 15;
+float Server::m_TimeUntilAutoStart = 0;
+
+bool Server::m_IsAtLobby = false;
+
 std::map<std::string, int> Server::m_WeaponList = {
 	{ "ak", 0 },
 	{ "glock", 1 },
@@ -183,6 +189,26 @@ void Server::Update(float dt) {
 			//std::cout << key << " transform pos" << Mod::FormatVector(GetPlayer(key)->m_Position) << std::endl;
 		}
 		//u10A0u10A8u10A0u10A4u10A8u10A0u109Au10A5u10A7u10A7u109C_SpectatorSpawn(key, nullptr);
+	}
+
+	if (m_AutoStartEnabled)
+	{
+		if (m_TimeUntilAutoStart > 0 && m_Players.size() > 1)
+		{
+			m_TimeUntilAutoStart -= 1 * dt;
+
+			//std::cout << "start in " << m_TimeUntilAutoStart << std::endl;
+
+			if (m_TimeUntilAutoStart <= 0)
+			{
+				m_TimeUntilAutoStart = 0;
+
+				Mod::SetAllPlayersReady();
+
+				Chat::SendServerMessage("Starting game in 3 seconds");
+			}
+		}
+		
 	}
 
 	Chat::Update(dt);
