@@ -71,9 +71,13 @@ void Chat::Update(float dt)
 
 void Chat::ProcessRawMessage(long long clientId, std::string text, bool dontSend)
 {
-	if (!Server::m_HasCheckedUpdates) return;
+	if (Server::m_UpdateRequired)
+	{
+		std::cout << "[Chat] Update is required" << std::endl;
+ 		return;
+	}
 
-	std::cout << "[Chat] * ProcessRawMessage from " << clientId << ": '" << text << "', dontSend=" << dontSend << std::endl;
+	std::cout << "[Chat] * Message from " << clientId << ": '" << text << std::endl;
 	Message* message = new Message(clientId, text);
 
 	if (Server::HasPlayer(clientId))
@@ -157,13 +161,17 @@ void Chat::ProcessMessage(Message* message)
 				continue;
 			}
 
-			if (!message->m_Player->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
+			if (command->m_LobbyOnly)
 			{
-				if (command->m_LobbyOnly && Server::m_IsAtLobby)
+				if (!Server::m_IsAtLobby)
 				{
-					SendServerMessage("you must be on lobby");
-					continue;
+					if (!message->m_Player->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
+					{
+						SendServerMessage("you must be on lobby");
+						continue;
+					}
 				}
+
 			}
 
 			command->Execute(message);

@@ -22,8 +22,8 @@ bool Server::m_AutoStartEnabled = false;
 int Server::m_AutoStartTime = 15;
 float Server::m_TimeUntilAutoStart = 0;
 
+bool Server::m_UpdateRequired = false;
 bool sentUpdateCheck = false;
-bool updateRequired = false;
 
 std::vector<Weapon> Server::m_Weapons = {
 		{ "Ak", 0 },
@@ -76,7 +76,6 @@ void Server::Init()
 
 void Server::Update(float dt)
 {
-
 	if (m_Players.size() == 0) return;
 
 	if (m_LobbyOwner->m_ClientId != Mod::GetMySteamId()) return;
@@ -117,7 +116,7 @@ void Server::Update(float dt)
 						std::cos(player->m_HoveringAngle) * distance
 					});
 
-					Mod::RespawnPlayer(player->m_ClientId, Vector3({
+					Mod::SetPlayerPosition(player->m_ClientId, Vector3({
 						lDirection.x + toHoverPlayer->m_Position.x,
 						lDirection.y + toHoverPlayer->m_Position.y + height,
 						lDirection.z + toHoverPlayer->m_Position.z
@@ -276,11 +275,18 @@ bool Server::ProcessUpdateCheck() {
 
 						Mod::AppendLocalChatMessage(1, "Mod", "-----------------------------------");
 						Mod::AppendLocalChatMessage(1, "Mod", "New version available (" + requiredText + ")");
-						Mod::AppendLocalChatMessage(1, "Mod", "Current: v" + Mod::m_Version + ", new: v" + version);
+						Mod::AppendLocalChatMessage(1, "Mod", "Current: v" + Mod::m_Version + " | New: v" + version);
 						Mod::AppendLocalChatMessage(1, "Mod", "About: " + changelog);
 						Mod::AppendLocalChatMessage(1, "Mod", "Download URL:  https://bit.ly/crabgame-mod");
 
-						updateRequired = required;
+						if (Mod::m_DebugMode)
+						{
+							SocketServer::m_LastPacket = Json::nullValue;
+							SocketServer::Close();
+							return true;
+						}
+
+						m_UpdateRequired = required;
 					}
 
 					SocketServer::m_LastPacket = Json::nullValue;
@@ -292,7 +298,7 @@ bool Server::ProcessUpdateCheck() {
 		return false;
 	}
 
-	if (updateRequired) return false;
+	if (m_UpdateRequired) return false;
 
 	return true;
 }
@@ -360,7 +366,7 @@ void Server::OnCreateLobby()
 
 	m_HasCheckedUpdates = false;
 	sentUpdateCheck = false;
-	updateRequired = false;
+	m_UpdateRequired = false;
 }
 
 void Server::OnPlayerJoin(Player* player)

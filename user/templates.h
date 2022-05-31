@@ -124,7 +124,7 @@ void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedCl
 auto HF_ServerSend_LoadMap_1 = new HookFunction<int32_t, int32_t, MethodInfo*>("ServerSend::LoadMap_1");
 void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 {
-	std::cout << "[Mod] Load map" << a << ", mode=" << b << ", " << std::endl;
+	std::cout << "[Mod] Load map " << a << ", mode=" << b << std::endl;
 
 	Server::m_IsAtLobby = b == 0;
 	Server::m_TimeUntilAutoStart = 0;

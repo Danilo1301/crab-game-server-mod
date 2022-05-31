@@ -23,6 +23,7 @@ public:
 	static void BanPlayer(long long clientId);
 	static void KickPlayer(long long clientId);
 	static void RespawnPlayer(long long clientId, Vector3 position);
+	static void SetPlayerPosition(long long clientId, Vector3 position);
 
 	static void RestartGame();
 	static void SetCurrentGameModeTime(float time);

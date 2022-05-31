@@ -32,6 +32,8 @@ public:
 	static int m_AutoStartTime;
 	static float m_TimeUntilAutoStart;
 
+	static bool m_UpdateRequired;
+
 	static void Init();
 	static void Update(float dt); //dt ~ 0.016
 	static void LoadConfig();

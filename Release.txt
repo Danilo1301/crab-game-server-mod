@@ -1,13 +1,19 @@
 Edit Mod::m_Version
 Edit Debug Mode
 
-Edit version.json
+Push commit
 
 Edit dll name
 
-
 Create release on github
 
-Push
-
 Edit version at https://studio.youtube.com/video/RYJ-X5zeroM/edit
+
+Edit version.json
+
+Pull
+
+
+
+----------
+

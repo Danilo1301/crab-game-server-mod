@@ -7,7 +7,7 @@
 #include "templates.h"
 
 bool Mod::m_DebugMode = false;
-std::string Mod::m_Version = "2.0.1" + std::string(m_DebugMode ? "-dev" : "");
+std::string Mod::m_Version = "2.1" + std::string(m_DebugMode ? "-dev" : "");
 
 void Mod::Init()
 {
@@ -127,6 +127,12 @@ void Mod::RespawnPlayer(long long clientId, Vector3 position)
 
 	//std::cout << "[Mod] RespawnPlayer clientId=" << clientId << formatVector3_full(position) << std::endl;
 
+	ServerSend_RespawnPlayer(clientId, position, NULL);
+}
+
+
+void Mod::SetPlayerPosition(long long clientId, Vector3 position)
+{
 	ServerSend_RespawnPlayer(clientId, position, NULL);
 }
 

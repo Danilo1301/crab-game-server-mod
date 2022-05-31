@@ -53,11 +53,16 @@ public:
 
 		char cmd[256];
 		if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
-			Chat::SendServerMessage("showing help for '" + std::string(cmd) + "'");
+
 			for (auto command : Chat::m_Commands) {
 				if (!command->Check(cmd)) continue;
 				command->PrintSyntaxes();
+
+				Chat::SendServerMessage("showing help for '" + command->m_Cmd + "'");
+				return;
 			}
+
+			Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
 			return;
 		}
 
@@ -210,6 +215,8 @@ public:
 			{
 				Chat::SendServerMessage(player->GetDisplayNameExtra());
 				Chat::SendServerMessage("group= " + player->GetPermissionGroup()->m_Name + ", pos= " + formatVector3(player->m_Position));
+			
+				std::cout << "m_DiedInThisRound= " << player->m_DiedInThisRound << ", m_IsAlive= " << player->m_IsAlive << std::endl;
 			}
 			return;
 		}
@@ -1463,27 +1470,19 @@ public:
 		{
 			char cmd[256];
 			if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
-				Chat::SendServerMessage("showing help for '" + std::string(cmd) + "'");
 
-				Command* command = NULL;
+				for (auto command : Chat::m_Commands) {
+					if (command->Check(cmd)) {
+						
+						command->m_LobbyOnly = !command->m_LobbyOnly;
+						if (command->m_LobbyOnly) Chat::SendServerMessage("command '" + command->m_Cmd + "' is now lobby-only");
+						else Chat::SendServerMessage("command '" + command->m_Cmd + "' is no longer lobby-only");
 
-				for (auto c : Chat::m_Commands) {
-					if (!c->Check(cmd)) {
-						command = c;
-						break;
+						return;
 					}
 				}
 
-				if (!command)
-				{
-					Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
-					return;
-				}
-
-				command->m_LobbyOnly = !command->m_LobbyOnly;
-				if (command->m_LobbyOnly) Chat::SendServerMessage("command is now lobby-only");
-				else Chat::SendServerMessage("command is no longer lobby-only");
-
+				Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
 				return;
 			}
 		}
