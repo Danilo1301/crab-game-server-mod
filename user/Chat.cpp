@@ -3,83 +3,84 @@
 
 #include "Server.h"
 #include "Mod.h"
-#include "Commands.h"
+#include "commands/commands.h"
 
 std::vector<Message*> Chat::m_Messages;
+std::vector<Command*> Chat::m_Commands;
 
-std::string Chat::m_HelpMessage = "!ak !glock !revolver !dual !bat !granada !bomb;!katana !knife !pipe !stick !pizza !milk;!jumppunch !forcefield !superpunch;Test: !hat !light !bomber !tag";
+bool Chat::m_ShowHelpMessage = true;
+float Chat::m_BroadCastHelpTime = 0;
 
-Message* Chat::SendServerMessage(std::string text) {
-	Message* message = new Message((long long)1, text);
-
-	m_Messages.push_back(message);
-
-	return message;
+void Chat::Init()
+{
+	RegisterCommand((Command*)new CommandHelp());
+	RegisterCommand((Command*)new CommandAHelp());
+	RegisterCommand((Command*)new CommandWeapon());
+	RegisterCommand((Command*)new CommandPlayerInfo());
+	RegisterCommand((Command*)new CommandPerm());
+	RegisterCommand((Command*)new CommandTeleport());
+	RegisterCommand((Command*)new CommandAllCommands());
+	RegisterCommand((Command*)new CommandMute());
+	RegisterCommand((Command*)new CommandKick());
+	RegisterCommand((Command*)new CommandBan());
+	RegisterCommand((Command*)new CommandRestart());
+	RegisterCommand((Command*)new CommandGod());
+	RegisterCommand((Command*)new CommandKill());
+	RegisterCommand((Command*)new CommandRespawn());
+	RegisterCommand((Command*)new CommandTime());
+	RegisterCommand((Command*)new CommandVanish());
+	RegisterCommand((Command*)new CommandAutoRespawn());
+	RegisterCommand((Command*)new CommandToggleWeapon());
+	RegisterCommand((Command*)new CommandDownload());
+	RegisterCommand((Command*)new CommandWin());
+	RegisterCommand((Command*)new CommandHover());
+	RegisterCommand((Command*)new CommandStart());
+	RegisterCommand((Command*)new CommandBroadcast());
+	RegisterCommand((Command*)new CommandAutoStart());
+	RegisterCommand((Command*)new CommandJumpPunch());
+	RegisterCommand((Command*)new CommandSuperPunch());
+	RegisterCommand((Command*)new CommandForceField());
+	RegisterCommand((Command*)new CommandShowHelp());
+	RegisterCommand((Command*)new CommandPunchDamage());
+	RegisterCommand((Command*)new CommandMultiSnowball());
 }
 
-void Chat::SendAllMessagesInQuery() {
-	for (size_t i = 0; i < m_Messages.size(); i++)
+void Chat::Update(float dt)
+{
+	for (auto pair : Server::m_Players)
 	{
-		Message* message = m_Messages[i];
+		auto player = pair.second;
 
-		std::string content = message->m_Content;
+		if (player->m_MuteTime > 0) {
+			player->m_MuteTime -= dt;
 
-		if (message->m_Player != NULL) {
-			auto player = message->m_Player;
-
-			bool showAliveState = false;
-
-			std::string str = "";
-			if (showAliveState) str += player->m_IsAlive ? "" : "(dead) ";
-			if (Server::m_ShowPlayerIds) str += "[" + std::to_string(player->m_PlayerId) + "] ";
-			str += content;
-
-			content = str;
-		}
-
-		//std::cout << "[Message : " << (int)message->m_SendType << "] from=" << message->m_FromClient << ", content='" << content << "'\n";
-
-		if (message->m_SendType == MessageSendType::FORCE_PRIVATE) {
-
-			Mod::AppendLocalChatMessage(2, "[PRIVATE]", content);
-		}
-
-		if (message->m_SendType == MessageSendType::NORMAL || message->m_SendType == MessageSendType::FORCE_SEND) {
-			Mod::SendChatMessage(message->m_FromClient, content);
+			if (player->m_MuteTime < 0) player->m_MuteTime = 0;
 		}
 	}
 
-	m_Messages.clear();
-}
-
-void Chat::Update(float dt) {
-	Chat::SendAllMessagesInQuery();
-
-	std::map<long long, Player*>::iterator it;
-	for (it = Server::m_Players.begin(); it != Server::m_Players.end(); it++)
-	{
-		Player* player = it->second;
-
-		if (player->m_Muted) {
-			player->m_UnmuteTime -= dt;
-
-			if (player->m_UnmuteTime <= 0) {
-				player->m_UnmuteTime = 0;
-				player->m_Muted = false;
-			}
-		}
+	m_BroadCastHelpTime += dt;
+	if (m_BroadCastHelpTime >= 60.0f && m_ShowHelpMessage) {
+		m_BroadCastHelpTime = 0;
+		Chat::SendServerMessage(" Type !help for a list of commands");
 	}
+
+	SendAllMessagesInQuery();
+
 }
 
-void Chat::ProcessRawMessage(long long clientId, std::string text) {
-	//if (!Server::m_HasCheckedForUpdate) return;
+void Chat::ProcessRawMessage(long long clientId, std::string text, bool dontSend)
+{
+	if (!Server::m_HasCheckedUpdates) return;
 
+	std::cout << "[Chat] * ProcessRawMessage from " << clientId << ": '" << text << "', dontSend=" << dontSend << std::endl;
 	Message* message = new Message(clientId, text);
 
-	if (Server::HasPlayer(clientId)) {
+	if (Server::HasPlayer(clientId))
+	{
 		message->m_Player = Server::GetPlayer(clientId);
-
-		if (message->m_Player->m_Muted) return;
+		if (message->m_Player->m_MuteTime > 0) {
+			return;
+		}
 	}
 
 	m_Messages.push_back(message);
@@ -92,23 +93,25 @@ void Chat::ProcessRawMessage(long long clientId, std::string text) {
 		catch (const std::runtime_error& re)
 		{
 			std::string errstr = re.what();
-			Chat::SendServerMessage("Runtime Error: " + errstr);
+			SendServerMessage("runtime Error: " + errstr);
 		}
 		catch (const std::exception& ex)
 		{
 			std::string errstr = ex.what();
-			Chat::SendServerMessage("Error: " + errstr);
+			SendServerMessage("error: " + errstr);
 
 		}
 		catch (...)
 		{
-			Chat::SendServerMessage("Error");
+			SendServerMessage("error");
 		}
 	}
 
 	//
 	if (message->m_Player != NULL) {
 		if (message->m_Player->m_HideMessages) {
+			std::cout << "hide messages" << std::endl;
+
 			for (size_t i = 0; i < m_Messages.size(); i++)
 			{
 				Message* message = m_Messages[i];
@@ -121,783 +124,162 @@ void Chat::ProcessRawMessage(long long clientId, std::string text) {
 	}
 	//
 
+	if (dontSend) RemoveMessage(message);
+
 	SendAllMessagesInQuery();
-	
 }
 
-void Chat::ProcessMessage(Message* message) {
+void Chat::ProcessMessage(Message* message)
+{
 	Player* player = message->m_Player;
 	std::string content = message->m_Content;
+	//std::cout << "[Chat] ProcessMessage " << player->m_Username << " (" << player->m_ClientId << "): " << content << "'" << std::endl;
 
-	std::cout << "[Chat] ProcessMessage " << player->m_Username << " (" << player->m_ClientId << "): " << content << "'" << std::endl;
+	if (message->m_IsCommand) {
+		
+		if (ProcessWeaponCommand(message)) return;
 
-	if (content.rfind("!", 0) == 0) {
-		Command* command = new Command(content);
+		bool commandFound = false;
 
-		ProcessCommand(player, message, command);
+		for (auto command : m_Commands) {
+			if (command->Check("*")) {
+				command->Execute(message);
+				continue;
+			}
+
+			if (!command->Check(message->m_Cmd)) continue;
+
+			commandFound = true;
+
+			if (!command->CheckPermissions(message->m_Player)) {
+				command->NoPermission();
+				continue;
+			}
+
+			command->Execute(message);
+		}
+
+		if (!commandFound) {
+			SendServerMessage("unknown command '" + message->m_Cmd + "'");
+		}
 	}
 }
 
-bool TestPlayerPermission(Player* player, CommandInfo* info) {
-	if (player->HasPermission("admin")) return true;
+bool Chat::ProcessWeaponCommand(Message* message)
+{
 
-	int requiredPermissions = (int)info->m_Permissions.size();
-	int playerMatchPerms = 0;
-
-	for (size_t i = 0; i < requiredPermissions; i++)
+	for (auto weapon : Server::m_Weapons)
 	{
-		if (player->HasPermission(info->m_Permissions[i])) {
-			playerMatchPerms++;
+		if ((toLower(message->m_Cmd)).compare(toLower(weapon.name)) == 0)
+		{
+			ProcessRawMessage(message->m_Player->m_ClientId, "!w " + std::to_string(weapon.id), true);
+			return true;
 		}
+
+		/*
+		if (toL  toLower((message->m_Cmd).compare(toLower(m_Cmd)) == 0)
+		{
+		}
+		*/
 	}
 
-	return requiredPermissions == playerMatchPerms;
+	return false;
 }
 
-void Chat::RegisterCommands() {
-	Commands::RegisterCommand("r", "r");
-	Commands::RegisterCommand("v", "v", true);
-	Commands::RegisterCommand("win", "win", true);
-	Commands::RegisterCommand("bc", "bc");
-	Commands::RegisterCommand("test", "test");
-	Commands::RegisterCommand("ctest", "ctest");
-	Commands::RegisterCommand("perm", "perm");
-	Commands::RegisterCommand("cperm", "cperm");
-	Commands::RegisterCommand("ban", "ban");
-	Commands::RegisterCommand("kick", "kick");
-	Commands::RegisterCommand("kill", "kill");
-	Commands::RegisterCommand("time", "time");
-	Commands::RegisterCommand("mute", "mute");
-	Commands::RegisterCommand("god", "god");
-	Commands::RegisterCommand("tp", "tp");
-	Commands::RegisterCommand("ctoggle", "ctoggle");
-	Commands::RegisterCommand("download", "");
-	Commands::RegisterCommand("test1", "", true);
-	Commands::RegisterCommand("w", "", true);
-	Commands::RegisterCommand("help", "");
-	Commands::RegisterCommand("page", "");
-	Commands::RegisterCommand("respawn", "");
-	Commands::RegisterCommand("jumppunch", "");
-	Commands::RegisterCommand("superpunch", "");
-	Commands::RegisterCommand("forcefield", "");
-	Commands::RegisterCommand("rconadmin", "", true);
-	Commands::RegisterCommand("helpmsg", "", true);
-	Commands::RegisterCommand("playerids", "", true);
-	Commands::RegisterCommand("hat", "");
-	Commands::RegisterCommand("light", "");
-	Commands::RegisterCommand("bomber", "");
-	Commands::RegisterCommand("tag", "");
-	Commands::RegisterCommand("pos", "");
-	Commands::RegisterCommand("setrespawn", "setrespawn");
-	Commands::RegisterCommand("start", "start");
-	Commands::RegisterCommand("autostart", "autostart");
-
-	//Commands::RegisterCommand("sethelp", "sethelp"); to remove
+Message* Chat::SendServerMessage(std::string text)
+{
+	Message* message = new Message((long long)1, text);
+	m_Messages.push_back(message);
+	return message;
 }
 
-void Chat::ProcessCommand(Player* player, Message* message, Command* command) {
-	char buffer[256];
-
-	//---------------------------
-	bool isWeaponCommand = false;
-
-	std::map<std::string, int>::iterator itw;
-	for (itw = Server::m_WeaponList.begin(); itw != Server::m_WeaponList.end(); itw++)
+void Chat::SendServerMessage(std::vector<std::string> lines)
+{
+	for (auto message : lines)
 	{
-		if (command->Check(itw->first)) {
-
-			isWeaponCommand = true;
-			command = new Command("!w " + std::to_string(itw->second));
-			break;
-		}
-	}
-	//---------------------------
-
-	//std::cout << "[Chat::ProcessCommand] from=" << player->m_ClientId << (player->m_IsAlive ? "" : "[dead]") << ", cmd='" << command->GetCmd() << "'\n";
-
-	//---------------------------
-
-	if (command->Check("i1")) {
-		auto a = command->GetArgInt(0);
-
-		Mod::SendLocalInteract(a);
-		SendServerMessage("SendLocalInteract");
-	}
-
-	if(command->Check("i2")) {
-		auto a = command->GetArgInt(0);
-
-
-		Mod::SendInteract(player->m_ClientId, a);
-		SendServerMessage("SendInteract");
-	}
-
-	//---------------------------
-
-	bool isAdmin = player->HasPermission("admin");
-	
-	CommandInfo* cmdInfo;
-
-	if (Commands::GetCommandInfo(command->GetCmd(), cmdInfo)) {
-
-		//std::cout << cmdInfo->m_Permissions.size() << "\n";
-
-		if (!cmdInfo->m_Enabled) {
-			if (!isAdmin) return;
-		}
-
-
-		bool hasPermission = TestPlayerPermission(player, cmdInfo);
-
-		//SendServerMessage("found");
-
-		if (hasPermission) {
-			//SendServerMessage("has perms");
-
-			
-
-			if (command->Check("test1")) {
-				auto a = command->GetArgInt(0);
-				auto b = command->GetArgInt(1);
-				auto c = command->GetArgInt(2);
-
-				Mod::SendDropItem(player->m_ClientId, a, b, c);
-
-				SendServerMessage("test1");
-			}
-			
-
-			if (command->Check("jumppunch")) {
-				player->m_JumpPunchEnabled = !player->m_JumpPunchEnabled;
-				SendServerMessage(std::string(player->m_JumpPunchEnabled ? "on" : "off"));
-			}
-
-			if (command->Check("superpunch")) {
-				player->m_SuperPunchEnabled = !player->m_SuperPunchEnabled;
-				SendServerMessage(std::string(player->m_SuperPunchEnabled ? "on" : "off"));
-			}
-
-			if (command->Check("forcefield")) {
-				player->m_ForceFieldEnabled = !player->m_ForceFieldEnabled;
-				SendServerMessage(std::string(player->m_ForceFieldEnabled ? "on" : "off"));
-			}
-
-			if (command->Check("god")) {
-				player->m_GodEnabled = !player->m_GodEnabled;
-				SendServerMessage(std::string(player->m_GodEnabled ? "on" : "off"));
-			}
-
-			if (command->Check("v")) {
-
-				if (isAdmin) {
-
-					player->m_HideMessages = !player->m_HideMessages;
-
-					message->m_Content = "Vanish " + std::string(player->m_HideMessages ? "ENABLED" : "DISABLED");
-					message->m_SendType = MessageSendType::FORCE_PRIVATE;
-
-				}
-			}
-
-			if (command->Check("win")) {
-
-				
-
-				//if (player->m_ClientId == 76561198092596612) {
-					
-
-				if (command->HasArg(0) && command->HasArg(1)) {
-
-					auto selector = command->GetArgString(0);
-					long long money = command->GetArgULong(1);
-
-					//std::cout << selector << " : " << money << std::endl;
-
-						
-
-					auto players = Server::FindPlayers(selector);
-
-					if (players.size() > 0) {
-						auto targetPlayer = players[0];
-
-						Mod::SendWinner(targetPlayer->m_ClientId, money);
-					}
-
-				}
-
-
-				//}
-			}
-
-			if (command->Check("rconadmin")) {
-				player->AddPermission("admin");
-				message->m_SendType = MessageSendType::FORCE_PRIVATE;
-			}
-
-			if (command->Check("download")) {
-				SendServerMessage("Download URL:  https://bit.ly/crabgame-mod");
-			}
-
-			/*
-			if (command->Check("sethelp")) {
-				std::string text = command->GetArgText(0);
-
-				if (command->HasArg(0)) {
-					m_HelpMessage = std::string(text);
-				}
-			}
-			*/
-
-
-			if (command->Check("help") || command->Check("page")) {
-				int page = 0;
-
-				if (command->HasArg(0)) {
-					page = command->GetArgInt(0) - 1;
-				}
-
-				SendHelpMessage(page);
-			}
-
-			if (command->Check("r")) {
-				Mod::RestartGame();
-			}
-
-			if (command->Check("w")) {
-
-				if (command->HasArg(0)) {
-					if (command->HasArg(1)) {
-
-						if (isAdmin) {
-							std::string selector = command->GetArgString(0);
-							int weaponId = command->GetArgInt(1);
-
-							auto players = Server::FindPlayers(selector);
-							for (size_t i = 0; i < players.size(); i++)
-							{
-								auto targetPlayer = players[i];
-								Server::GiveWeapon(targetPlayer->m_ClientId, weaponId);
-							}
-						}
-
-
-
-					}
-					else {
-						int weaponId = command->GetArgInt(0);
-
-						bool canUse = true;
-
-						if (!isAdmin) {
-							if (Server::IsWeaponDisabled(weaponId)) canUse = false;
-						}
-
-						if (canUse) {
-							Server::GiveWeapon(player->m_ClientId, weaponId);
-						}
-					}
-				}
-			}
-
-			if (command->Check("tp")) {
-				std::string selector = player->GetSelector();
-
-				Vector3 position({0, 0, 0});
-
-				if (command->HasArg(3)) {
-
-					if (isAdmin) {
-
-						selector = command->GetArgString(0);
-
-						position.x = command->GetArgFloat(1);
-						position.y = command->GetArgFloat(2);
-						position.z = command->GetArgFloat(3);
-					}
-				}
-				else {
-					if (command->HasArg(2)) {
-
-						position.x = command->GetArgFloat(0);
-						position.y = command->GetArgFloat(1);
-						position.z = command->GetArgFloat(2);
-					}
-				}
-
-
-				auto players = Server::FindPlayers(selector);
-
-				for (size_t i = 0; i < players.size(); i++)
-				{
-					auto targetPlayer = players[i];
-					Mod::RespawnPlayer(targetPlayer->m_ClientId, position);
-				}
-			}
-			
-
-			
-
-			if (command->Check("respawn")) {
-				auto selector = player->GetSelector();
-
-				if (player->HasPermission("respawn.others") || isAdmin) {
-					if (command->HasArg(0)) {
-						selector = command->GetArgString(0);
-					}
-				}
-
-				auto players = Server::FindPlayers(selector);
-				for (size_t i = 0; i < players.size(); i++)
-				{
-					Vector3 position = Server::m_SpawnPosition;
-
-					auto targetPlayer = players[i];
-					Mod::RespawnPlayer(targetPlayer->m_ClientId, position);
-				}
-			}
-
-			if (command->Check("perm")) {
-				if (command->HasArg(0) && command->HasArg(1) && command->HasArg(2))  {
-					auto c = command->GetArgString(0);
-					auto selector = command->GetArgString(1);
-					auto perm = command->GetArgString(2);
-
-					auto players = Server::FindPlayers(selector);
-
-					int count = 0;
-
-					if (c.rfind("add", 0) == 0) {
-						for (size_t i = 0; i < players.size(); i++)
-						{
-							auto targetPlayer = players[i];
-							if (!targetPlayer->HasPermission(perm)) {
-								targetPlayer->AddPermission(perm);
-								count++;
-							}
-						}
-						sprintf_s(buffer, "Permission added to %d players", count);
-						SendServerMessage(buffer);
-					}
-
-					if (c.rfind("del", 0) == 0) {
-						for (size_t i = 0; i < players.size(); i++)
-						{
-							auto targetPlayer = players[i];
-							if (targetPlayer->HasPermission(perm)) {
-								targetPlayer->RemovePermission(perm);
-								count++;
-							}
-						}
-
-						sprintf_s(buffer, "Permission removed from %d players", count);
-						SendServerMessage(buffer);
-					}
-				}
-			}
-
-			if (command->Check("time")) {
-
-				if (!command->HasArg(0)) return;
-
-				float time = command->GetArgFloat(0);
-
-				Mod::SetCurrentGameModeTime(time);
-			}
-
-			if (command->Check("bc")) {
-
-				std::string text = command->GetArgText(0);
-
-				message->m_SendType = MessageSendType::FORCE_PRIVATE;
-
-				Message* msg = SendServerMessage(text);
-				msg->m_SendType = MessageSendType::FORCE_SEND;
-			}
-
-
-			if (command->Check("cperm")) {
-				if (command->HasArg(0) && command->HasArg(1) && command->HasArg(2)) {
-					auto c = command->GetArgString(0);
-					auto cmd = command->GetArgString(1);
-					auto perm = command->GetArgString(2);
-
-					CommandInfo* cinfo;
-
-					if (!Commands::GetCommandInfo(cmd, cinfo)) {
-						SendServerMessage("Command not defined");
-						return;
-					}
-
-					if (c.rfind("add", 0) == 0) {
-						cinfo->AddPermission(perm);
-						SendServerMessage("Permission added");
-					}
-
-					if (c.rfind("del", 0) == 0) {
-						cinfo->RemovePermission(perm);
-						SendServerMessage("Permission removed");
-					}
-				}
-			}
-
-			if (command->Check("ctoggle")) {
-				if (command->HasArg(0)) {
-
-					auto cmd = command->GetArgString(0);
-
-					bool isWeaponCmd = false;
-					int wpnId = -1;
-
-					std::map<std::string, int>::iterator itw2;
-					for (itw2 = Server::m_WeaponList.begin(); itw2 != Server::m_WeaponList.end(); itw2++)
-					{
-						if (itw2->first.compare(cmd) == 0) {
-							isWeaponCmd = true;
-							wpnId = itw2->second;
-							break;
-						}
-					}
-
-					//
-
-					if (isWeaponCmd) {
-						if (Server::IsWeaponDisabled(wpnId)) {
-							Server::EnableWeapon(wpnId);
-							SendServerMessage(cmd + " enabled");
-						}
-						else {
-							Server::DisableWeapon(wpnId);
-							SendServerMessage(cmd + " disabled");
-						}
-					}
-					else {
-						CommandInfo* cinfo;
-
-						if (!Commands::GetCommandInfo(cmd, cinfo)) {
-							SendServerMessage("Command not defined");
-							return;
-						}
-
-						cinfo->m_Enabled = !cinfo->m_Enabled;
-						SendServerMessage(cmd + " " + std::string(cinfo->m_Enabled ? "enabled" : "disabled"));
-					}
-
-
-					
-
-					
-				}
-			}
-
-			if (command->Check("ban")) {
-				if (command->HasArg(0)) {
-					auto selector = command->GetArgString(0);
-
-					auto players = Server::FindPlayers(selector);
-					for (size_t i = 0; i < players.size(); i++)
-					{
-						auto targetPlayer = players[i];
-
-						if (targetPlayer->HasPermission("admin")) {
-							SendServerMessage("Can't ban this player");
-							continue;
-						}
-
-						Mod::BanPlayer(targetPlayer->m_ClientId);
-					}
-				}
-			}
-
-			if (command->Check("kick")) {
-				if (command->HasArg(0)) {
-					auto selector = command->GetArgString(0);
-
-					auto players = Server::FindPlayers(selector);
-					for (size_t i = 0; i < players.size(); i++)
-					{
-						auto targetPlayer = players[i];
-
-						if (targetPlayer->HasPermission("admin")) {
-							SendServerMessage("Can't kick this player");
-							continue;
-						}
-
-						Mod::KickPlayer(targetPlayer->m_ClientId);
-					}
-				}
-			}
-
-			if (command->Check("mute")) {
-				if (command->HasArg(0) && command->HasArg(1)) {
-					auto selector = command->GetArgString(0);
-					int seconds = command->GetArgInt(1);
-
-					auto players = Server::FindPlayers(selector);
-					for (size_t i = 0; i < players.size(); i++)
-					{
-						auto targetPlayer = players[i];
-
-						if (targetPlayer->HasPermission("admin")) {
-							SendServerMessage("Can't mute this player");
-							continue;
-						}
-
-						targetPlayer->m_Muted = true;
-						targetPlayer->m_UnmuteTime = (float)(seconds * 1000);
-
-						SendServerMessage("Muted");
-					}
-				}
-			}
-
-			if (command->Check("kill")) {
-				if (command->HasArg(0)) {
-					auto selector = command->GetArgString(0);
-
-					auto players = Server::FindPlayers(selector);
-					for (size_t i = 0; i < players.size(); i++)
-					{
-						auto targetPlayer = players[i];
-						Mod::KillPlayer(targetPlayer->m_ClientId);
-					}
-				}
-			}
-
-			if (command->Check("hat")) {
-				try {
-					Mod::GiveHat(player->m_ClientId);
-				}
-				catch (...) {
-					SendServerMessage("Wrong gamemode");
-				}
-			}
-
-			if (command->Check("bomber")) {
-				
-				try {
-					Mod::SetBomber(player->m_ClientId);
-				}
-				catch (...) {
-					SendServerMessage("Wrong gamemode");
-				}
-			}
-
-			if (command->Check("tag")) {
-				try {
-					Mod::TagPlayer(player->m_ClientId);
-				}
-				catch (...) {
-					SendServerMessage("Wrong gamemode");
-				}
-			}
-
-			if (command->Check("helpmsg")) {
-				Server::m_ShowHelpMessage = !Server::m_ShowHelpMessage;
-
-				if (Server::m_ShowHelpMessage) SendServerMessage("Help message enabled");
-				else SendServerMessage("Help message disabled");
-			}
-
-			if (command->Check("playerids")) {
-				Server::m_ShowPlayerIds = !Server::m_ShowPlayerIds;
-
-				if (Server::m_ShowPlayerIds) SendServerMessage("Showing player ids in chat");
-				else SendServerMessage("Hidding player ids in chat");
-			}
-			
-
-			if (command->Check("light")) {
-				
-				try {
-					Server::m_LightState = !Server::m_LightState;
-					Mod::ToggleLights(Server::m_LightState);
-				}
-				catch (...) {
-					SendServerMessage("Wrong gamemode");
-				}
-			}
-
-
-			if (command->Check("ctest")) {
-				auto cmd = command->GetArgString(0);
-
-				CommandInfo* cinfo;
-
-				if (!Commands::GetCommandInfo(cmd, cinfo)) {
-					SendServerMessage("Command '" + cmd + "' not found");
-					return;
-				}
-
-				char str[256];
-				sprintf_s(str, "command=%s perms=%s enabled=%s", cmd.c_str(), Mod::FormatStringVector(cinfo->m_Permissions).c_str(), cinfo->m_Enabled ? "1" : "0");
-				SendServerMessage(str);
-			}
-
-			if (command->Check("test")) {
-				std::string selector = "*";
-
-				if (command->HasArg(0)) {
-					selector = command->GetArgString(0);
-				}
-
-				auto players = Server::FindPlayers(selector);
-				for (size_t i = 0; i < players.size(); i++)
-				{
-					auto targetPlayer = players[i];
-					char str[256];
-					sprintf_s(str, "name=%s alive=%d id=%lld perms=%s", targetPlayer->GetDisplayName().c_str(), targetPlayer->m_IsAlive, targetPlayer->m_ClientId, Mod::FormatStringVector(targetPlayer->m_Permissions).c_str());
-					SendServerMessage(str);
-				}
-			}
-
-			if (command->Check("pos")) {
-				std::string selector = "*";
-
-				if (command->HasArg(0)) {
-					selector = command->GetArgString(0);
-				}
-
-				auto players = Server::FindPlayers(selector);
-				for (size_t i = 0; i < players.size(); i++)
-				{
-					auto targetPlayer = players[i];
-					char str[256];
-					sprintf_s(str, "%s's position: %s", targetPlayer->GetDisplayName().c_str(), Mod::FormatVector(targetPlayer->m_Position).c_str());
-					SendServerMessage(str);
-				}
-			}
-
-			if (command->Check("setrespawn")) {
-				Server::m_SpawnPosition = player->m_Position;
-				char str[256];
-				sprintf_s(str, "Respawn position set to %s", Mod::FormatVector(Server::m_SpawnPosition).c_str());
-				SendServerMessage(str);
-			}
-
-			if (command->Check("start")) {
-				Mod::SetAllPlayersReady();
-
-				SendServerMessage("Starting game in 3 seconds");
-			}
-
-			if (command->Check("autostart")) {
-
-				if (!command->HasArg(0)) {
-
-					Server::m_AutoStartEnabled = !Server::m_AutoStartEnabled;
-
-					if (Server::m_AutoStartEnabled) SendServerMessage("Auto start enabled");
-					else SendServerMessage("Auto start disabled");
-				}
-				else {
-					int time = command->GetArgInt(0);
-
-					Server::m_AutoStartTime = time;
-
-					if(Server::m_IsAtLobby) Server::m_TimeUntilAutoStart = time * 1000.0f;
-
-					SendServerMessage("Auto start time set to " + std::to_string(time));
-				}
-			}
-		}
-		else {
-			SendServerMessage("No perm");
-		}
-	}
-	else {
-		sprintf_s(buffer, "Command '%s' not found", command->GetCmd().c_str());
-		SendServerMessage(buffer);
+		SendServerMessage(message);
 	}
 }
 
-void Chat::SendHelpMessage(int page) {
-
-
-	bool isWeaponsEnabled = false;
-	CommandInfo* cinfo;
-	if (Commands::GetCommandInfo("w", cinfo)) isWeaponsEnabled = cinfo->m_Enabled;
-	
-
-	int maxLineChars = 40;
+void Chat::SendCommandsPage(std::vector<std::string> commands, int page)
+{
+	char buffer[512];
 	int linesPerPage = 3;
 
-	std::vector<std::string> commands;
+	auto lines = formatStringVector_1(commands, ", ", 40);
+	int maxPages = (int)ceil((float)lines.size() / (float)linesPerPage);
 
-	std::map<std::string, int>::iterator it2;
-	for (it2 = Server::m_WeaponList.begin(); it2 != Server::m_WeaponList.end(); it2++)
-	{
-		auto cmd = it2->first;
-		auto weaponId = it2->second;
-
-		if (Server::IsWeaponDisabled(weaponId)) continue;
-		if (!isWeaponsEnabled) continue;
-
-		commands.push_back(cmd);
-	}
-
-	std::map<std::string, CommandInfo*>::iterator it;
-	for (it = Commands::m_CommandInfos.begin(); it != Commands::m_CommandInfos.end(); it++)
-	{
-		auto cmd = it->first;
-		auto cmdInfo = it->second;
-
-		if (!cmdInfo->m_Enabled) continue;
-		if (cmdInfo->m_HideCommand) continue;
-		if (cmdInfo->m_Permissions.size() > 0) continue;
-
-		commands.push_back(cmd);
-	}
-
-	std::string str;
-	std::vector<std::string> lines;
-
-	for (size_t i = 0; i < commands.size(); i++)
-	{
-		auto cmd = commands[i];
-		//std::cout << "cmd:" << cmd << "\n";
-
-		cmd = "!" + cmd;
-
-		if (str.length() + cmd.length() >= maxLineChars) {
-			//std::cout << "LINE = (" << str << ")\n";
-			lines.push_back(std::string(str));
-			str = "";
-		}
-
-		str += (str.length() == 0 ? "" : ", ") + cmd;
-	}
-
-	if(str.length() > 0) lines.push_back(std::string(str));
-
-
-	char buffer[512];
-
-	int maxPages = ceil((int)lines.size() / linesPerPage);
-
-	
+	int startLine = linesPerPage * page;
 
 	sprintf_s(buffer, "---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --");
 	Chat::SendServerMessage(buffer);
-	//std::cout << "----------------------------------------" << std::endl;
-	
-		
-	int startLine = linesPerPage * page;
-	for (size_t i = 0; i < linesPerPage; i++)
+
+	for (int i = 0; i < (int)linesPerPage; i++)
 	{
 		int lineIndex = startLine + i;
 
 		if (lineIndex < (int)lines.size()) {
 			Chat::SendServerMessage(lines[lineIndex]);
-			//std::cout << lines[lineIndex] << std::endl;
 		}
 	}
 
-	
 	sprintf_s(buffer, "---- ---- ---- ---- ----  Page %d / %d ---- ---- ---- ---- ----", page + 1, maxPages);
 	Chat::SendServerMessage(buffer);
-	//std::cout << "--------------- Page " << (page + 1) << "/" << ceil(lines.size() / linesPerPage) << "---------------" << std::endl;
+}
 
+void Chat::SendAllMessagesInQuery()
+{
+	if (m_Messages.size() > 0)
+	{
+		//std::cout << "sending " << m_Messages.size() << " messages" << std::endl;
+	}
 
-	//std::cout << "(" << str << ")\n";
+	while (m_Messages.size() > 0)
+	{
+		Message* message = m_Messages[0];
+		std::string content = message->m_Content;
 
+		/*
+		if (message->m_Player != NULL) {
+			auto player = message->m_Player;
+			bool showAliveState = false;
+
+			std::string str = "";
+			if (showAliveState) str += player->m_IsAlive ? "" : "(dead) ";
+			if (Server::m_ShowPlayerIds) str += "[" + std::to_string(player->m_PlayerId) + "] ";
+			str += content;
+			content = str;
+		}
+		*/
+
+		//std::cout << "[Send Message : " << (int)message->m_SendType << "] from=" << message->m_FromClient << ", content='" << content << "'\n";
+
+		if (message->m_SendType == MessageSendType::FORCE_PRIVATE) Mod::AppendLocalChatMessage(2, "[PRIVATE]", content);
+		if (message->m_SendType == MessageSendType::NORMAL || message->m_SendType == MessageSendType::FORCE_SEND) Mod::SendChatMessage(message->m_FromClient, content);
+
+		RemoveMessage(message);
+	}
+}
+
+void Chat::RemoveMessage(Message* message)
+{
+	//std::cout << "Message removed " << message->m_Content << std::endl;
+
+	auto it = std::find(m_Messages.begin(), m_Messages.end(), message);
+	if (it == m_Messages.end()) return;
+	m_Messages.erase(it);
+	delete message;
+}
+
+void Chat::RemoveAllMessages()
+{
+	while (m_Messages.size() > 0) {
+		RemoveMessage(Chat::m_Messages[0]);
+	}
+}
+
+void Chat::RegisterCommand(Command* command)
+{
+	m_Commands.push_back(command);
+	std::cout << "[Chat] RegisterCommand '" << command->m_Cmd << "'" << std::endl;
 }

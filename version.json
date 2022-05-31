@@ -1,5 +1,5 @@
 {
-    "version": "1.3.3",
-    "required": false,
-    "changelog": "Added !autostart"
+    "version": "2.0",
+    "required": true,
+    "changelog": "New version"
 }

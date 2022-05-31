@@ -1,15 +1,17 @@
 #pragma once
 
 #include "pch.h"
+
 #include "Server.h"
 #include "Mod.h"
 
 class SocketServer {
 private:
-	
+
 public:
-	static bool m_IsConnected;
-	static bool m_FirstConnect;
+	static bool m_Connected;
+	static bool m_Connecting;
+
 	static sio::client m_Client;
 	static Json::Value m_LastPacket;
 
@@ -20,4 +22,5 @@ public:
 	static void on_fail();
 
 	static void Connect();
+	static void Close();
 };

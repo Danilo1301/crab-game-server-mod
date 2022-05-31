@@ -1,26 +1,33 @@
 #pragma once
 
 #include "pch.h"
-#include "Player.h"
+
 #include "Message.h"
 #include "Command.h"
 
 class Chat {
-private:
-	static void ProcessCommand(Player* player, Message* message, Command* command);
 public:
 	static std::vector<Message*> m_Messages;
-	static std::string m_HelpMessage;
+	static std::vector<Command*> m_Commands;
 
-	static Message* SendServerMessage(std::string text);
-	static void SendAllMessagesInQuery();
+	static bool m_ShowHelpMessage;
+	static float m_BroadCastHelpTime;
 
+	static void Init();
 	static void Update(float dt);
 
-	static void ProcessRawMessage(long long clientId, std::string text);
+	static void ProcessRawMessage(long long clientId, std::string text, bool dontSend);
 	static void ProcessMessage(Message* message);
+	static bool ProcessWeaponCommand(Message* message);
 
-	static void RegisterCommands();
+	static Message* SendServerMessage(std::string text);
+	static void SendServerMessage(std::vector<std::string> lines);
 
-	static void SendHelpMessage(int page);
+	static void SendCommandsPage(std::vector<std::string> commands, int page);
+
+	static void SendAllMessagesInQuery();
+	static void RemoveMessage(Message* message);
+	static void RemoveAllMessages();
+	
+	static void RegisterCommand(Command* command);
 };

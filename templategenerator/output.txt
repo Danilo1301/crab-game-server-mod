@@ -1,0 +1,11 @@
+auto HF_ServerSend_RedLight = new HookFunction<uint64_t, bool, float, MethodInfo*>("ServerSend::RedLight");
+void Template_ServerSend_RedLight(uint64_t a, bool b, float c, MethodInfo* method)
+{
+	std::cout << "ServerSend::RedLight" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	HF_ServerSend_RedLight->original(a, b, c, method);
+}	
+	
+Injector::Inject(HF_ServerSend_RedLight, ServerSend_RedLight, &Template_ServerSend_RedLight);
+
+

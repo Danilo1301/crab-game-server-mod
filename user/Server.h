@@ -4,49 +4,57 @@
 
 #include "Player.h"
 
+using namespace app;
+
+struct Weapon {
+	std::string name;
+	int id;
+	bool enabled = true;
+};
+
 class Server {
 public:
-	static std::string m_Version;
-	static Player* m_LobbyOwner;
 	static std::map<long long, Player*> m_Players;
-	static std::chrono::system_clock::time_point m_LastUpdatedTime;
-	static int m_UniqueObjectId;
-	static float m_BroadCastHelpTime;
-	static bool m_LightState;
-	static Vector3 m_SpawnPosition;
-	static bool m_CanUpdateSpawnPosition;
-	static bool m_ShowHelpMessage;
-	static bool m_ShowPlayerIds;
 	static long long m_LobbyId;
-	static long long m_LastLobbyId;
-	static bool m_HasCheckedForUpdate;
+	static bool m_HasCheckedUpdates;
+	static Player* m_LobbyOwner;
+	static int m_UniqueObjectId;
+
+	static std::vector<Weapon> m_Weapons;
+
+	static int m_PunchDamageId;
+	static bool m_CanUseItem;
+
+	static bool m_IsAtLobby;
+	static bool m_RedLightState;
 
 	static bool m_AutoStartEnabled;
 	static int m_AutoStartTime;
 	static float m_TimeUntilAutoStart;
 
-	static bool m_IsAtLobby;
+	static void Init();
+	static void Update(float dt); //dt ~ 0.016
+	static void LoadConfig();
+	static void SaveConfig();
 
-	static std::map<std::string, int> m_WeaponList;
-	static std::vector<int> m_DisabledWeapons;
+	static void UpdatePlayersPosition();
+	static bool ProcessUpdateCheck();
 
-	static void OnPlayerAddedToLobby(long long clientId);
-	static void OnPlayerRemovedFromLobby(long long clientId);
-	static bool OnPlayerAttemptBanned(long long clientId);
-
-	static void TryAddPlayer(long long clientId, int playerId, u10A5u109Au109Eu109Eu1099u10A8u10A8u109Au109Du109Fu109C* playerManager);
 	static bool HasPlayer(long long clientId);
 	static Player* AddPlayer(Player* player);
+	static void RemovePlayer(Player* player);
 	static Player* GetPlayer(long long clientId);
+	static void TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager);
+	static void RemoveAllPlayers();
 
-	static void Init();
-	static void Update(float dt);
+	static void OnCreateLobby();
+
+	static void OnPlayerJoin(Player* player);
+	static void OnPlayerLeave(Player* player);
+	static bool OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 damageDir);
 
 	static void GiveWeapon(long long toClient, int weaponId);
+	static Weapon* GetWeaponById(int weaponId);
 
 	static std::vector<Player*> FindPlayers(std::string selector);
-
-	static bool IsWeaponDisabled(int weaponId);
-	static void DisableWeapon(int weaponId);
-	static void EnableWeapon(int weaponId);
 };

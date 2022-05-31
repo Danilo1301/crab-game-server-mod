@@ -2,166 +2,159 @@
 #include "Mod.h"
 
 #include "Injector.h"
-#include "SocketServer.h"
+#include "Config.h"
+#include "Server.h"
 #include "templates.h"
 
-std::string Mod::m_Version = "1.3.3";
+bool Mod::m_DebugMode = false;
+std::string Mod::m_Version = "2.0" + std::string(m_DebugMode ? "-dev" : "");
 
-void Mod::Init() {
+void Mod::Init()
+{
 	std::cout << "[Mod] Init v" << m_Version << std::endl;
 
 	Injector::Init();
-
-	ServerSend_GameSpawnPlayer->SetTemplate(&Template_ServerSend_GameSpawnPlayer);
-	Injector::Inject(ServerSend_GameSpawnPlayer);
-
-	PlayerManager_SetPlayer->SetTemplate(&Template_PlayerManager_SetPlayer);
-	Injector::Inject(PlayerManager_SetPlayer);
-
-	ServerSend_SendChatMessage->SetTemplate(&Template_ServerSend_SendChatMessage);
-	Injector::Inject(ServerSend_SendChatMessage);
+	
+	Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
+	Injector::Inject(HF_LobbyManager_AddPlayerToLobby, LobbyManager_AddPlayerToLobby, &Template_LobbyManager_AddPlayerToLobby);
+	Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
+	Injector::Inject(HF_LobbyManager_BanPlayer, LobbyManager_BanPlayer, &Template_LobbyManager_BanPlayer);
+	Injector::Inject(HF_PlayerManager_SetPlayer, PlayerManager_SetPlayer, &Template_PlayerManager_SetPlayer);
+	Injector::Inject(HF_ServerSend_SendChatMessage, ServerSend_SendChatMessage, &Template_ServerSend_SendChatMessage);
+	Injector::Inject(HF_ServerSend_PlayerDied, ServerSend_PlayerDied, &Template_ServerSend_PlayerDied);
+	Injector::Inject(HF_ServerSend_GameSpawnPlayer, ServerSend_GameSpawnPlayer, &Template_ServerSend_GameSpawnPlayer);
+	Injector::Inject(HF_ServerSend_LoadMap_1, ServerSend_LoadMap_1, &Template_ServerSend_LoadMap_1);
+	Injector::Inject(HF_ServerHandle_PlayerDied, ServerHandle_PlayerDied, &Template_ServerHandle_PlayerDied);
+	Injector::Inject(HF_ServerSend_UseItemAll, ServerSend_UseItemAll, &Template_ServerSend_UseItemAll);
+	Injector::Inject(HF_ServerSend_UseItem, ServerSend_UseItem, &Template_ServerSend_UseItem);
+	Injector::Inject(HF_ServerSend_PlayerDamage, ServerSend_PlayerDamage, &Template_ServerSend_PlayerDamage);
+	Injector::Inject(HF_ServerSend_PunchPlayer, ServerSend_PunchPlayer, &Template_ServerSend_PunchPlayer);
+	Injector::Inject(HF_ServerSend_RedLight, ServerSend_RedLight, &Template_ServerSend_RedLight);
 
 	/*
-	ServerHandle_TryInteract->SetTemplate(&Template_ServerHandle_TryInteract);
-	Injector::Inject(ServerHandle_TryInteract);
+	Injector::Inject(HF_ServerSend_u109Au109Du109Eu109Du10A1u10A2u1099u10A8u10A6u109Cu10A2, ServerSend_u109Au109Du109Eu109Du10A1u10A2u1099u10A8u10A6u109Cu10A2, &Template_ServerSend_u109Au109Du109Eu109Du10A1u10A2u1099u10A8u10A6u109Cu10A2);
+	Injector::Inject(HF_ServerSend_u109Au10A0u109Fu10A6u10A8u10A3u10A5u10A5u10A5u10A5u109D, ServerSend_u109Au10A0u109Fu10A6u10A8u10A3u10A5u10A5u10A5u10A5u109D, &Template_ServerSend_u109Au10A0u109Fu10A6u10A8u10A3u10A5u10A5u10A5u10A5u109D);
+	Injector::Inject(HF_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, &Template_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C);
+	Injector::Inject(HF_ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5, ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5, &Template_ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5);
+	//Injector::Inject(HF_ServerHandle_PlayerDamage, ServerHandle_PlayerDamage, &Template_ServerHandle_PlayerDamage); doesnt work
 	*/
 
-	LobbyManager_AddPlayerToLobby->SetTemplate(&Template_LobbyManager_AddPlayerToLobby);
-	Injector::Inject(LobbyManager_AddPlayerToLobby);
-
-	LobbyManager_RemovePlayerFromLobby->SetTemplate(&Template_LobbyManager_RemovePlayerFromLobby);
-	Injector::Inject(LobbyManager_RemovePlayerFromLobby);
-
-	ChatBox_AppendMessage->SetTemplate(&Template_ChatBox_AppendMessage);
-	Injector::Inject(ChatBox_AppendMessage);
-
-	ChatBox_Update->SetTemplate(&Template_ChatBox_Update);
-	Injector::Inject(ChatBox_Update);
-
-	ServerSend_PunchPlayer->SetTemplate(&Template_ServerSend_PunchPlayer);
-	Injector::Inject(ServerSend_PunchPlayer);
-
-	LobbyManager_BanPlayer->SetTemplate(&Template_LobbyManager_BanPlayer);
-	Injector::Inject(LobbyManager_BanPlayer);
-
-	ServerSend_PlayerDied->SetTemplate(&Template_ServerSend_PlayerDied);
-	Injector::Inject(ServerSend_PlayerDied);
-
-	ServerSend_LoadMap->SetTemplate(&Template_ServerSend_LoadMap);
-	Injector::Inject(ServerSend_LoadMap);
+	Config::LoadJSON();
 
 	Server::Init();
-
-	SocketServer::Connect();
 }
 
-void Mod::SendChatMessage(long long fromClient, std::string message) {
-	//std::cout << "[Mod] SendChatMessage " << "(" << fromClient << "): '" << message << "'" << std::endl;
+/*
+long long Mod::GetLobbyOwnerId()
+{
+	return (long long)(*u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__TypeInfo)->static_fields->Instance->fields.originalLobbyOwnerId.m_SteamID;
+}
+*/
 
-	ServerSend_SendChatMessage->original(fromClient, Mod::CreateMonoString(message.c_str()));
+long long Mod::GetMySteamId()
+{
+	auto steamManager_c = (*u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__TypeInfo);
+	return steamManager_c->static_fields->Instance->fields._u109Du109Au10A3u10A6u10A0u10A8u1099u109Au109Du10A7u1099_k__BackingField.m_SteamID;
 }
 
-void Mod::AppendLocalChatMessage(long long fromClient, std::string username, std::string message) {
-	//std::cout << "[Mod] AppendLocalChatMessage " << username << "(" << fromClient << "): '" << message << "'" << std::endl;
+void Mod::SendChatMessage(long long fromClient, std::string message)
+{
+	std::cout << "[Mod] SendChatMessage " << "(" << fromClient << "): '" << message << "'" << std::endl;
 
-	ChatBox_AppendMessage->original(GetChatBox()->static_fields->Instance, fromClient, CreateMonoString(message.c_str()), CreateMonoString(username.c_str()));
+	HF_ServerSend_SendChatMessage->original(fromClient, createMonoString(message.c_str()), NULL);
 }
 
-void Mod::SendDropItem(long long toClient, int objectId, int itemId, int ammo) {
+void Mod::AppendLocalChatMessage(long long fromClient, std::string username, std::string message)
+{
+	std::cout << "[Mod] AppendLocalChatMessage " << username << "(" << fromClient << "): '" << message << "'" << std::endl;
+
+	auto chatBox = (*ChatBox__TypeInfo)->static_fields->Instance;
+	ChatBox_AppendMessage(chatBox, fromClient, (String*)createMonoString(message.c_str()), (String*)createMonoString(username.c_str()), NULL);
+}
+
+void Mod::SendDropItem(long long toClient, int objectId, int itemId, int ammo)
+{
 	std::cout << "[Mod] SendDropItem toClient=" << toClient << ", objectId='" << objectId << "', itemId='" << itemId << "', ammo='" << ammo << "'" << std::endl;
 
-	void (*DropItem)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3) = (void (*)(uint64_t clientId, int32_t int1, int32_t int2, int32_t int3))(Injector::m_AssemblyBase + 19767472);
-	DropItem(toClient, objectId, itemId, ammo);
+	ServerSend_DropItem(toClient, objectId, itemId, ammo, NULL);
 }
 
-void Mod::ForceGiveItem(long long toClient, int objectId, int itemId) {
+void Mod::ForceGiveItem(long long toClient, int objectId, int itemId)
+{
 	std::cout << "[Mod] ForceGiveItem toClient=" << toClient << ", objectId='" << objectId << "', itemId='" << itemId << "'" << std::endl;
 
-	void (*ForceGiveItem)(uint64_t clientId, int32_t int1, int32_t int2) = (void (*)(uint64_t clientId, int32_t int1, int32_t int2))(Injector::m_AssemblyBase + 19768080);
-	ForceGiveItem(toClient, objectId, itemId);
+	ServerSend_ForceGiveItem(toClient, objectId, itemId, NULL);
+}
+
+void Mod::KillPlayer(long long clientId)
+{
+	std::cout << "[Mod] KillPlayer clientId=" << clientId << std::endl;
+
+	ServerSend_PlayerDied(clientId, clientId, Vector3({ 0, 1, 0 }), NULL);
+}
+
+void Mod::BanPlayer(long long clientId)
+{
+	std::cout << "[Mod] BanPlayer clientId=" << clientId << std::endl;
+
+	auto lobbyManager = (*LobbyManager__TypeInfo)->static_fields->Instance;
+	
+	HF_LobbyManager_BanPlayer->original(lobbyManager, clientId, NULL);
+}
+
+void Mod::KickPlayer(long long clientId)
+{
+	std::cout << "[Mod] KickPlayer clientId=" << clientId << std::endl;
+
+	auto lobbyManager = (*LobbyManager__TypeInfo)->static_fields->Instance;
+
+	LobbyManager_KickPlayer(lobbyManager, clientId, NULL);
+}
+
+void Mod::RespawnPlayer(long long clientId, Vector3 position)
+{
+	if (Server::HasPlayer(clientId))
+	{
+		auto player = Server::GetPlayer(clientId);
+
+		if (player->m_DiedInThisRound)
+		{
+			player->m_IsAlive = true;
+		}
+
+		if (Server::m_RedLightState) return;
+	}
+
+	//std::cout << "[Mod] RespawnPlayer clientId=" << clientId << formatVector3_full(position) << std::endl;
+
+	ServerSend_RespawnPlayer(clientId, position, NULL);
+}
+
+void Mod::RestartGame()
+{
+	std::cout << "[Mod] RestartGame" << std::endl;
+
+	ServerSend_StartGame(NULL);
+}
+
+void Mod::SetCurrentGameModeTime(float time)
+{
+	auto gameMode = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance->fields.gameMode;
+
+	GameMode_SetGameModeTimer(gameMode, time, 0, NULL);
+}
+
+void Mod::SendWinner(long long clientId, long long money)
+{
+	ServerSend_SendWinner(clientId, money, NULL);
 }
 
 void Mod::SendLocalInteract(int itemid) {
-	void (*TryInteract)(int32_t itemId) = (void (*)(int32_t itemId))(Injector::m_AssemblyBase + 19285136);
-	TryInteract(itemid);
+	ClientSend_TryInteract(itemid, NULL);
 }
 
-void Mod::SendInteract(long long clientId, int itemid) {
-	void (*TryInteract)(uint64_t clientId, int32_t itemId) = (void (*)(uint64_t clientId, int32_t itemId))(Injector::m_AssemblyBase + 19285136);
-	TryInteract(clientId, itemid);
-}
-
-void Mod::KillPlayer(long long clientId) {
-	std::cout << "[Mod] KillPlayer clientId=" << clientId << std::endl;
-
-	ServerSend_PlayerDied->original(clientId, clientId, Vector3({ 0, 1, 0 }));
-}
-
-void Mod::BanPlayer(long long clientId) {
-	std::cout << "[Mod] BanPlayer clientId=" << clientId << std::endl;
-
-	auto lobbyManager = (*u109Bu10A2u10A4u10A6u109Du10A3u109Cu1099u109Du109Cu10A4__TypeInfo)->static_fields->Instance;
-
-	u109Bu10A2u10A4u10A6u109Du10A3u109Cu1099u109Du109Cu10A4_BanPlayer(lobbyManager, clientId, NULL);
-}
-
-void Mod::KickPlayer(long long clientId) {
-	std::cout << "[Mod] KickPlayer clientId=" << clientId << std::endl;
-
-	auto lobbyManager = (*u109Bu10A2u10A4u10A6u109Du10A3u109Cu1099u109Du109Cu10A4__TypeInfo)->static_fields->Instance;
-
-	u109Bu10A2u10A4u10A6u109Du10A3u109Cu1099u109Du109Cu10A4_KickPlayer(lobbyManager, clientId, NULL);
-}
-
-void Mod::RespawnPlayer(long long clientId, Vector3 position) {
-	std::cout << "[Mod] RespawnPlayer clientId=" << clientId << Mod::FormatVector(position) << std::endl;
-
-	void (*Respawn)(uint64_t, Vector3, const void*) = (void (*)(uint64_t toClient, Vector3 spawnPos, const void* method))(Injector::m_AssemblyBase + 19778288);
-	Respawn(clientId, position, NULL);
-}
-
-void Mod::RestartGame() {
-	std::cout << "[Mod] RestartGame" << std::endl;
-
-	void (*Restart)() = (void (*)())(Injector::m_AssemblyBase + 19788976);
-	Restart();
-}
-
-void Mod::SetCurrentGameModeTime(float time) {
-	auto gameMode = GetGameManager()->static_fields->Instance->fields.gameMode;
-
-	void (*GameMode__SetGameModeTimer)(void* _this, float time, uint64_t param_2) = (void (*)(void* _this, float time, uint64_t param_2))(Injector::m_AssemblyBase + 17156720);
-
-	GameMode__SetGameModeTimer(gameMode, time, 0);
-}
-
-void Mod::SetBomber(long long clientId) {
-	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19787040);
-	Fn(clientId, clientId);
-	Fn(clientId, 0);
-}
-
-void Mod::TagPlayer(long long clientId) {
-	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19790432);
-	Fn(clientId, clientId);
-}
-
-void Mod::ToggleLights(bool on) {
-	void (*Fn)(bool param1) = (void (*)(bool))(Injector::m_AssemblyBase + 19790688);
-	Fn(on);
-}
-
-void Mod::GiveHat(long long clientId) {
-	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19770272);
-	Fn(clientId, clientId);
-}
-
-void Mod::SendWinner(long long clientId, long long money) {
-	void (*Fn)(uint64_t param1, uint64_t param2) = (void (*)(uint64_t, uint64_t))(Injector::m_AssemblyBase + 19786784);
-	Fn(clientId, money);
-}
-
-void Mod::SetAllPlayersReady() {
+void Mod::SetAllPlayersReady()
+{
 	auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
 	auto activePlayers = gameManager->fields.activePlayers;
 
@@ -170,26 +163,16 @@ void Mod::SetAllPlayersReady() {
 		//auto key = activePlayers->fields.entries->vector[i].key;
 		auto playerManager = activePlayers->fields.entries->vector[i].value;
 
-		playerManager->fields.waitingReady = true;
+		if (!playerManager) continue;
 
-		//SendServerMessage("set ready");
+		playerManager->fields.waitingReady = true;
 	}
 
-	//SendServerMessage("interact 2x");
-	//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
-	//Mod::SendInteract(Server::m_LobbyOwner->m_PlayerId, 4);
 	Mod::SendLocalInteract(4);
 	Mod::SendLocalInteract(4);
 }
 
-u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__Class* Mod::GetGameManager() {
-	return (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo);
-}
-
-u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__Class* Mod::GetSteamManager() {
-	return (*u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__TypeInfo);
-}
-
-u109Du10A6u109Eu10A3u10A7u10A2u10A3u10A8u10A8u109Eu10A1__Class* Mod::GetChatBox() {
-	return (*u109Du10A6u109Eu10A3u10A7u10A2u10A3u10A8u10A8u109Eu10A1__TypeInfo);
+void Mod::UseItemAll(long long clientId, int objectId, int itemId, Vector3 pos)
+{
+	HF_ServerSend_UseItemAll->original(clientId, objectId, pos, itemId, NULL);
 }

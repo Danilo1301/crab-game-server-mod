@@ -2,34 +2,46 @@
 
 #include "pch.h"
 
+#include "PermissionGroup.h"
+
 class Player {
 public:
 	long long m_ClientId;
-	int m_PlayerId;
+	int m_Id;
 	std::string m_Username = "";
 
-	bool m_IsAlive = true;
-	
-	float m_UnmuteTime = 0;
-	bool m_Muted = false;
-	bool m_HideMessages = false;
-	bool m_JumpPunchEnabled = false;
-	bool m_SuperPunchEnabled = false;
-	bool m_ForceFieldEnabled = false;
-	bool m_GodEnabled = false;
+	std::string m_PermissionGroup = "player";
 
 	Vector3 m_Position = Vector3({ 0, 0, 0 });
 
-	std::vector<std::string> m_Permissions;
+	bool m_Godmode = false;
+	bool m_IsAlive = false;
+	bool m_JustSpawned = false;
+	bool m_DiedInThisRound = false;
+	bool m_HideMessages = false;
+	float m_MuteTime = 0.0f;
 
-	Player(long long clientId, int playerId);
+	bool m_AutoRespawnEnabled = false;
+	float m_RespawnTime = 0;
+	Vector3 m_RespawnPosition = Vector3({ 0, 0, 0 });
 
-	bool HasPermission(std::string permission);
-	void AddPermission(std::string permission);
-	void RemovePermission(std::string permission);
+	long long m_HoveringPlayer = -1;
+	float m_HoveringAngle = -1;
+	float m_HoveringRadius = 0;
+
+	bool m_JumpPunchEnabled = false;
+	bool m_SuperPunchEnabled = false;
+	bool m_ForceFieldEnabled = false;
+	bool m_MultiSnowballEnabled = false;
+
+	//bool m_ParticleEnabled = true;
+	//float m_ParticleTime = 0;
+
+	Player(long long clientId, int id);
 
 	bool IsLobbyOwner();
-
+	std::string GetDisplayNameExtra();
 	std::string GetDisplayName();
-	std::string GetSelector();
+	PermissionGroup* GetPermissionGroup();
+	void SetAlive(bool alive);
 };

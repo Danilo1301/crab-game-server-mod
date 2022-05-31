@@ -25,21 +25,6 @@
     <ClCompile Include="user\pch.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\Server.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\Commands.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\Player.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\Chat.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\SocketServer.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
     <ClCompile Include="include\json_reader.cpp">
       <Filter>json</Filter>
     </ClCompile>
@@ -48,6 +33,33 @@
     </ClCompile>
     <ClCompile Include="include\json_writer.cpp">
       <Filter>json</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Server.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Player.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Chat.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Message.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Command.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\Config.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\SocketServer.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\PermissionGroup.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
+    <ClCompile Include="user\PermissionGroups.cpp">
+      <Filter>user</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -93,22 +105,13 @@
     <ClInclude Include="user\pch.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\il2cpp.h">
-      <Filter>user</Filter>
-    </ClInclude>
     <ClInclude Include="user\templates.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="include\json_tool.h">
+      <Filter>json</Filter>
+    </ClInclude>
     <ClInclude Include="user\Server.h">
-      <Filter>user</Filter>
-    </ClInclude>
-    <ClInclude Include="user\Command.h">
-      <Filter>user</Filter>
-    </ClInclude>
-    <ClInclude Include="user\Commands.h">
-      <Filter>user</Filter>
-    </ClInclude>
-    <ClInclude Include="user\Message.h">
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\Player.h">
@@ -117,11 +120,29 @@
     <ClInclude Include="user\Chat.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="user\Message.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Command.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\commands\commands.h">
+      <Filter>user\commands</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Config.h">
+      <Filter>user</Filter>
+    </ClInclude>
     <ClInclude Include="user\SocketServer.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="include\json_tool.h">
-      <Filter>json</Filter>
+    <ClInclude Include="user\PermissionGroup.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\PermissionGroups.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\CommandArgs.h">
+      <Filter>user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -136,6 +157,9 @@
     </Filter>
     <Filter Include="json">
       <UniqueIdentifier>{db25e3df-de74-4d11-abf8-221c2a2b4570}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="user\commands">
+      <UniqueIdentifier>{3be61f82-2391-47a1-bee6-0621d6331a59}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
