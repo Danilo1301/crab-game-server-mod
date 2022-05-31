@@ -10,8 +10,8 @@ public:
 	std::vector<std::string> m_RequiredPermissions;
 	std::vector<std::string> m_Aliases;
 
-	bool m_IsAdminCommand = false;
 	bool m_ShowOnHelpPage = true;
+	bool m_LobbyOnly = false;
 
 	Command();
 
@@ -19,7 +19,7 @@ public:
 	bool Check(std::string str);
 	void AddRequiredPermission(std::string permission);
 	void ShowOnHelpPage(bool show);
-	void SetIsAdminCommand(bool state);
+	void SetLobbyOnly(bool state);
 	void AddAlias(std::string cmd);
 
 	virtual void Execute(Message* message);

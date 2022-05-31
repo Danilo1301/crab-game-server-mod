@@ -7,7 +7,7 @@
 #include "templates.h"
 
 bool Mod::m_DebugMode = false;
-std::string Mod::m_Version = "2.0" + std::string(m_DebugMode ? "-dev" : "");
+std::string Mod::m_Version = "2.0.1" + std::string(m_DebugMode ? "-dev" : "");
 
 void Mod::Init()
 {

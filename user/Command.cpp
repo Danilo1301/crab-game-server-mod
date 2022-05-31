@@ -31,9 +31,9 @@ void Command::ShowOnHelpPage(bool show)
 	m_ShowOnHelpPage = show;
 }
 
-void Command::SetIsAdminCommand(bool state)
+void Command::SetLobbyOnly(bool state)
 {
-	m_IsAdminCommand = state;
+	m_LobbyOnly = state;
 }
 
 void Command::AddAlias(std::string cmd)

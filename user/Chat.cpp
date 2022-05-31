@@ -43,6 +43,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandShowHelp());
 	RegisterCommand((Command*)new CommandPunchDamage());
 	RegisterCommand((Command*)new CommandMultiSnowball());
+	RegisterCommand((Command*)new CommandLobbyOnly());
 }
 
 void Chat::Update(float dt)
@@ -156,6 +157,15 @@ void Chat::ProcessMessage(Message* message)
 				continue;
 			}
 
+			if (!message->m_Player->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
+			{
+				if (command->m_LobbyOnly && Server::m_IsAtLobby)
+				{
+					SendServerMessage("you must be on lobby");
+					continue;
+				}
+			}
+
 			command->Execute(message);
 		}
 
@@ -175,12 +185,6 @@ bool Chat::ProcessWeaponCommand(Message* message)
 			ProcessRawMessage(message->m_Player->m_ClientId, "!w " + std::to_string(weapon.id), true);
 			return true;
 		}
-
-		/*
-		if (toL  toLower((message->m_Cmd).compare(toLower(m_Cmd)) == 0)
-		{
-		}
-		*/
 	}
 
 	return false;

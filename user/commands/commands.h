@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Mod.h"
 #include "Command.h"
 #include "CommandArgs.h"
 #include "PermissionGroups.h"
@@ -37,7 +38,7 @@ public:
 		
 		for (auto command : Chat::m_Commands)
 		{
-			if (command->m_IsAdminCommand) continue;
+			if (!command->CheckPermissions(message->m_Player)) continue;
 			if (!command->m_ShowOnHelpPage) continue;
 			cmds.push_back("!" + command->m_Cmd);
 		}
@@ -88,7 +89,7 @@ public:
 		std::vector<std::string> cmds;
 		for (auto command : Chat::m_Commands)
 		{
-			if (!command->m_IsAdminCommand) continue;
+			if (command->CheckPermissions(message->m_Player)) continue;
 			if (!command->m_ShowOnHelpPage) continue;
 			cmds.push_back("!" + command->m_Cmd);
 		}
@@ -230,7 +231,6 @@ public:
 
 		SetCmd("perm");
 		AddRequiredPermission("perm");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -500,7 +500,6 @@ public:
 
 		SetCmd("mute");
 		AddRequiredPermission("mute");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -551,7 +550,6 @@ public:
 
 		SetCmd("kick");
 		AddRequiredPermission("kick");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -598,7 +596,6 @@ public:
 
 		SetCmd("ban");
 		AddRequiredPermission("ban");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -645,7 +642,6 @@ public:
 
 		SetCmd("r");
 		AddRequiredPermission("r");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -908,7 +904,6 @@ public:
 
 		SetCmd("v");
 		AddRequiredPermission("v");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -963,7 +958,6 @@ public:
 
 		SetCmd("toggleweapon");
 		AddRequiredPermission("toggleweapon");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1025,7 +1019,6 @@ public:
 
 		SetCmd("win");
 		AddRequiredPermission("win");
-		SetIsAdminCommand(true);
 		ShowOnHelpPage(false);
 	}
 
@@ -1146,7 +1139,6 @@ public:
 
 		SetCmd("start");
 		AddRequiredPermission("start");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1171,7 +1163,6 @@ public:
 
 		SetCmd("bc");
 		AddRequiredPermission("bc");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1206,7 +1197,6 @@ public:
 
 		SetCmd("autostart");
 		AddRequiredPermission("autostart");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1350,7 +1340,6 @@ public:
 
 		SetCmd("helpmsg");
 		AddRequiredPermission("helpmsg");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1377,7 +1366,6 @@ public:
 
 		SetCmd("punchdamage");
 		AddRequiredPermission("punchdamage");
-		SetIsAdminCommand(true);
 	}
 
 	virtual void Execute(Message* message)
@@ -1451,5 +1439,60 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("");
+	}
+};
+
+
+class CommandLobbyOnly : public Command {
+public:
+	CommandLobbyOnly()
+	{
+		Command::Command();
+
+		SetCmd("lobbyonly");
+		AddRequiredPermission("lobbyonly");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+
+		if (args.size() == 1)
+		{
+			char cmd[256];
+			if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
+				Chat::SendServerMessage("showing help for '" + std::string(cmd) + "'");
+
+				Command* command = NULL;
+
+				for (auto c : Chat::m_Commands) {
+					if (!c->Check(cmd)) {
+						command = c;
+						break;
+					}
+				}
+
+				if (!command)
+				{
+					Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
+					return;
+				}
+
+				command->m_LobbyOnly = !command->m_LobbyOnly;
+				if (command->m_LobbyOnly) Chat::SendServerMessage("command is now lobby-only");
+				else Chat::SendServerMessage("command is no longer lobby-only");
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(command)");
 	}
 };
