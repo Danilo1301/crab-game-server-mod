@@ -1,5 +1,5 @@
 {
-    "version": "2.0",
-    "required": true,
-    "changelog": "New version"
+    "version": "2.1",
+    "required": false,
+    "changelog": "Added !lobbyonly; fixed perms"
 }
