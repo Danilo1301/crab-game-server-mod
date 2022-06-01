@@ -15,6 +15,16 @@ void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
 	HF_ChatBox_Update->original(a, method);
 }
 
+auto HF_ChatBox_AppendMessage = new HookFunction<ChatBox*, uint64_t, String*, String*, MethodInfo*>("ChatBox::AppendMessage");
+void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, String* d, MethodInfo* method)
+{
+	//std::cout << "ChatBox::AppendMessage" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
+	
+	if (b == 0) return;
+
+	HF_ChatBox_AppendMessage->original(a, b, c, d, method);
+}
+
 auto HF_LobbyManager_AddPlayerToLobby = new HookFunction<LobbyManager*, CSteamID, MethodInfo*>("LobbyManager::AddPlayerToLobby");
 void Template_LobbyManager_AddPlayerToLobby(LobbyManager* a, CSteamID b, MethodInfo* method)
 {
@@ -42,8 +52,10 @@ void Template_LobbyManager_RemovePlayerFromLobby(LobbyManager* a, CSteamID b, Me
 
 	if (Server::HasPlayer(b.m_SteamID)) {
 		auto player = Server::GetPlayer(b.m_SteamID);
+		player->m_IsOnline = false;
+
 		Server::OnPlayerLeave(player);
-		Server::RemovePlayer(player);
+		//Server::RemovePlayer(player);
 	}
 
 	HF_LobbyManager_RemovePlayerFromLobby->original(a, b, method);
@@ -72,6 +84,13 @@ void Template_ServerSend_SendChatMessage(uint64_t clientId, monoString* message,
 {
 	//std::cout << "ServerSend::SendChatMessage" << " a=" << clientId << ", " << " b=" << message->toCPPString() << ", " << std::endl;
 
+	auto owner = Server::m_LobbyOwner;
+	if (owner->m_ClientId == clientId) {
+		if (!owner->m_HideMessages) {
+			Mod::AppendLocalChatMessage(2, owner->m_Username, owner->GetChatSuffix() + " " + message->toCPPString().c_str());
+		}
+	}
+
 	if (Server::HasPlayer(clientId))
 	{
 		Chat::ProcessRawMessage(clientId, message->toCPPString(), false);
@@ -79,14 +98,6 @@ void Template_ServerSend_SendChatMessage(uint64_t clientId, monoString* message,
 	}
 
 	HF_ServerSend_SendChatMessage->original(clientId, message, method);
-
-	/*
-	if (Server::m_LobbyOwner->m_ClientId == fromClient) {
-		if (!Server::m_LobbyOwner->m_HideMessages) {
-			Mod::AppendLocalChatMessage(2, Server::m_LobbyOwner->GetDisplayName(), message->toCPPString().c_str());
-		}
-	}
-	*/
 }
 
 auto HF_ServerSend_PlayerDied = new HookFunction<uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PlayerDied");

@@ -13,7 +13,4 @@ Edit version.json
 
 Pull
 
-
-
 ----------
-

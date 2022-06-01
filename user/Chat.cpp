@@ -11,6 +11,9 @@ std::vector<Command*> Chat::m_Commands;
 bool Chat::m_ShowHelpMessage = true;
 float Chat::m_BroadCastHelpTime = 0;
 
+bool Chat::m_ShowDeathStatusAfterName = false;
+bool Chat::m_ShowIdAfterName = true;
+
 void Chat::Init()
 {
 	RegisterCommand((Command*)new CommandHelp());
@@ -30,7 +33,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandTime());
 	RegisterCommand((Command*)new CommandVanish());
 	RegisterCommand((Command*)new CommandAutoRespawn());
-	RegisterCommand((Command*)new CommandToggleWeapon());
+	//RegisterCommand((Command*)new CommandToggleWeapon());
 	RegisterCommand((Command*)new CommandDownload());
 	RegisterCommand((Command*)new CommandWin());
 	RegisterCommand((Command*)new CommandHover());
@@ -44,6 +47,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandPunchDamage());
 	RegisterCommand((Command*)new CommandMultiSnowball());
 	RegisterCommand((Command*)new CommandLobbyOnly());
+	RegisterCommand((Command*)new CommandConfig());
 }
 
 void Chat::Update(float dt)
@@ -251,18 +255,12 @@ void Chat::SendAllMessagesInQuery()
 		Message* message = m_Messages[0];
 		std::string content = message->m_Content;
 
-		/*
+		
 		if (message->m_Player != NULL) {
 			auto player = message->m_Player;
-			bool showAliveState = false;
-
-			std::string str = "";
-			if (showAliveState) str += player->m_IsAlive ? "" : "(dead) ";
-			if (Server::m_ShowPlayerIds) str += "[" + std::to_string(player->m_PlayerId) + "] ";
-			str += content;
-			content = str;
+			content = player->GetChatSuffix() + " " + content;
 		}
-		*/
+		
 
 		//std::cout << "[Send Message : " << (int)message->m_SendType << "] from=" << message->m_FromClient << ", content='" << content << "'\n";
 

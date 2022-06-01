@@ -7,7 +7,7 @@
 #include "templates.h"
 
 bool Mod::m_DebugMode = false;
-std::string Mod::m_Version = "2.1" + std::string(m_DebugMode ? "-dev" : "");
+std::string Mod::m_Version = "2.2" + std::string(m_DebugMode ? "-dev" : "");
 
 void Mod::Init()
 {
@@ -16,6 +16,7 @@ void Mod::Init()
 	Injector::Init();
 	
 	Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
+	Injector::Inject(HF_ChatBox_AppendMessage, ChatBox_AppendMessage, &Template_ChatBox_AppendMessage);
 	Injector::Inject(HF_LobbyManager_AddPlayerToLobby, LobbyManager_AddPlayerToLobby, &Template_LobbyManager_AddPlayerToLobby);
 	Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
 	Injector::Inject(HF_LobbyManager_BanPlayer, LobbyManager_BanPlayer, &Template_LobbyManager_BanPlayer);
@@ -38,8 +39,6 @@ void Mod::Init()
 	Injector::Inject(HF_ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5, ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5, &Template_ServerSend_u10A1u1099u10A1u109Du10A4u10A2u10A3u10A5u10A3u109Au10A5);
 	//Injector::Inject(HF_ServerHandle_PlayerDamage, ServerHandle_PlayerDamage, &Template_ServerHandle_PlayerDamage); doesnt work
 	*/
-
-	Config::LoadJSON();
 
 	Server::Init();
 }

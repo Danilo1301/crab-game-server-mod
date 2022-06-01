@@ -18,7 +18,6 @@ public:
 
 	static void SaveJSON();
 	static void LoadJSON();
-	static void CreateDefaultConfig();
 
 	
 };

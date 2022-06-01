@@ -9,7 +9,6 @@ using namespace app;
 struct Weapon {
 	std::string name;
 	int id;
-	bool enabled = true;
 };
 
 class Server {
@@ -33,6 +32,8 @@ public:
 	static float m_TimeUntilAutoStart;
 
 	static bool m_UpdateRequired;
+
+	static float m_SaveConfigTime;
 
 	static void Init();
 	static void Update(float dt); //dt ~ 0.016

@@ -7,12 +7,14 @@
 class Player {
 public:
 	long long m_ClientId;
-	int m_Id;
+	int m_Id = -1;
 	std::string m_Username = "";
+	bool m_IsOnline = false;
 
-	std::string m_PermissionGroup = "player";
+	std::string m_PermissionGroup = "default";
 
 	Vector3 m_Position = Vector3({ 0, 0, 0 });
+
 
 	bool m_Godmode = false;
 	bool m_IsAlive = false;
@@ -37,11 +39,12 @@ public:
 	//bool m_ParticleEnabled = true;
 	//float m_ParticleTime = 0;
 
-	Player(long long clientId, int id);
+	Player(long long clientId);
 
 	bool IsLobbyOwner();
 	std::string GetDisplayNameExtra();
 	std::string GetDisplayName();
+	std::string GetChatSuffix();
 	PermissionGroup* GetPermissionGroup();
 	void SetAlive(bool alive);
 };

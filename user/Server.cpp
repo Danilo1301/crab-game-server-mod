@@ -5,6 +5,7 @@
 #include "Chat.h"
 #include "SocketServer.h"
 #include "PermissionGroups.h"
+#include "Config.h"
 
 std::map<long long, Player*> Server::m_Players;
 long long Server::m_LobbyId = 0;
@@ -25,6 +26,8 @@ float Server::m_TimeUntilAutoStart = 0;
 bool Server::m_UpdateRequired = false;
 bool sentUpdateCheck = false;
 
+float Server::m_SaveConfigTime = 0;
+
 std::vector<Weapon> Server::m_Weapons = {
 		{ "Ak", 0 },
 		{ "Glock", 1 },
@@ -44,12 +47,15 @@ std::vector<Weapon> Server::m_Weapons = {
 
 void Server::Init()
 {
+	LoadConfig();
+
 	Chat::Init();
 
 	auto permissionGroup = PermissionGroups::AddGroup("default");
 	permissionGroup->AddPermission("help");
 	permissionGroup->AddPermission("ahelp");
 	permissionGroup->AddPermission("w");
+	//permissionGroup->AddPermission("w.others");
 	permissionGroup->AddPermission("playerinfo");
 	//permissionGroup->AddPermission("perm");
 	permissionGroup->AddPermission("tp");
@@ -58,6 +64,7 @@ void Server::Init()
 	permissionGroup->AddPermission("kill");
 	//permissionGroup->AddPermission("kill.others");
 	permissionGroup->AddPermission("respawn");
+	//permissionGroup->AddPermission("respawn.others");
 	//permissionGroup->AddPermission("time");
 	permissionGroup->AddPermission("autorespawn");
 	//permissionGroup->AddPermission("bc");
@@ -66,6 +73,28 @@ void Server::Init()
 	permissionGroup->AddPermission("superpunch");
 	permissionGroup->AddPermission("forcefield");
 	permissionGroup->AddPermission("snowball2");
+
+	for (auto weapon : m_Weapons)
+	{
+		permissionGroup->AddPermission(toLower(weapon.name));
+	}
+
+	auto moderatorPermissionGroup = PermissionGroups::AddGroup("moderator");
+	moderatorPermissionGroup->m_InheritsFromGroup = "default";
+
+	moderatorPermissionGroup->AddPermission("kick");
+	moderatorPermissionGroup->AddPermission("ban");
+	moderatorPermissionGroup->AddPermission("bc");
+	moderatorPermissionGroup->AddPermission("w.others");
+	moderatorPermissionGroup->AddPermission("respawn.others");
+	moderatorPermissionGroup->AddPermission("tp.others");
+	moderatorPermissionGroup->AddPermission("god");
+	moderatorPermissionGroup->AddPermission("god.others");
+	moderatorPermissionGroup->AddPermission("time");
+	moderatorPermissionGroup->AddPermission("r");
+	moderatorPermissionGroup->AddPermission("mute");
+	moderatorPermissionGroup->AddPermission("lobbyonly");
+	moderatorPermissionGroup->AddPermission("start");
 
 	auto adminPermissionGroup = PermissionGroups::AddGroup("admin");
 	adminPermissionGroup->AddPermission("*");
@@ -76,6 +105,12 @@ void Server::Init()
 
 void Server::Update(float dt)
 {
+	m_SaveConfigTime += dt;
+	if (m_SaveConfigTime >= 40.0f) {
+		m_SaveConfigTime = 0;
+		SaveConfig();
+	}
+
 	if (m_Players.size() == 0) return;
 
 	if (m_LobbyOwner->m_ClientId != Mod::GetMySteamId()) return;
@@ -184,12 +219,12 @@ void Server::Update(float dt)
 
 void Server::LoadConfig()
 {
-
+	Config::LoadJSON();
 }
 
 void Server::SaveConfig()
 {
-
+	Config::SaveJSON();
 }
 
 void Server::UpdatePlayersPosition()
@@ -229,7 +264,7 @@ bool Server::ProcessUpdateCheck() {
 			//std::cout << "needs to connect" << std::endl;
 			SocketServer::Connect();
 
-			Mod::AppendLocalChatMessage(0, "Mod", "Checking for updates...");
+			Mod::AppendLocalChatMessage(3, "Mod", "Checking for updates...");
 		}
 
 		if (!SocketServer::m_Connected) {
@@ -266,7 +301,7 @@ bool Server::ProcessUpdateCheck() {
 					auto changelog = data["changelog"].asString();
 
 					if (version.compare(Mod::m_Version) == 0) {
-						Mod::AppendLocalChatMessage(0, "Mod", "Mod started!");
+						Mod::AppendLocalChatMessage(3, "Mod", "Mod started!");
 
 						//m_HasCheckedUpdates = true;
 					}
@@ -329,24 +364,44 @@ Player* Server::GetPlayer(long long clientId)
 
 void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager)
 {
-	if (!HasPlayer(clientId)) {
-		auto username = (monoString*)playerManager->fields.username;
+	auto username = (monoString*)playerManager->fields.username;
 
-		Player* player = new Player(clientId, playerId);
-		player->m_Username = username->toCPPString();
+	bool newPlayer = false;
+	Player* player = NULL;
 
+	if (HasPlayer(clientId))
+	{
+		player = GetPlayer(clientId);
+	}
+	else
+	{
+		player = new Player(clientId);
 		if (player->IsLobbyOwner()) player->m_PermissionGroup = "admin";
-
-		player->m_IsAlive = true;
-		player->m_JustSpawned = true;
-
-		if (playerId == 1) {
-			Server::m_LobbyOwner = player;
-		}
-
 		Server::AddPlayer(player);
+
+		newPlayer = true;
+	}
+
+	player->m_Username = username->toCPPString();
+	player->m_IsAlive = true;
+	player->m_JustSpawned = true;
+	player->m_Id = playerId;
+
+	if (playerId == 1) {
+		Server::m_LobbyOwner = player;
+	}
+
+	if (!player->m_IsOnline)
+	{
+		player->m_IsOnline = true;
 		Server::OnPlayerJoin(player);
 	}
+
+	if (newPlayer)
+	{
+		std::cout << "[Server] New player " << player->GetDisplayNameExtra() << " (" << std::to_string(m_Players.size()) << " in total)" << std::endl;
+	}
+
 }
 
 void Server::RemoveAllPlayers()
@@ -361,7 +416,16 @@ void Server::OnCreateLobby()
 {
 	std::cout << "[Server] Lobby created " << m_LobbyId << std::endl;
 
-	RemoveAllPlayers();
+	for (auto pair : m_Players)
+	{
+		auto player = pair.second;
+
+		player->m_IsOnline = false;
+		player->m_IsAlive = false;
+		player->m_DiedInThisRound = false;
+	}
+
+	//RemoveAllPlayers();
 	Chat::RemoveAllMessages();
 
 	m_HasCheckedUpdates = false;
@@ -372,6 +436,20 @@ void Server::OnCreateLobby()
 void Server::OnPlayerJoin(Player* player)
 {
 	std::cout << "[Server] Player joined: " << player->GetDisplayNameExtra() << std::endl;
+
+	//if (player->IsLobbyOwner()) player->m_PermissionGroup = "admin";
+
+	/*
+	player->m_IsAlive = true;
+	player->m_JustSpawned = true;
+
+	if (playerId == 1) {
+		Server::m_LobbyOwner = player;
+	}
+	*/
+
+	//Server::AddPlayer(player);
+	//Server::OnPlayerJoin(player);
 }
 
 void Server::OnPlayerLeave(Player* player)
@@ -384,11 +462,11 @@ bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 
 	if (Server::HasPlayer(deadClient))
 	{
 		Player* deadPlayer = GetPlayer(deadClient);
-		deadPlayer->SetAlive(false);
-
 		//Server::ChangePlayerIsAliveState(deadPlayer, false);
 
 		if (deadPlayer->m_Godmode) return false;
+
+		deadPlayer->SetAlive(false);
 
 		if (deadClient == damageDoerId)
 		{
@@ -443,12 +521,16 @@ Weapon* Server::GetWeaponById(int weaponId)
 
 std::vector<Player*> Server::FindPlayers(std::string selector)
 {
+	//add check for online
+
 	std::vector<Player*> players;
 
 	std::map<long long, Player*>::iterator it;
 	for (it = m_Players.begin(); it != m_Players.end(); it++)
 	{
 		Player* player = it->second;
+
+		if (!player->m_IsOnline) continue;
 
 		if (selector == "*")
 		{

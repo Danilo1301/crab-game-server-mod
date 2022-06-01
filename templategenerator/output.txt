@@ -1,11 +1,11 @@
-auto HF_ServerSend_RedLight = new HookFunction<uint64_t, bool, float, MethodInfo*>("ServerSend::RedLight");
-void Template_ServerSend_RedLight(uint64_t a, bool b, float c, MethodInfo* method)
+auto HF_ChatBox_AppendMessage = new HookFunction<ChatBox*, uint64_t, String*, String*, MethodInfo*>("ChatBox::AppendMessage");
+void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, String* d, MethodInfo* method)
 {
-	std::cout << "ServerSend::RedLight" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "ChatBox::AppendMessage" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_ServerSend_RedLight->original(a, b, c, method);
+	HF_ChatBox_AppendMessage->original(a, b, c, d, method);
 }	
 	
-Injector::Inject(HF_ServerSend_RedLight, ServerSend_RedLight, &Template_ServerSend_RedLight);
+Injector::Inject(HF_ChatBox_AppendMessage, ChatBox_AppendMessage, &Template_ChatBox_AppendMessage);
 
 

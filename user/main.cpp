@@ -2,10 +2,8 @@
 #include "pch.h"
 
 //#define CPPHTTPLIB_OPENSSL_SUPPORT
-#include <httplib.h>
+//#include <httplib.h>
 //#include "stdafx.h"
-
-
 
 #include "Mod.h"
 
@@ -32,12 +30,23 @@ u10A0u10A8u10A0u10A4u10A8u10A0u109Au10A5u10A7u10A7u109C ServerSend
 u1099u10A5u109Fu10A8u1099u10A4u10A4u109Du109Du10A1u10A0 ServerHandle
 u109Du10A8u10A0u109Bu109Bu10A0u109Cu109Cu10A6u109Au10A7 ClientSend
 
+[01/06 - v2.2-dev]
 Todo:
 
-add superpunch, jumppunch, forcefield
-add punch damage
+add cinfo, pinfo(alias)
+[ok]change perm (multiple perms at once)
+add pperm
+[ok] remove toggleweapon
+[ok] add permissions for weapons
+[ok]save config
+[ok] perm create/remove group
 
-lobby
-detect gamemode (red lights, god mode and etc)
-
+Test:
+[ok] player ids and death in chat
+[ok] perm
+[ok] perm list (page)
+[ok] perm groups
+[ok] permissions for weapons
+[ok] config
+[ok] perm create/remove group
 */

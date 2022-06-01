@@ -29,7 +29,7 @@ public:
 		{
 			for (auto weapon : Server::m_Weapons)
 			{
-				if (!weapon.enabled) continue;
+				if (!message->m_Player->GetPermissionGroup()->HasPermission(toLower(weapon.name))) continue;
 
 				cmds.push_back("!" + toLower(weapon.name));
 			}
@@ -58,7 +58,7 @@ public:
 				if (!command->Check(cmd)) continue;
 				command->PrintSyntaxes();
 
-				Chat::SendServerMessage("showing help for '" + command->m_Cmd + "'");
+				//Chat::SendServerMessage("showing help for '" + command->m_Cmd + "'");
 				return;
 			}
 
@@ -141,11 +141,12 @@ public:
 
 				auto weapon = Server::GetWeaponById(weaponId);
 
-				if (!message->m_Player->GetPermissionGroup()->HasPermission("w.bypass"))
+				if (!message->m_Player->GetPermissionGroup()->HasPermission(toLower(weapon->name)))
 				{
-					if (!weapon->enabled) return;
+					NoPermission();
+					return;
 				}
-
+					
 				Server::GiveWeapon(message->m_Player->m_ClientId, weaponId);
 
 				return;
@@ -156,6 +157,12 @@ public:
 		{
 			if (args[1].isNumber)
 			{
+				if (!message->m_Player->GetPermissionGroup()->HasPermission("w.others"))
+				{
+					NoPermission();
+					return;
+				}
+
 				auto selector = args[0].str;
 				auto weaponId = args[1].AsInt();
 
@@ -193,6 +200,7 @@ public:
 		Command::Command();
 
 		SetCmd("playerinfo");
+		AddAlias("test");
 		AddRequiredPermission("playerinfo");
 	}
 
@@ -214,9 +222,7 @@ public:
 			for (auto player : players)
 			{
 				Chat::SendServerMessage(player->GetDisplayNameExtra());
-				Chat::SendServerMessage("group= " + player->GetPermissionGroup()->m_Name + ", pos= " + formatVector3(player->m_Position));
-			
-				std::cout << "m_DiedInThisRound= " << player->m_DiedInThisRound << ", m_IsAlive= " << player->m_IsAlive << std::endl;
+				Chat::SendServerMessage("group= " + player->GetPermissionGroup()->m_Name + ", pos= " + formatVector3(player->m_Position) + ", alive=" + (player->m_IsAlive ? "true" : "false"));
 			}
 			return;
 		}
@@ -252,8 +258,14 @@ public:
 
 			if (cmd.compare("list") == 0)
 			{
-				if (args.size() == 2)
+				if (args.size() == 2 || args.size() == 3)
 				{
+					int page = 0;
+					if (args.size() == 3)
+					{
+						if (args[2].isNumber) page = args[2].AsInt() - 1;
+					}
+
 					auto groupName = args[1].str;
 
 					if (!PermissionGroups::HasGroup(groupName))
@@ -263,7 +275,13 @@ public:
 					}
 
 					auto group = PermissionGroups::GetGroup(groupName);
-					Chat::SendServerMessage(formatStringVector_1(group->m_Permissions, ", ", 256)[0]);
+					
+					std::vector<std::string> pms;
+					for (auto perm : group->GetPermissions())
+					{
+						pms.push_back(perm);
+					}
+					Chat::SendCommandsPage(pms, page);
 
 					return;
 				}
@@ -274,7 +292,7 @@ public:
 				if (args.size() == 3)
 				{
 					auto groupName = args[1].str;
-					auto perm = args[2].str;
+					auto perms = args[2].SplitStr();
 
 					if (!PermissionGroups::HasGroup(groupName))
 					{
@@ -283,10 +301,14 @@ public:
 					}
 
 					auto group = PermissionGroups::GetGroup(groupName);
-					bool result = group->AddPermission(perm);
 
-					if (result) Chat::SendServerMessage("Permission '" + perm + "' added");
-					else Chat::SendServerMessage("Permission '" + perm + "' already added!");
+					for (auto perm : perms)
+					{
+						bool result = group->AddPermission(perm);
+
+						if (result) Chat::SendServerMessage("Permission '" + perm + "' added");
+						else Chat::SendServerMessage("Permission '" + perm + "' already added!");
+					}
 
 					return;
 				}
@@ -297,7 +319,7 @@ public:
 				if (args.size() == 3)
 				{
 					auto groupName = args[1].str;
-					auto perm = args[2].str;
+					auto perms = args[2].SplitStr();
 
 					if (!PermissionGroups::HasGroup(groupName))
 					{
@@ -306,11 +328,14 @@ public:
 					}
 
 					auto group = PermissionGroups::GetGroup(groupName);
-					bool result = group->RemovePermission(perm);
 
-					if (result) Chat::SendServerMessage("Permission '" + perm + "' removed");
-					else Chat::SendServerMessage("Permission '" + perm + "' already removed!");
+					for (auto perm : perms)
+					{
+						bool result = group->RemovePermission(perm);
 
+						if (result) Chat::SendServerMessage("Permission '" + perm + "' removed");
+						else Chat::SendServerMessage("Permission '" + perm + "' already removed!");
+					}
 					return;
 				}
 			}
@@ -338,9 +363,64 @@ public:
 
 					for (auto player : players)
 					{
+						if (player->IsLobbyOwner()) continue;
+
 						player->m_PermissionGroup = groupName;
 						Chat::SendServerMessage(player->GetDisplayName() + "'s group set to: " + groupName);
 					}
+
+					return;
+				}
+			}
+
+			if (cmd.compare("groups") == 0)
+			{
+				std::vector<std::string> groups;
+
+				for (auto pair : PermissionGroups::m_Groups)
+				{
+					groups.push_back(pair.first + "(" + std::to_string(pair.second->GetPermissions().size()) + " perms)");
+				}
+
+				Chat::SendServerMessage(formatStringVector_1(groups, ", ", 256));
+				return;
+			}
+
+			if (cmd.compare("creategroup") == 0)
+			{
+				if (args.size() == 2)
+				{
+					auto groupName = args[1].str;
+
+					if (PermissionGroups::HasGroup(groupName))
+					{
+						Chat::SendServerMessage("group '" + groupName + "' already exists");
+						return;
+					}
+
+					PermissionGroups::AddGroup(groupName);
+
+					Chat::SendServerMessage("group '" + groupName + "' added!");
+
+					return;
+				}
+			}
+
+			if (cmd.compare("removegroup") == 0)
+			{
+				if (args.size() == 2)
+				{
+					auto groupName = args[1].str;
+
+					if (!PermissionGroups::HasGroup(groupName))
+					{
+						Chat::SendServerMessage("group '" + groupName + "' not found");
+						return;
+					}
+
+					PermissionGroups::RemoveGroup(groupName);
+
+					Chat::SendServerMessage("group '" + groupName + "' removed!");
 
 					return;
 				}
@@ -352,10 +432,13 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("add (group) (perm)");
-		PrintSyntax("del (group) (perm)");
+		PrintSyntax("add (group) (perm1,perm2,...)");
+		PrintSyntax("del (group) (perm1,perm2,...)");
 		PrintSyntax("setgroup (player) (group)");
-		PrintSyntax("list (group)");
+		PrintSyntax("list (group) [page]");
+		PrintSyntax("groups");
+		PrintSyntax("creategroup (name)");
+		PrintSyntax("removegroup (name)");
 	}
 };
 
@@ -474,6 +557,7 @@ public:
 		Command::Command();
 
 		SetCmd("*");
+		ShowOnHelpPage(false);
 	}
 
 	virtual void Execute(Message* message)
@@ -957,6 +1041,7 @@ public:
 	}
 };
 
+/*
 class CommandToggleWeapon : public Command {
 public:
 	CommandToggleWeapon()
@@ -1000,6 +1085,7 @@ public:
 		PrintSyntax("(weaponName)");
 	}
 };
+*/
 
 class CommandDownload : public Command {
 public:
@@ -1493,5 +1579,52 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("(command)");
+	}
+};
+
+
+class CommandConfig : public Command {
+public:
+	CommandConfig()
+	{
+		Command::Command();
+
+		SetCmd("config");
+		AddRequiredPermission("config");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+
+		if (args.size() >= 1)
+		{
+			auto cmd = args[0].str;
+
+			if (cmd.compare("save") == 0)
+			{
+				Server::SaveConfig();
+				Chat::SendServerMessage("config saved");
+				return;
+			}
+
+			if (cmd.compare("path") == 0)
+			{
+				Chat::SendServerMessage("Crab Game folder: C:\\Program Files (x86)\\Steam\\steamapps\\common\\Crab Game");
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("path");
+		PrintSyntax("save");
+		Chat::SendServerMessage("* Saves every 40 seconds");
+		Chat::SendServerMessage("* To load config you must restart game");
 	}
 };

@@ -21,3 +21,9 @@ PermissionGroup* PermissionGroups::GetGroup(std::string name)
 	if (!HasGroup(name)) return GetGroup("default");
 	return m_Groups[name];
 }
+
+void PermissionGroups::RemoveGroup(std::string name)
+{
+	m_Groups.erase(name);
+}
+

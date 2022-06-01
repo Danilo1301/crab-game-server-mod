@@ -11,4 +11,5 @@ public:
 	static bool HasGroup(std::string name);
 	static PermissionGroup* AddGroup(std::string name);
 	static PermissionGroup* GetGroup(std::string name);
+	static void RemoveGroup(std::string name);
 };

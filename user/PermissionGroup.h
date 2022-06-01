@@ -9,6 +9,7 @@ public:
 	std::vector<std::string> m_Permissions;
 
 	bool HasPermission(std::string permission);
+	bool ThisGroupHasPermission(std::string permission);
 	bool AddPermission(std::string permission);
 	bool RemovePermission(std::string permission);
 	std::vector<std::string> GetPermissions();

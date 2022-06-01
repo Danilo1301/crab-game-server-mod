@@ -3,11 +3,11 @@
 
 #include "Server.h"
 #include "PermissionGroups.h"
+#include "Chat.h"
 
-Player::Player(long long clientId, int id)
+Player::Player(long long clientId)
 {
 	m_ClientId = clientId;
-	m_Id = id;
 }
 
 bool Player::IsLobbyOwner()
@@ -22,7 +22,18 @@ std::string Player::GetDisplayNameExtra()
 
 std::string Player::GetDisplayName()
 {
-	return m_Username + "[" + std::to_string(m_Id) + "]";
+	return m_Username + "[#" + std::to_string(m_Id) + "]";
+}
+
+std::string Player::GetChatSuffix()
+{
+	bool showIds = Chat::m_ShowIdAfterName;
+	bool showIsAlive = Chat::m_ShowDeathStatusAfterName;
+
+	std::string strId = "[#" + std::to_string(m_Id) + "]";
+	std::string strAlive = m_IsAlive ? "" : "(dead)";
+
+	return (showIds ? strId : "") + ((showIds && showIsAlive) ? " " : "") + (showIsAlive ? strAlive : "");
 }
 
 PermissionGroup* Player::GetPermissionGroup()

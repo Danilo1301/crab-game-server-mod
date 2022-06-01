@@ -1,8 +1,21 @@
 #include "pch-il2cpp.h"
 #include "PermissionGroup.h"
 
+#include "PermissionGroups.h"
+
 bool PermissionGroup::HasPermission(std::string permission) {
 	auto permissions = GetPermissions();
+
+	for (auto p : permissions)
+	{
+		if (p.compare("*") == 0) return true;
+		if (p.compare(permission) == 0) return true;
+	}
+	return false;
+}
+
+bool PermissionGroup::ThisGroupHasPermission(std::string permission) {
+	auto permissions = m_Permissions;
 
 	for (auto p : permissions)
 	{
@@ -28,5 +41,28 @@ bool PermissionGroup::RemovePermission(std::string permission) {
 
 std::vector<std::string> PermissionGroup::GetPermissions()
 {
-	return m_Permissions;
+	std::vector<std::string> allPerms;
+
+	for (auto p : m_Permissions)
+	{
+		allPerms.push_back(p);
+	}
+
+	if (m_InheritsFromGroup.size() > 0)
+	{
+		if (PermissionGroups::HasGroup(m_InheritsFromGroup))
+		{
+			auto perms = PermissionGroups::GetGroup(m_InheritsFromGroup)->m_Permissions;
+
+			for (auto p : perms)
+			{
+				if (!ThisGroupHasPermission(p))
+				{
+					allPerms.push_back(p);
+				}
+			}
+		}
+	}
+
+	return allPerms;
 }

@@ -6,6 +6,7 @@ class CommandArg {
 public:
 	bool isNumber = false;
 	bool isString = true;
+	bool canSplit = false;
 	std::string str;
 
 	CommandArg(std::string s)
@@ -17,6 +18,8 @@ public:
 			isNumber = true;
 			isString = false;
 		}
+
+		canSplit = str.find(",") != -1;
 	}
 
 	int AsInt() {
@@ -33,6 +36,17 @@ public:
 
 	long long AsULong() {
 		return std::stoll(str);
+	}
+
+	std::vector<std::string> SplitStr()
+	{
+		if (!canSplit)
+		{
+			std::vector<std::string> vec;
+			vec.push_back(str);
+			return vec;
+		}
+		return split_1(str, ',');
 	}
 
 	static std::vector<CommandArg> GetArgs(std::string s)

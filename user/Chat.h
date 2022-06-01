@@ -13,6 +13,9 @@ public:
 	static bool m_ShowHelpMessage;
 	static float m_BroadCastHelpTime;
 
+	static bool m_ShowDeathStatusAfterName;
+	static bool m_ShowIdAfterName;
+
 	static void Init();
 	static void Update(float dt);
 
