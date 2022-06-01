@@ -1,5 +1,5 @@
 {
-    "version": "2.1",
+    "version": "2.2",
     "required": false,
-    "changelog": "Added !lobbyonly; fixed perms"
+    "changelog": "Config now saves locally; changed !perm"
 }
