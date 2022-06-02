@@ -51,56 +51,55 @@ void Server::Init()
 
 	Chat::Init();
 
-	auto permissionGroup = PermissionGroups::AddGroup("default");
-	permissionGroup->AddPermission("help");
-	permissionGroup->AddPermission("ahelp");
-	permissionGroup->AddPermission("w");
-	//permissionGroup->AddPermission("w.others");
-	permissionGroup->AddPermission("playerinfo");
-	//permissionGroup->AddPermission("perm");
-	permissionGroup->AddPermission("tp");
-	//permissionGroup->AddPermission("tp.others");
-	//permissionGroup->AddPermission("god");
-	permissionGroup->AddPermission("kill");
-	//permissionGroup->AddPermission("kill.others");
-	permissionGroup->AddPermission("respawn");
-	//permissionGroup->AddPermission("respawn.others");
-	//permissionGroup->AddPermission("time");
-	permissionGroup->AddPermission("autorespawn");
-	//permissionGroup->AddPermission("bc");
-	permissionGroup->AddPermission("hover");
-	permissionGroup->AddPermission("jumppunch");
-	permissionGroup->AddPermission("superpunch");
-	permissionGroup->AddPermission("forcefield");
-	permissionGroup->AddPermission("snowball2");
-
-	for (auto weapon : m_Weapons)
+	//oops
+	if (!PermissionGroups::HasGroup("default"))
 	{
-		permissionGroup->AddPermission(toLower(weapon.name));
+		auto permissionGroup = PermissionGroups::AddGroup("default");
+		permissionGroup->AddPermission("help");
+		permissionGroup->AddPermission("ahelp");
+		permissionGroup->AddPermission("w");
+		permissionGroup->AddPermission("playerinfo");
+		permissionGroup->AddPermission("tp");
+		permissionGroup->AddPermission("kill");
+		permissionGroup->AddPermission("respawn");
+		permissionGroup->AddPermission("autorespawn");
+		permissionGroup->AddPermission("hover");
+		permissionGroup->AddPermission("jumppunch");
+		permissionGroup->AddPermission("superpunch");
+		permissionGroup->AddPermission("forcefield");
+		permissionGroup->AddPermission("snowball2");
+
+		for (auto weapon : m_Weapons)
+		{
+			permissionGroup->AddPermission(toLower(weapon.name));
+		}
 	}
 
-	auto moderatorPermissionGroup = PermissionGroups::AddGroup("moderator");
-	moderatorPermissionGroup->m_InheritsFromGroup = "default";
+	if (!PermissionGroups::HasGroup("moderator"))
+	{
+		auto moderatorPermissionGroup = PermissionGroups::AddGroup("moderator");
+		moderatorPermissionGroup->m_InheritsFromGroup = "default";
 
-	moderatorPermissionGroup->AddPermission("kick");
-	moderatorPermissionGroup->AddPermission("ban");
-	moderatorPermissionGroup->AddPermission("bc");
-	moderatorPermissionGroup->AddPermission("w.others");
-	moderatorPermissionGroup->AddPermission("respawn.others");
-	moderatorPermissionGroup->AddPermission("tp.others");
-	moderatorPermissionGroup->AddPermission("god");
-	moderatorPermissionGroup->AddPermission("god.others");
-	moderatorPermissionGroup->AddPermission("time");
-	moderatorPermissionGroup->AddPermission("r");
-	moderatorPermissionGroup->AddPermission("mute");
-	moderatorPermissionGroup->AddPermission("lobbyonly");
-	moderatorPermissionGroup->AddPermission("start");
+		moderatorPermissionGroup->AddPermission("kick");
+		moderatorPermissionGroup->AddPermission("ban");
+		moderatorPermissionGroup->AddPermission("bc");
+		moderatorPermissionGroup->AddPermission("w.others");
+		moderatorPermissionGroup->AddPermission("respawn.others");
+		moderatorPermissionGroup->AddPermission("tp.others");
+		moderatorPermissionGroup->AddPermission("god");
+		moderatorPermissionGroup->AddPermission("god.others");
+		moderatorPermissionGroup->AddPermission("time");
+		moderatorPermissionGroup->AddPermission("r");
+		moderatorPermissionGroup->AddPermission("mute");
+		moderatorPermissionGroup->AddPermission("lobbyonly");
+		moderatorPermissionGroup->AddPermission("start");
+		moderatorPermissionGroup->AddPermission("fly");
 
-	auto adminPermissionGroup = PermissionGroups::AddGroup("admin");
-	adminPermissionGroup->AddPermission("*");
+		auto adminPermissionGroup = PermissionGroups::AddGroup("admin");
+		adminPermissionGroup->AddPermission("*");
+	}
 
 	SaveConfig();
-
 }
 
 void Server::Update(float dt)
@@ -117,9 +116,28 @@ void Server::Update(float dt)
 
 	if (!ProcessUpdateCheck()) return;
 
+	UpdatePlayersPosition();
+
 	for (auto pair : m_Players)
 	{
 		auto player = pair.second;
+
+		if (player->m_FlyEnabled)
+		{
+			if (player->m_FlyVelocity > 0)
+			{
+				player->m_FlyVelocity -= 1.0f * dt;
+				
+				if (player->m_FlyVelocity < 0) player->m_FlyVelocity = 0;
+			}
+
+			Vector3 newPos = player->m_Position;
+
+			if (player->m_FlyVelocity > 0)
+				newPos = newPos + (player->m_LookDir) * (player->m_FlyVelocity * player->m_FlySpeed) * dt;
+			
+			Mod::SetPlayerPosition(player->m_ClientId, newPos);
+		}
 
 		if (player->m_RespawnTime > 0)
 		{
@@ -181,7 +199,7 @@ void Server::Update(float dt)
 		*/
 	}
 
-	UpdatePlayersPosition();
+	
 
 	if (m_AutoStartEnabled)
 	{
@@ -229,6 +247,12 @@ void Server::SaveConfig()
 
 void Server::UpdatePlayersPosition()
 {
+	for (auto pair : m_Players)
+	{
+		auto player = pair.second;
+		player->m_PlayerManager = NULL;
+	}
+
 	auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
 	auto activePlayers = gameManager->fields.activePlayers;
 
@@ -239,9 +263,62 @@ void Server::UpdatePlayersPosition()
 
 		if (!playerManager) continue;
 
+		auto player = GetPlayer(key);
+		player->m_PlayerManager = playerManager;
+
 		auto transform = Component_get_transform((Component*)playerManager, nullptr);
 		auto pos = Transform_get_position(transform, nullptr);
 
+		if(!player->m_FlyEnabled)
+			player->m_Position = pos;
+
+		//auto headTransform = playerManager->fields.head;
+		//auto headPos = Transform_get_position(headTransform, nullptr);
+		//std::cout << "headPos" << headPos.toString() << std::endl;
+
+		//auto euler = Transform_get_eulerAngles(headTransform, nullptr);
+		//std::cout << "head euler" << euler.toString() << std::endl;
+
+		//std::cout << "head forward" << player->m_FlyDir.toString() << std::endl;
+
+		auto quat = PlayerManager_GetRotation(playerManager, NULL); //thank god (or thank Dani) this function exists lol
+		auto forward = Quaternion_op_Multiply_1(quat, Vector3_get_forward(NULL), NULL);
+		player->m_LookDir = Vector3_Normalize(forward, NULL);
+
+		//Quaternion__Boxed* myQuat = (Quaternion__Boxed*)il2cpp_object_new((Il2CppClass*)*Quaternion__TypeInfo);
+		//Quaternion__ctor(myQuat, quat.x, quat.y, quat.z, quat.w, NULL);
+
+
+		/*
+		auto quatEuler = Quaternion_get_eulerAngles(myQuat, NULL);
+
+		auto pitch = -quatEuler.y * (M_PI / 180.0);
+		auto yaw = quatEuler.x * (M_PI / 180.0);
+
+		Vector3 direction(
+			std::cos(yaw) * std::cos(pitch),
+			std::sin(yaw) * std::cos(pitch),
+			std::sin(pitch)
+		);
+
+		std::cout << "quatEuler" << quatEuler.toString() << std::endl;
+		std::cout << "direction" << direction.toString() << std::endl;
+		*/
+
+		//Quaternion_
+
+		//auto quatEuler = Quaternion_get_eulerAngles(quat, NULL);
+
+		//boxed
+
+		//targetRot * Vector3.forward;
+
+		//Quaternion_iden
+
+
+		//player->m_FlyDir = euler;
+
+		// 
 		//auto headTransform = playerManager->fields.head;
 		//auto headPos = Transform_get_position(headTransform, nullptr);
 
@@ -250,7 +327,6 @@ void Server::UpdatePlayersPosition()
 		//std::cout << "head pos" << headPos.x << ", " << headPos.y << ", " << headPos.z << std::endl;
 
 		
-		GetPlayer(key)->m_Position = pos;
 
 			//std::cout << key << " transform pos" << Mod::FormatVector(GetPlayer(key)->m_Position) << std::endl;
 		

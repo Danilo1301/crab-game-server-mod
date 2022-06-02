@@ -33,17 +33,6 @@ using namespace app;
 
 static uintptr_t m_AssemblyBase = 0;
 
-/*
-struct Vector3 {
-	float x = 0;
-	float y = 0;
-	float z = 0;
-
-	Vector3(float x, float y, float z) : x(x), y(y), z(z) {};
-	~Vector3() {};
-};
-*/
-
 typedef struct _monoString {
 	void* klass;
 	void* monitor;

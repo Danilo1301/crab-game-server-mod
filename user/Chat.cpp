@@ -48,6 +48,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandMultiSnowball());
 	RegisterCommand((Command*)new CommandLobbyOnly());
 	RegisterCommand((Command*)new CommandConfig());
+	RegisterCommand((Command*)new CommandFly());
 }
 
 void Chat::Update(float dt)

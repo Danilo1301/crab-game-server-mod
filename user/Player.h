@@ -15,7 +15,6 @@ public:
 
 	Vector3 m_Position = Vector3({ 0, 0, 0 });
 
-
 	bool m_Godmode = false;
 	bool m_IsAlive = false;
 	bool m_JustSpawned = false;
@@ -35,6 +34,14 @@ public:
 	bool m_SuperPunchEnabled = false;
 	bool m_ForceFieldEnabled = false;
 	bool m_MultiSnowballEnabled = false;
+
+	Vector3 m_LookDir = Vector3(0, 0, 1);
+
+	bool m_FlyEnabled = false;
+	float m_FlyVelocity = 0;
+	float m_FlySpeed = 15.0f;
+
+	PlayerManager* m_PlayerManager = NULL;
 
 	//bool m_ParticleEnabled = true;
 	//float m_ParticleTime = 0;

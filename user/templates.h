@@ -212,10 +212,17 @@ void Template_ServerSend_PlayerDamage(uint64_t a, uint64_t b, int32_t c, Vector3
 auto HF_ServerSend_PunchPlayer = new HookFunction<uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PunchPlayer");
 void Template_ServerSend_PunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method)
 {
-	//std::cout << "ServerSend::PunchPlayer" << " playerId=" << playerId << ", " << " punchedPlayerId=" << punchedPlayerId << ", " << " dir=" << formatVector3_full(dir) << ", " << std::endl;
+	std::cout << "ServerSend::PunchPlayer" << " playerId=" << playerId << ", " << " punchedPlayerId=" << punchedPlayerId << ", " << " dir=" << formatVector3_full(dir) << std::endl;
+
+
 
 	if (Server::HasPlayer(playerId)) {
 		auto player = Server::GetPlayer(playerId);
+
+		if (player->m_FlyEnabled)
+		{
+			player->m_FlyVelocity = 1.0f;
+		}
 
 		if (player->m_JumpPunchEnabled) {
 			HF_ServerSend_PunchPlayer->original(player->m_ClientId, player->m_ClientId, Vector3({ 0, 3, 0 }), NULL);

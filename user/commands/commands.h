@@ -1628,3 +1628,50 @@ public:
 		Chat::SendServerMessage("* To load config you must restart game");
 	}
 };
+
+
+class CommandFly : public Command {
+public:
+	CommandFly()
+	{
+		Command::Command();
+
+		SetCmd("fly");
+		AddRequiredPermission("fly");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto player = message->m_Player;
+
+		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+
+		if (args.size() == 1)
+		{
+			if (args[0].isNumber)
+			{
+				auto speed = args[0].AsFloat();
+
+				player->m_FlySpeed = speed;
+
+				char str[256];
+				sprintf_s(str, "fly speed set to %.2f", speed);
+				Chat::SendServerMessage(str);
+				return;
+			}
+		}
+
+		player->m_FlyEnabled = !player->m_FlyEnabled;
+
+		if (player->m_FlyEnabled) Chat::SendServerMessage("on");
+		else Chat::SendServerMessage("off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+		PrintSyntax("(speed)");
+	}
+};

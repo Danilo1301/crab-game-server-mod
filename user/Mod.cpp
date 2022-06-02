@@ -132,6 +132,11 @@ void Mod::RespawnPlayer(long long clientId, Vector3 position)
 
 void Mod::SetPlayerPosition(long long clientId, Vector3 position)
 {
+	if (Server::HasPlayer(clientId))
+	{
+		Server::GetPlayer(clientId)->m_Position = position;
+	}
+
 	ServerSend_RespawnPlayer(clientId, position, NULL);
 }
 
