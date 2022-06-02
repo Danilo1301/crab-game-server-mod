@@ -114,9 +114,13 @@ void Config::SaveJSON()
 
 void Config::LoadJSON()
 {
-	std::cout << "[Config] Loading config" << std::endl;
+	if (!Exists("server/"))
+	{
+		std::cout << "[Config] Config not found" << std::endl;
+		return;
+	}
 
-	if (!Exists("server/")) return;
+	std::cout << "[Config] Loading config" << std::endl;
 
 	//
 

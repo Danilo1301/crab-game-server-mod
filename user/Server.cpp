@@ -94,7 +94,10 @@ void Server::Init()
 		moderatorPermissionGroup->AddPermission("lobbyonly");
 		moderatorPermissionGroup->AddPermission("start");
 		moderatorPermissionGroup->AddPermission("fly");
+	}
 
+	if (!PermissionGroups::HasGroup("admin"))
+	{
 		auto adminPermissionGroup = PermissionGroups::AddGroup("admin");
 		adminPermissionGroup->AddPermission("*");
 	}
@@ -452,7 +455,6 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 	else
 	{
 		player = new Player(clientId);
-		if (player->IsLobbyOwner()) player->m_PermissionGroup = "admin";
 		Server::AddPlayer(player);
 
 		newPlayer = true;
@@ -465,6 +467,9 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 
 	if (playerId == 1) {
 		Server::m_LobbyOwner = player;
+		player->m_PermissionGroup = "admin";
+
+		std::cout << "perm fix" << std::endl;
 	}
 
 	if (!player->m_IsOnline)
