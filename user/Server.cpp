@@ -463,7 +463,6 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 	player->m_Id = playerId;
 	player->m_Username = username->toCPPString();
 	player->m_IsAlive = false;
-	player->m_DiedInThisRound = false;
 	player->m_Spectating = false;
 
 	if (playerId == 1) {
@@ -551,8 +550,6 @@ bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 
 
 		if (HasPlayer(deadClient)) {
 			auto player = GetPlayer(deadClient);
-
-			player->m_DiedInThisRound = true;
 
 			if (player->m_AutoRespawnEnabled) {
 				player->m_RespawnTime = 1.6f;

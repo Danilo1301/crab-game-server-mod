@@ -941,9 +941,10 @@ public:
 
 		if (args.size() == 0)
 		{
-			if (!message->m_Player->m_IsAlive && !message->m_Player->m_DiedInThisRound)
+			if (message->m_Player->m_Spectating)
 			{
-				Chat::SendServerMessage("error");
+				Chat::SendServerMessage("you will respawn next round");
+				message->m_Player->m_IsAlive = true;
 				return;
 			}
 			

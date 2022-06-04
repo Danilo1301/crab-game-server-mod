@@ -22,7 +22,7 @@ public:
 
 	bool m_FirstRoundSpawn = false;
 
-	bool m_DiedInThisRound = false;
+	//bool m_DiedInThisRound = false;
 
 	bool m_HideMessages = false;
 	float m_MuteTime = 0.0f;

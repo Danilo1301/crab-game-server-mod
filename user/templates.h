@@ -191,7 +191,6 @@ void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 	for (auto pair : Server::m_Players)
 	{
 		auto player = pair.second;
-		player->m_DiedInThisRound = false;
 		player->m_FirstRoundSpawn = true;
 
 		std::cout << "Player set to alive" << std::endl;

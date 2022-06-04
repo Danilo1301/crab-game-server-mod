@@ -341,16 +341,14 @@ void Mod::KickPlayer(long long clientId)
 
 void Mod::RespawnPlayer(long long clientId, Vector3 position)
 {
+	if (Server::m_RedLightState) return;
+
 	if (Server::HasPlayer(clientId))
 	{
 		auto player = Server::GetPlayer(clientId);
 
-		if (player->m_DiedInThisRound)
-		{
-			player->m_IsAlive = true;
-		}
+		player->m_IsAlive = true;
 
-		if (Server::m_RedLightState) return;
 	}
 
 	//std::cout << "[Mod] RespawnPlayer clientId=" << clientId << formatVector3_full(position) << std::endl;
