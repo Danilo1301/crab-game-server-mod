@@ -473,6 +473,8 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 	if (!player->m_IsOnline)
 	{
 		player->m_IsOnline = true;
+		player->m_ByteArray = NULL;
+
 		Server::OnPlayerJoin(player);
 	}
 
@@ -541,12 +543,11 @@ bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 
 				Player* killerPlayer = GetPlayer(damageDoerId);
 
 				Chat::SendServerMessage("" + killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
-			}
-			else {
+
+			} else {
 				Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
 			}
 		}
-
 
 		if (HasPlayer(deadClient)) {
 			auto player = GetPlayer(deadClient);

@@ -4,6 +4,9 @@
 #include "Server.h"
 #include "Chat.h"
 
+#include "templates_GameServer.h"
+#include "templates_GameManager.h"
+
 auto HF_ChatBox_Update = new HookFunction<void, ChatBox*, MethodInfo*>("ChatBox::Update");
 void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
 {
@@ -131,25 +134,8 @@ void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedCl
 			if (!player->m_IsAlive)
 			{
 				player->m_IsAlive = true;
-
-				std::cout << "[Player] " << player->GetDisplayNameExtra() << " spawned" << std::endl;
-
-				//dm
-				//std::cout << "[Player] Giving pistol to " << player->GetDisplayNameExtra() << std::endl;
-				//Mod::ForceGiveItem(player->m_ClientId, 1, Server::m_UniqueObjectId++);
-				//u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_ForceGiveWeapon(player->m_ClientId, 1, Server::m_UniqueObjectId++, NULL);
-				//
-
-				if (player->m_FirstRoundSpawn)
-				{
-					player->m_FirstRoundSpawn = false;
-
-					std::cout << "[Player] " << player->GetDisplayNameExtra() << " first round spawn" << std::endl;
-
-					player->m_RespawnPosition = spawnPos;
-				}
+				player->OnSpawn(spawnPos);
 			}
-
 		}
 	}
 	
@@ -164,15 +150,22 @@ void Template_ServerSend_SpectatorSpawn(uint64_t a, MethodInfo* method)
 	{
 		auto player = Server::GetPlayer(a);
 
-		if (player->m_IsAlive && player->m_ByteArray)
+		if (player->m_IsOnline)
 		{
-			u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_PlayerSpawnRequest(a, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
-			return;
+			if (player->m_IsAlive && player->m_ByteArray)
+			{
+				GameServer_PlayerSpawnRequest(a, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
+				return;
+			}
+
+			player->m_Spectating = true;
 		}
 
-		player->m_Spectating = true;
 	}
 
+	
+	//spawn player on join
+	//GameServer_PlayerSpawnRequest(a, false, Server::m_LobbyOwner->m_ByteArray, Server::m_UniqueObjectId++, NULL);
 
 	HF_ServerSend_SpectatorSpawn->original(a, method);
 }
@@ -185,21 +178,18 @@ void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 
 	Server::m_IsAtLobby = b == 0;
 	Server::m_TimeUntilAutoStart = 0;
-
+	
 	Chat::RemoveAllMessages();
 
 	for (auto pair : Server::m_Players)
 	{
 		auto player = pair.second;
 		player->m_FirstRoundSpawn = true;
-
-		std::cout << "Player set to alive" << std::endl;
-		player->m_IsAlive = true;
 	}
 
-	HF_ServerSend_LoadMap_1->original(a, b, method);
+	GameServer_ForceRemoveAllWeapons(NULL);
 
-	u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_ForceRemoveAllWeapons(NULL);
+	HF_ServerSend_LoadMap_1->original(a, b, method);
 }
 
 
@@ -316,13 +306,6 @@ auto HF_ServerSend_FreezePlayers = new HookFunction<void, bool, MethodInfo*>("Se
 void Template_ServerSend_FreezePlayers(bool a, MethodInfo* method)
 {
 	std::cout << "ServerSend::FreezePlayers" << " a=" << a << ", " << std::endl;
-
-	//dm
-	if (!a)
-	{
-		u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_ForceRemoveAllWeapons(NULL);
-		u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_ForceGiveAllWeapon(1, NULL);
-	}
 
 	HF_ServerSend_FreezePlayers->original(a, method);
 }

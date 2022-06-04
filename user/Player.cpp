@@ -40,3 +40,23 @@ PermissionGroup* Player::GetPermissionGroup()
 {
 	return PermissionGroups::GetGroup(m_PermissionGroup);
 }
+
+void Player::OnSpawn(Vector3 spawnPos)
+{
+	std::cout << "[Player] " << GetDisplayNameExtra() << " spawned" << std::endl;
+
+	//dm
+	//std::cout << "[Player] Giving pistol to " << player->GetDisplayNameExtra() << std::endl;
+	//Mod::ForceGiveItem(player->m_ClientId, 1, Server::m_UniqueObjectId++);
+	//u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_ForceGiveWeapon(player->m_ClientId, 1, Server::m_UniqueObjectId++, NULL);
+	//
+
+	if (m_FirstRoundSpawn)
+	{
+		m_FirstRoundSpawn = false;
+
+		std::cout << "[Player] " << GetDisplayNameExtra() << " first round spawn" << std::endl;
+
+		m_RespawnPosition = spawnPos;
+	}
+}

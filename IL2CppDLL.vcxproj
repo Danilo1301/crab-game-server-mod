@@ -84,6 +84,7 @@
     <ClInclude Include="user\SocketServer.h" />
     <ClInclude Include="user\templates.h" />
     <ClInclude Include="user\templates_GameManager.h" />
+    <ClInclude Include="user\templates_GameServer.h" />
     <ClInclude Include="user\templates_test.h" />
   </ItemGroup>
   <ItemGroup>

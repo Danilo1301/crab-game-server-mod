@@ -49,6 +49,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandLobbyOnly());
 	RegisterCommand((Command*)new CommandConfig());
 	RegisterCommand((Command*)new CommandFly());
+	//RegisterCommand((Command*)new CommandDeathMatch());
 }
 
 void Chat::Update(float dt)

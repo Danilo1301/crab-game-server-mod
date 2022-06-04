@@ -27,8 +27,7 @@ public:
 	bool m_HideMessages = false;
 	float m_MuteTime = 0.0f;
 
-
-	bool m_AutoRespawnEnabled = true; //dm
+	bool m_AutoRespawnEnabled = false;
 	float m_RespawnTime = 0;
 	Vector3 m_RespawnPosition = Vector3({ 0, 0, 0 });
 
@@ -61,4 +60,6 @@ public:
 	std::string GetDisplayName();
 	std::string GetChatSuffix();
 	PermissionGroup* GetPermissionGroup();
+
+	void OnSpawn(Vector3 spawnPos);
 };

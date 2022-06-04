@@ -150,6 +150,9 @@
     <ClInclude Include="user\templates_GameManager.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="user\templates_GameServer.h">
+      <Filter>user</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appdata">
