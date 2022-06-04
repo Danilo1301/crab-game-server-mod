@@ -1586,6 +1586,8 @@ public:
 	{
 		Command::Execute(message);
 
+		//test
+
 		auto args = CommandArg::GetArgs(message->m_CmdArgs);
 
 		if (args.size() == 1)
