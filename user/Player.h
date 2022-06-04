@@ -16,13 +16,16 @@ public:
 	Vector3 m_Position = Vector3({ 0, 0, 0 });
 
 	bool m_Godmode = false;
+
+	bool m_CanSpawn = true;
 	bool m_IsAlive = false;
-	bool m_JustSpawned = false;
+	bool m_FirstRoundSpawn = true;
+
 	bool m_DiedInThisRound = false;
 	bool m_HideMessages = false;
 	float m_MuteTime = 0.0f;
 
-	bool m_AutoRespawnEnabled = false;
+	bool m_AutoRespawnEnabled = true;
 	float m_RespawnTime = 0;
 	Vector3 m_RespawnPosition = Vector3({ 0, 0, 0 });
 
@@ -42,6 +45,8 @@ public:
 	float m_FlySpeed = 15.0f;
 
 	PlayerManager* m_PlayerManager = NULL;
+	Byte__Array* m_ByteArray = NULL;
+	int m_SpawnNumberId = 0;
 
 	//bool m_ParticleEnabled = true;
 	//float m_ParticleTime = 0;
@@ -53,5 +58,8 @@ public:
 	std::string GetDisplayName();
 	std::string GetChatSuffix();
 	PermissionGroup* GetPermissionGroup();
-	void SetAlive(bool alive);
+	//void SetAlive(bool alive);
+
+	void OnSpawn(Vector3 spawnPos);
+	void OnDie();
 };

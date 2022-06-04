@@ -144,6 +144,12 @@
     <ClInclude Include="user\CommandArgs.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="user\templates_test.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates_GameManager.h">
+      <Filter>user</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appdata">

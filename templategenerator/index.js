@@ -2,26 +2,31 @@ const fs = require("fs");
 
 let inputFile = fs.readFileSync("input.txt", "utf-8");
 
+let alreadyAddedFile = fs.readFileSync("alreadyadded.txt", "utf-8");
+
 function convertInputText(input)
 {
-    
     while(input.includes(" *"))
     {
         input = input.replace(" *", "*");
     }
-
-    console.log(input);
-
     const parts = input.split(" ");
 
     for(const p of parts)
     {
-        console.log("PART: " + p);
+        //console.log("PART: " + p);
+    }
+
+    const fn = parts[2].replace(",", "");
+    
+    if(alreadyAddedFile.includes(fn + ","))
+    {
+        return ["", ""];
     }
 
     const returnType = parts[1].replace(",", "");
     const className = parts[2].split("_")[0];
-    const methotName = parts[2].split("_")[1].replace(",", "");
+    const methotName = fn.slice(fn.indexOf("_") + 1);
 
     console.log("RETURN: " + returnType);
     console.log("CLASS: " + className);
@@ -81,20 +86,29 @@ function convertInputText(input)
     output += `	HF_${className}_${methotName}->original(${originStr});\n`
     output += `}`;
     output += `	\n`;
-    output += `	\n`;
-    output += `Injector::Inject(HF_${className}_${methotName}, ${className}_${methotName}, &Template_${className}_${methotName});\n`;
+
+    let output2 = "";
+    output2 += `Injector::Inject(HF_${className}_${methotName}, ${className}_${methotName}, &Template_${className}_${methotName});\n`;
 
     console.log("\noutput:\n" + output);
 
-    return output;
+    return [output, output2];
 }
 
 let outputFile = '';
 
+console.log(inputFile)
+
 const parts = inputFile.split("\n");
+
 for (const p of parts) {
-    outputFile += convertInputText(p);
-    outputFile += `\n\n`;
+    outputFile += convertInputText(p)[0];
+}
+
+outputFile += `\n`;
+
+for (const p of parts) {
+    outputFile += convertInputText(p)[1];
 }
 
 fs.writeFileSync("output.txt", outputFile);

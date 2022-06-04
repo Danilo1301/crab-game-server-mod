@@ -113,6 +113,8 @@ void Server::Update(float dt)
 		SaveConfig();
 	}
 
+	if (!(*LobbyManager__TypeInfo)->static_fields->Instance) return;
+
 	if (m_Players.size() == 0) return;
 
 	if (m_LobbyOwner->m_ClientId != Mod::GetMySteamId()) return;
@@ -256,7 +258,7 @@ void Server::UpdatePlayersPosition()
 		player->m_PlayerManager = NULL;
 	}
 
-	auto gameManager = (*u10A1u10A0u10A1u109Eu10A5u10A1u109Du10A8u10A5u1099u109A__TypeInfo)->static_fields->Instance;
+	auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
 	auto activePlayers = gameManager->fields.activePlayers;
 
 	for (size_t i = 0; i < activePlayers->fields.count; i++)
@@ -461,15 +463,17 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 	}
 
 	player->m_Username = username->toCPPString();
-	player->m_IsAlive = true;
-	player->m_JustSpawned = true;
+
 	player->m_Id = playerId;
 
-	if (playerId == 1) {
+	if (playerId == 1)
+	{
 		Server::m_LobbyOwner = player;
-		player->m_PermissionGroup = "admin";
+	}
 
-		std::cout << "perm fix" << std::endl;
+	if (player->IsLobbyOwner())
+	{
+		player->m_PermissionGroup = "admin";
 	}
 
 	if (!player->m_IsOnline)
@@ -517,20 +521,6 @@ void Server::OnCreateLobby()
 void Server::OnPlayerJoin(Player* player)
 {
 	std::cout << "[Server] Player joined: " << player->GetDisplayNameExtra() << std::endl;
-
-	//if (player->IsLobbyOwner()) player->m_PermissionGroup = "admin";
-
-	/*
-	player->m_IsAlive = true;
-	player->m_JustSpawned = true;
-
-	if (playerId == 1) {
-		Server::m_LobbyOwner = player;
-	}
-	*/
-
-	//Server::AddPlayer(player);
-	//Server::OnPlayerJoin(player);
 }
 
 void Server::OnPlayerLeave(Player* player)
@@ -586,6 +576,14 @@ void Server::GiveWeapon(long long toClient, int weaponId)
 
 	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);
 }
+
+void Server::GiveWeaponHand(long long toClient, int weaponId)
+{
+	if (!GetPlayer(toClient)->m_IsAlive) return;
+
+	Mod::ForceGiveItem(toClient, weaponId, m_UniqueObjectId++);
+}
+
 
 Weapon* Server::GetWeaponById(int weaponId)
 {

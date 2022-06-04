@@ -1,10 +1,23 @@
 #pragma once
 
+#include "templates_test.h"
+#include "templates_GameManager.h"
+
 #include "Injector.h"
 #include "Server.h"
 #include "Chat.h"
 
-auto HF_ChatBox_Update = new HookFunction<ChatBox*, MethodInfo*>("ChatBox::Update");
+auto HF_GameMode_GetGoodBadPlayers = new HookFunction<ValueTuple_2_Int32_Int32_, GameMode*, MethodInfo*>("GameMode::GetGoodBadPlayers");
+ValueTuple_2_Int32_Int32_ Template_GameMode_GetGoodBadPlayers(GameMode* a, MethodInfo* method)
+{
+	ValueTuple_2_Int32_Int32_ ret = HF_GameMode_GetGoodBadPlayers->original(a, method);
+
+	std::cout << "GetGoodBadPlayers: " << ret.Item1 << " : " << ret.Item2 << " << " << std::endl;
+
+	return ret;
+}
+
+auto HF_ChatBox_Update = new HookFunction<void, ChatBox*, MethodInfo*>("ChatBox::Update");
 void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
 {
 	//std::cout << "ChatBox::Update" << " a=" << a << ", " << std::endl;
@@ -15,7 +28,17 @@ void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
 	HF_ChatBox_Update->original(a, method);
 }
 
-auto HF_ChatBox_AppendMessage = new HookFunction<ChatBox*, uint64_t, String*, String*, MethodInfo*>("ChatBox::AppendMessage");
+/*
+auto HF_GameManager_Update = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::Update");
+void Template_GameManager_Update(GameManager* a, MethodInfo* method)
+{
+	//std::cout << "GameManager::Update" << " a=" << a << ", " << std::endl;
+
+	HF_GameManager_Update->original(a, method);
+}
+*/
+
+auto HF_ChatBox_AppendMessage = new HookFunction<void, ChatBox*, uint64_t, String*, String*, MethodInfo*>("ChatBox::AppendMessage");
 void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, String* d, MethodInfo* method)
 {
 	//std::cout << "ChatBox::AppendMessage" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
@@ -25,7 +48,7 @@ void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, String* d
 	HF_ChatBox_AppendMessage->original(a, b, c, d, method);
 }
 
-auto HF_LobbyManager_AddPlayerToLobby = new HookFunction<LobbyManager*, CSteamID, MethodInfo*>("LobbyManager::AddPlayerToLobby");
+auto HF_LobbyManager_AddPlayerToLobby = new HookFunction<void, LobbyManager*, CSteamID, MethodInfo*>("LobbyManager::AddPlayerToLobby");
 void Template_LobbyManager_AddPlayerToLobby(LobbyManager* a, CSteamID b, MethodInfo* method)
 {
 
@@ -34,7 +57,7 @@ void Template_LobbyManager_AddPlayerToLobby(LobbyManager* a, CSteamID b, MethodI
 	uintptr_t ptr2 = (uintptr_t)a + 0x18;
 	long long lobbyId = *(long long*)ptr2;
 
-	//std::cout << "LobbyManager::AddPlayerToLobby" << " a=" << a << ", " << " b=" << b.m_SteamID << ", lobbyId=" << lobbyId << ", testId=" << testId << std::endl;
+	std::cout << "LobbyManager::AddPlayerToLobby" << " a=" << a << ", " << " b=" << b.m_SteamID << ", lobbyId=" << lobbyId << ", testId=" << testId << std::endl;
 
 	if (Server::m_LobbyId != lobbyId) {
 		Server::OnCreateLobby();
@@ -45,10 +68,10 @@ void Template_LobbyManager_AddPlayerToLobby(LobbyManager* a, CSteamID b, MethodI
 	HF_LobbyManager_AddPlayerToLobby->original(a, b, method);
 }
 
-auto HF_LobbyManager_RemovePlayerFromLobby = new HookFunction<LobbyManager*, CSteamID, MethodInfo*>("LobbyManager::RemovePlayerFromLobby");
+auto HF_LobbyManager_RemovePlayerFromLobby = new HookFunction<void, LobbyManager*, CSteamID, MethodInfo*>("LobbyManager::RemovePlayerFromLobby");
 void Template_LobbyManager_RemovePlayerFromLobby(LobbyManager* a, CSteamID b, MethodInfo* method)
 {
-	//std::cout << "LobbyManager::RemovePlayerFromLobby" << " a=" << a << ", " << " b=" << b.m_SteamID << ", " << std::endl;
+	std::cout << "LobbyManager::RemovePlayerFromLobby" << " a=" << a << ", " << " b=" << b.m_SteamID << ", " << std::endl;
 
 	if (Server::HasPlayer(b.m_SteamID)) {
 		auto player = Server::GetPlayer(b.m_SteamID);
@@ -61,7 +84,7 @@ void Template_LobbyManager_RemovePlayerFromLobby(LobbyManager* a, CSteamID b, Me
 	HF_LobbyManager_RemovePlayerFromLobby->original(a, b, method);
 }
 
-auto HF_LobbyManager_BanPlayer = new HookFunction<LobbyManager*, uint64_t, MethodInfo*>("LobbyManager::BanPlayer");
+auto HF_LobbyManager_BanPlayer = new HookFunction<void, LobbyManager*, uint64_t, MethodInfo*>("LobbyManager::BanPlayer");
 void Template_LobbyManager_BanPlayer(LobbyManager* a, uint64_t b, MethodInfo* method)
 {
 	//std::cout << "LobbyManager::BanPlayer" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
@@ -69,17 +92,17 @@ void Template_LobbyManager_BanPlayer(LobbyManager* a, uint64_t b, MethodInfo* me
 	//HF_LobbyManager_BanPlayer->original(a, b, method);
 }
 
-auto HF_PlayerManager_SetPlayer = new HookFunction<PlayerManager*, uint64_t, int32_t, bool, MethodInfo*>("PlayerManager::SetPlayer");
+auto HF_PlayerManager_SetPlayer = new HookFunction<void, PlayerManager*, uint64_t, int32_t, bool, MethodInfo*>("PlayerManager::SetPlayer");
 void Template_PlayerManager_SetPlayer(PlayerManager* playerManager, uint64_t clientId, int32_t playerId, bool d, MethodInfo* method)
 {
-	//std::cout << "PlayerManager::SetPlayer" << " playerManager=" << playerManager << ", " << " clientId=" << clientId << ", " << " playerId=" << playerId << ", " << " d=" << d << ", " << std::endl;
+	std::cout << "PlayerManager::SetPlayer" << " playerManager=" << playerManager << ", " << " clientId=" << clientId << ", " << " playerId=" << playerId << ", " << " d=" << d << ", " << std::endl;
 
 	HF_PlayerManager_SetPlayer->original(playerManager, clientId, playerId, d, method);
 
 	Server::TryAddPlayer(clientId, playerId, playerManager);
 }
 
-auto HF_ServerSend_SendChatMessage = new HookFunction<uint64_t, monoString*, MethodInfo*>("ServerSend::SendChatMessage");
+auto HF_ServerSend_SendChatMessage = new HookFunction<void, uint64_t, monoString*, MethodInfo*>("ServerSend::SendChatMessage");
 void Template_ServerSend_SendChatMessage(uint64_t clientId, monoString* message, MethodInfo* method)
 {
 	//std::cout << "ServerSend::SendChatMessage" << " a=" << clientId << ", " << " b=" << message->toCPPString() << ", " << std::endl;
@@ -100,25 +123,64 @@ void Template_ServerSend_SendChatMessage(uint64_t clientId, monoString* message,
 	HF_ServerSend_SendChatMessage->original(clientId, message, method);
 }
 
-auto HF_ServerSend_PlayerDied = new HookFunction<uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PlayerDied");
+auto HF_ServerSend_PlayerDied = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PlayerDied");
 void Template_ServerSend_PlayerDied(uint64_t deadClient, uint64_t damageDoerId, Vector3 damageDir, MethodInfo* method)
 {
-	//std::cout << "ServerSend::PlayerDied" << " deadClient=" << deadClient << ", " << " damageDoerId=" << damageDoerId << ", " << " damageDir=" << formatVector3_full(damageDir) << ", " << std::endl;
+	std::cout << "ServerSend::PlayerDied" << " deadClient=" << deadClient << ", " << " damageDoerId=" << damageDoerId << ", " << " damageDir=" << formatVector3_full(damageDir) << ", " << std::endl;
 
 	if (!Server::OnPlayerDied(deadClient, damageDoerId, damageDir)) return;
 
 	HF_ServerSend_PlayerDied->original(deadClient, damageDoerId, damageDir, method);
 }
 
+auto HF_ServerSend_SpectatorSpawn = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::SpectatorSpawn");
+void Template_ServerSend_SpectatorSpawn(uint64_t a, MethodInfo* method)
+{
+	std::cout << "ServerSend::SpectatorSpawn " << " a=" << a << ", " << std::endl;
 
-auto HF_ServerSend_GameSpawnPlayer = new HookFunction<uint64_t, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("ServerSend::GameSpawnPlayer");
+	if (Server::HasPlayer(a))
+	{
+		auto player = Server::GetPlayer(a);
+
+		if (player->m_IsAlive)
+		{
+			if (player->m_ByteArray)
+			{
+				u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3_PlayerSpawnRequest(a, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
+
+				/*
+				for (auto p : Server::m_Players)
+				{
+					ServerSend_GameSpawnPlayer(p.first, a, Vector3(0, 0, 0), 0, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
+				}
+				*/
+
+				return;
+			}
+		}
+	}
+
+	HF_ServerSend_SpectatorSpawn->original(a, method);
+}
+
+auto HF_ServerSend_GameSpawnPlayer = new HookFunction<void, uint64_t, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("ServerSend::GameSpawnPlayer");
 void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedClientId, Vector3 spawnPos, int32_t d, bool streamerMode, Byte__Array* byteArray, int32_t numberId, MethodInfo* method)
 {
-	//std::cout << "ServerSend::GameSpawnPlayer" << " toClientId=" << toClientId << ", " << " spawnedClientId=" << spawnedClientId << ", " << " spawnPos=" << formatVector3_full(spawnPos) << ", " << " d=" << d << ", " << " streamerMode=" << streamerMode << ", " << " byteArray=" << byteArray << ", " << " numberId=" << numberId << ", " << std::endl;
+	std::cout << "ServerSend::GameSpawnPlayer" << " toClientId=" << toClientId << ", " << " spawnedClientId=" << spawnedClientId << ", " << " spawnPos=" << formatVector3_full(spawnPos) << ", " << " d=" << d << ", " << " streamerMode=" << streamerMode << ", " << " byteArray=" << byteArray << ", " << " numberId=" << numberId << ", " << std::endl;
+
+	HF_ServerSend_GameSpawnPlayer->original(toClientId, spawnedClientId, spawnPos, d, streamerMode, byteArray, numberId, method);
 
 	if (Server::HasPlayer(spawnedClientId))
 	{
 		Player* player = Server::GetPlayer(spawnedClientId);
+
+		if (!player->m_IsAlive)
+		{
+			std::cout << "[Player] " << player->GetDisplayNameExtra() << " spawned" << std::endl;
+
+			Server::GiveWeaponHand(spawnedClientId, 1);
+		}
+
 		player->SetAlive(true);
 
 		if (player->m_JustSpawned)
@@ -126,13 +188,14 @@ void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedCl
 			player->m_RespawnPosition = spawnPos;
 		}
 		
+		player->m_ByteArray = byteArray;
+		player->m_SpawnNumberId = numberId;
 	}
 
-	HF_ServerSend_GameSpawnPlayer->original(toClientId, spawnedClientId, spawnPos, d, streamerMode, byteArray, numberId, method);
 }
 
 
-auto HF_ServerSend_LoadMap_1 = new HookFunction<int32_t, int32_t, MethodInfo*>("ServerSend::LoadMap_1");
+auto HF_ServerSend_LoadMap_1 = new HookFunction<void, int32_t, int32_t, MethodInfo*>("ServerSend::LoadMap_1");
 void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 {
 	std::cout << "[Mod] Load map " << a << ", mode=" << b << std::endl;
@@ -147,26 +210,29 @@ void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 		auto player = pair.second;
 		player->m_DiedInThisRound = false;
 		player->m_JustSpawned = false;
-		player->m_IsAlive = false;
+		//player->m_IsAlive = false;
+
+		std::cout << "set player alive" << std::endl;
+		player->m_IsAlive = true;
 	}
 
 	HF_ServerSend_LoadMap_1->original(a, b, method);
 }
 
 
-auto HF_ServerHandle_PlayerDied = new HookFunction<uint64_t, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("ServerHandle::PlayerDied");
+auto HF_ServerHandle_PlayerDied = new HookFunction<void, uint64_t, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("ServerHandle::PlayerDied");
 void Template_ServerHandle_PlayerDied(uint64_t a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	//std::cout << "ServerHandle::PlayerDied" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
+	std::cout << "ServerHandle::PlayerDied" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
 
 	HF_ServerHandle_PlayerDied->original(a, b, method);
 }
 
 
-auto HF_ServerSend_UseItemAll = new HookFunction<uint64_t, int32_t, Vector3, int32_t, MethodInfo*>("ServerSend::UseItemAll");
+auto HF_ServerSend_UseItemAll = new HookFunction<void, uint64_t, int32_t, Vector3, int32_t, MethodInfo*>("ServerSend::UseItemAll");
 void Template_ServerSend_UseItemAll(uint64_t a, int32_t b, Vector3 c, int32_t d, MethodInfo* method)
 {
-	//std::cout << "ServerSend::UseItemAll" << " a=" << a << ", " << " b=" << b << ", " << " c=" << formatVector3_full(c) << ", " << " d=" << d << ", " << std::endl;
+	std::cout << "ServerSend::UseItemAll" << " a=" << a << ", " << " b=" << b << ", " << " c=" << formatVector3_full(c) << ", " << " d=" << d << ", " << std::endl;
 
 	if (!Server::m_CanUseItem)
 	{
@@ -187,10 +253,10 @@ void Template_ServerSend_UseItemAll(uint64_t a, int32_t b, Vector3 c, int32_t d,
 	}
 }
 
-auto HF_ServerSend_UseItem = new HookFunction<uint64_t, int32_t, Vector3, MethodInfo*>("ServerSend::UseItem");
+auto HF_ServerSend_UseItem = new HookFunction<void, uint64_t, int32_t, Vector3, MethodInfo*>("ServerSend::UseItem");
 void Template_ServerSend_UseItem(uint64_t a, int32_t b, Vector3 c, MethodInfo* method)
 {
-	//std::cout << "ServerSend::UseItem" << " a=" << a << ", " << " b=" << b << ", " << " c=" << formatVector3_full(c) << ", " << std::endl;
+	std::cout << "ServerSend::UseItem" << " a=" << a << ", " << " b=" << b << ", " << " c=" << formatVector3_full(c) << ", " << std::endl;
 
 	if (!Server::m_CanUseItem)
 	{
@@ -201,15 +267,15 @@ void Template_ServerSend_UseItem(uint64_t a, int32_t b, Vector3 c, MethodInfo* m
 	HF_ServerSend_UseItem->original(a, b, c, method);
 }
 
-auto HF_ServerSend_PlayerDamage = new HookFunction<uint64_t, uint64_t, int32_t, Vector3, int32_t, MethodInfo*>("ServerSend::PlayerDamage");
+auto HF_ServerSend_PlayerDamage = new HookFunction<void, uint64_t, uint64_t, int32_t, Vector3, int32_t, MethodInfo*>("ServerSend::PlayerDamage");
 void Template_ServerSend_PlayerDamage(uint64_t a, uint64_t b, int32_t c, Vector3 d, int32_t e, MethodInfo* method)
 {
-	//std::cout << "ServerSend::PlayerDamage" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << formatVector3_full(d) << ", " << " e=" << e << ", " << std::endl;
+	std::cout << "ServerSend::PlayerDamage" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << formatVector3_full(d) << ", " << " e=" << e << ", " << std::endl;
 
 	HF_ServerSend_PlayerDamage->original(a, b, c, d, e, method);
 }
 
-auto HF_ServerSend_PunchPlayer = new HookFunction<uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PunchPlayer");
+auto HF_ServerSend_PunchPlayer = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("ServerSend::PunchPlayer");
 void Template_ServerSend_PunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method)
 {
 	std::cout << "ServerSend::PunchPlayer" << " playerId=" << playerId << ", " << " punchedPlayerId=" << punchedPlayerId << ", " << " dir=" << formatVector3_full(dir) << std::endl;
@@ -253,13 +319,12 @@ void Template_ServerSend_PunchPlayer(uint64_t playerId, uint64_t punchedPlayerId
 	ServerSend_PlayerDamage(playerId, punchedPlayerId, 0, Vector3({ -dir.x, -dir.y, -dir.z }), punchDamageId, NULL);
 }
 
-auto HF_ServerSend_RedLight = new HookFunction<uint64_t, bool, float, MethodInfo*>("ServerSend::RedLight");
+auto HF_ServerSend_RedLight = new HookFunction<void, uint64_t, bool, float, MethodInfo*>("ServerSend::RedLight");
 void Template_ServerSend_RedLight(uint64_t a, bool b, float c, MethodInfo* method)
 {
-	//std::cout << "ServerSend::RedLight" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
+	std::cout << "ServerSend::RedLight" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
 
 	Server::m_RedLightState = b;
 
 	HF_ServerSend_RedLight->original(a, b, c, method);
 }
-

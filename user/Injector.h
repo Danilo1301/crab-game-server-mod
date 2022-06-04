@@ -2,10 +2,10 @@
 
 #include "pch.h"
 
-template<class... Args>
+template<class Ret, class... Args>
 class HookFunction {
 public:
-	typedef void(__stdcall* T)(Args...);
+	typedef Ret(__stdcall* T)(Args...);
 
 	std::string name;
 	T original = nullptr;

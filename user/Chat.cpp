@@ -153,7 +153,27 @@ void Chat::ProcessMessage(Message* message)
 
 		for (auto command : m_Commands) {
 			if (command->Check("*")) {
-				command->Execute(message);
+
+				try
+				{
+					command->Execute(message);
+				}
+				catch (const std::runtime_error& re)
+				{
+					std::string errstr = re.what();
+					SendServerMessage("runtime Error: " + errstr);
+				}
+				catch (const std::exception& ex)
+				{
+					std::string errstr = ex.what();
+					SendServerMessage("error: " + errstr);
+
+				}
+				catch (...)
+				{
+					SendServerMessage("error");
+				}
+
 				continue;
 			}
 

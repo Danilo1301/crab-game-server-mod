@@ -41,14 +41,20 @@ PermissionGroup* Player::GetPermissionGroup()
 	return PermissionGroups::GetGroup(m_PermissionGroup);
 }
 
-void Player::SetAlive(bool alive)
+void Player::OnSpawn(Vector3 spawnPos)
 {
-	if (!m_JustSpawned)
+	if (m_FirstRoundSpawn)
 	{
-		m_JustSpawned = true;
 
-		std::cout << "[Player] " << GetDisplayNameExtra() << " just spawned" << std::endl;
 	}
 
-	m_IsAlive = alive;
+	m_FirstRoundSpawn = false;
+	m_IsAlive = true;
+}
+
+void Player::OnDie()
+{
+	m_CanSpawn = false;
+
+	m_IsAlive = false;
 }

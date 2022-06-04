@@ -83,6 +83,8 @@
     <ClInclude Include="user\Server.h" />
     <ClInclude Include="user\SocketServer.h" />
     <ClInclude Include="user\templates.h" />
+    <ClInclude Include="user\templates_GameManager.h" />
+    <ClInclude Include="user\templates_test.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl" />

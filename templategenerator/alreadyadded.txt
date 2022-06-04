@@ -1,0 +1,16 @@
+Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
+Injector::Inject(HF_ChatBox_AppendMessage, ChatBox_AppendMessage, &Template_ChatBox_AppendMessage);
+Injector::Inject(HF_LobbyManager_AddPlayerToLobby, LobbyManager_AddPlayerToLobby, &Template_LobbyManager_AddPlayerToLobby);
+Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
+Injector::Inject(HF_LobbyManager_BanPlayer, LobbyManager_BanPlayer, &Template_LobbyManager_BanPlayer);
+Injector::Inject(HF_PlayerManager_SetPlayer, PlayerManager_SetPlayer, &Template_PlayerManager_SetPlayer);
+Injector::Inject(HF_ServerSend_SendChatMessage, ServerSend_SendChatMessage, &Template_ServerSend_SendChatMessage);
+Injector::Inject(HF_ServerSend_PlayerDied, ServerSend_PlayerDied, &Template_ServerSend_PlayerDied);
+Injector::Inject(HF_ServerSend_GameSpawnPlayer, ServerSend_GameSpawnPlayer, &Template_ServerSend_GameSpawnPlayer);
+Injector::Inject(HF_ServerSend_LoadMap_1, ServerSend_LoadMap_1, &Template_ServerSend_LoadMap_1);
+Injector::Inject(HF_ServerHandle_PlayerDied, ServerHandle_PlayerDied, &Template_ServerHandle_PlayerDied);
+Injector::Inject(HF_ServerSend_UseItemAll, ServerSend_UseItemAll, &Template_ServerSend_UseItemAll);
+Injector::Inject(HF_ServerSend_UseItem, ServerSend_UseItem, &Template_ServerSend_UseItem);
+Injector::Inject(HF_ServerSend_PlayerDamage, ServerSend_PlayerDamage, &Template_ServerSend_PlayerDamage);
+Injector::Inject(HF_ServerSend_PunchPlayer, ServerSend_PunchPlayer, &Template_ServerSend_PunchPlayer);
+Injector::Inject(HF_ServerSend_RedLight, ServerSend_RedLight, &Template_ServerSend_RedLight);

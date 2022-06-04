@@ -575,6 +575,41 @@ public:
 			//ServerSend_UseItem(message->m_Player->m_ClientId, 0, Vector3({ 0, 0, 1 }), NULL);
 			return;
 		}
+
+		if (cmd.compare("players") == 0)
+		{
+			auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
+
+			Chat::SendServerMessage("Active:");
+
+			auto activePlayers = gameManager->fields.activePlayers;
+			for (size_t i = 0; i < activePlayers->fields.count; i++)
+			{
+				auto key = activePlayers->fields.entries->vector[i].key;
+				auto playerManager = activePlayers->fields.entries->vector[i].value;
+
+				Chat::SendServerMessage("#" + std::to_string(playerManager->fields.playerNumber));
+			}
+
+			Chat::SendServerMessage("Spec:");
+
+			auto spectators = gameManager->fields.spectators;
+			for (size_t i = 0; i < spectators->fields.count; i++)
+			{
+				auto key = spectators->fields.entries->vector[i].key;
+				auto playerManager = spectators->fields.entries->vector[i].value;
+
+				Chat::SendServerMessage("#" + std::to_string(playerManager->fields.playerNumber));
+			}
+		}
+
+		if (cmd.compare("clearspec") == 0)
+		{
+			
+
+
+
+		}
 	}
 
 	virtual void PrintSyntaxes()
