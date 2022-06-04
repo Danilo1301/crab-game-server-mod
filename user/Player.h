@@ -17,15 +17,18 @@ public:
 
 	bool m_Godmode = false;
 
-	bool m_CanSpawn = true;
 	bool m_IsAlive = false;
-	bool m_FirstRoundSpawn = true;
+	bool m_Spectating = false;
+
+	bool m_FirstRoundSpawn = false;
 
 	bool m_DiedInThisRound = false;
+
 	bool m_HideMessages = false;
 	float m_MuteTime = 0.0f;
 
-	bool m_AutoRespawnEnabled = true;
+
+	bool m_AutoRespawnEnabled = true; //dm
 	float m_RespawnTime = 0;
 	Vector3 m_RespawnPosition = Vector3({ 0, 0, 0 });
 
@@ -58,8 +61,4 @@ public:
 	std::string GetDisplayName();
 	std::string GetChatSuffix();
 	PermissionGroup* GetPermissionGroup();
-	//void SetAlive(bool alive);
-
-	void OnSpawn(Vector3 spawnPos);
-	void OnDie();
 };

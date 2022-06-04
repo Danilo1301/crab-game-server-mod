@@ -113,8 +113,6 @@ void Server::Update(float dt)
 		SaveConfig();
 	}
 
-	if (!(*LobbyManager__TypeInfo)->static_fields->Instance) return;
-
 	if (m_Players.size() == 0) return;
 
 	if (m_LobbyOwner->m_ClientId != Mod::GetMySteamId()) return;
@@ -132,7 +130,7 @@ void Server::Update(float dt)
 			if (player->m_FlyVelocity > 0)
 			{
 				player->m_FlyVelocity -= 1.0f * dt;
-				
+
 				if (player->m_FlyVelocity < 0) player->m_FlyVelocity = 0;
 			}
 
@@ -140,7 +138,7 @@ void Server::Update(float dt)
 
 			if (player->m_FlyVelocity > 0)
 				newPos = newPos + (player->m_LookDir) * (player->m_FlyVelocity * player->m_FlySpeed) * dt;
-			
+
 			Mod::SetPlayerPosition(player->m_ClientId, newPos);
 		}
 
@@ -172,16 +170,16 @@ void Server::Update(float dt)
 						std::sin(player->m_HoveringAngle) * distance,
 						0,
 						std::cos(player->m_HoveringAngle) * distance
-					});
+						});
 
 					Mod::SetPlayerPosition(player->m_ClientId, Vector3({
 						lDirection.x + toHoverPlayer->m_Position.x,
 						lDirection.y + toHoverPlayer->m_Position.y + height,
 						lDirection.z + toHoverPlayer->m_Position.z
-					}));
+						}));
 				}
 			}
-			
+
 		}
 
 
@@ -204,7 +202,7 @@ void Server::Update(float dt)
 		*/
 	}
 
-	
+
 
 	if (m_AutoStartEnabled)
 	{
@@ -274,7 +272,7 @@ void Server::UpdatePlayersPosition()
 		auto transform = Component_get_transform((Component*)playerManager, nullptr);
 		auto pos = Transform_get_position(transform, nullptr);
 
-		if(!player->m_FlyEnabled)
+		if (!player->m_FlyEnabled)
 			player->m_Position = pos;
 
 		//auto headTransform = playerManager->fields.head;
@@ -331,10 +329,10 @@ void Server::UpdatePlayersPosition()
 		//std::cout << key << " transform pos" << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 		//std::cout << "head pos" << headPos.x << ", " << headPos.y << ", " << headPos.z << std::endl;
 
-		
+
 
 			//std::cout << key << " transform pos" << Mod::FormatVector(GetPlayer(key)->m_Position) << std::endl;
-		
+
 	}
 }
 
@@ -462,17 +460,14 @@ void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playe
 		newPlayer = true;
 	}
 
-	player->m_Username = username->toCPPString();
-
 	player->m_Id = playerId;
+	player->m_Username = username->toCPPString();
+	player->m_IsAlive = false;
+	player->m_DiedInThisRound = false;
+	player->m_Spectating = false;
 
-	if (playerId == 1)
-	{
+	if (playerId == 1) {
 		Server::m_LobbyOwner = player;
-	}
-
-	if (player->IsLobbyOwner())
-	{
 		player->m_PermissionGroup = "admin";
 	}
 
@@ -507,10 +502,8 @@ void Server::OnCreateLobby()
 
 		player->m_IsOnline = false;
 		player->m_IsAlive = false;
-		player->m_DiedInThisRound = false;
 	}
 
-	//RemoveAllPlayers();
 	Chat::RemoveAllMessages();
 
 	m_HasCheckedUpdates = false;
@@ -537,7 +530,7 @@ bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 
 
 		if (deadPlayer->m_Godmode) return false;
 
-		deadPlayer->SetAlive(false);
+		deadPlayer->m_IsAlive = false;
 
 		if (deadClient == damageDoerId)
 		{
@@ -560,7 +553,7 @@ bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 
 			auto player = GetPlayer(deadClient);
 
 			player->m_DiedInThisRound = true;
-			
+
 			if (player->m_AutoRespawnEnabled) {
 				player->m_RespawnTime = 1.6f;
 			}
@@ -576,14 +569,6 @@ void Server::GiveWeapon(long long toClient, int weaponId)
 
 	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);
 }
-
-void Server::GiveWeaponHand(long long toClient, int weaponId)
-{
-	if (!GetPlayer(toClient)->m_IsAlive) return;
-
-	Mod::ForceGiveItem(toClient, weaponId, m_UniqueObjectId++);
-}
-
 
 Weapon* Server::GetWeaponById(int weaponId)
 {
@@ -632,7 +617,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 			players.push_back(player);
 			continue;
 		}
-		
+
 		if (selector.rfind("#", 0) == 0)
 		{
 			std::string idstr;

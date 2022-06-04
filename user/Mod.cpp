@@ -16,7 +16,6 @@ void Mod::Init()
 	Injector::Init();
 	
 	Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
-	//Injector::Inject(HF_GameManager_Update, GameManager_Update, &Template_GameManager_Update);
 	Injector::Inject(HF_ChatBox_AppendMessage, ChatBox_AppendMessage, &Template_ChatBox_AppendMessage);
 	Injector::Inject(HF_LobbyManager_AddPlayerToLobby, LobbyManager_AddPlayerToLobby, &Template_LobbyManager_AddPlayerToLobby);
 	Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
@@ -24,8 +23,8 @@ void Mod::Init()
 	Injector::Inject(HF_PlayerManager_SetPlayer, PlayerManager_SetPlayer, &Template_PlayerManager_SetPlayer);
 	Injector::Inject(HF_ServerSend_SendChatMessage, ServerSend_SendChatMessage, &Template_ServerSend_SendChatMessage);
 	Injector::Inject(HF_ServerSend_PlayerDied, ServerSend_PlayerDied, &Template_ServerSend_PlayerDied);
-	Injector::Inject(HF_ServerSend_SpectatorSpawn, ServerSend_SpectatorSpawn, &Template_ServerSend_SpectatorSpawn);
 	Injector::Inject(HF_ServerSend_GameSpawnPlayer, ServerSend_GameSpawnPlayer, &Template_ServerSend_GameSpawnPlayer);
+	Injector::Inject(HF_ServerSend_SpectatorSpawn, ServerSend_SpectatorSpawn, &Template_ServerSend_SpectatorSpawn);
 	Injector::Inject(HF_ServerSend_LoadMap_1, ServerSend_LoadMap_1, &Template_ServerSend_LoadMap_1);
 	Injector::Inject(HF_ServerHandle_PlayerDied, ServerHandle_PlayerDied, &Template_ServerHandle_PlayerDied);
 	Injector::Inject(HF_ServerSend_UseItemAll, ServerSend_UseItemAll, &Template_ServerSend_UseItemAll);
@@ -33,8 +32,10 @@ void Mod::Init()
 	Injector::Inject(HF_ServerSend_PlayerDamage, ServerSend_PlayerDamage, &Template_ServerSend_PlayerDamage);
 	Injector::Inject(HF_ServerSend_PunchPlayer, ServerSend_PunchPlayer, &Template_ServerSend_PunchPlayer);
 	Injector::Inject(HF_ServerSend_RedLight, ServerSend_RedLight, &Template_ServerSend_RedLight);
+	Injector::Inject(HF_ServerSend_FreezePlayers, ServerSend_FreezePlayers, &Template_ServerSend_FreezePlayers);
 
 	//
+	//Injector::Inject(HF_GameManager_Update, GameManager_Update, &Template_GameManager_Update);
 
 	/*
 	Injector::Inject(HF_ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1, ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1, &Template_ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1);
@@ -119,7 +120,7 @@ void Mod::Init()
 	Injector::Inject(HF_ServerSend_u109Eu109Du109Eu109Eu109Fu109Du10A5u10A5u1099u1099u10A3, ServerSend_u109Eu109Du109Eu109Eu109Fu109Du10A5u10A5u1099u1099u10A3, &Template_ServerSend_u109Eu109Du109Eu109Eu109Fu109Du10A5u10A5u1099u1099u10A3);
 	Injector::Inject(HF_ServerSend_SendStrobe, ServerSend_SendStrobe, &Template_ServerSend_SendStrobe);
 	Injector::Inject(HF_ServerSend_u10A3u10A8u109Fu109Eu10A1u109Bu109Au1099u10A7u10A7u10A2, ServerSend_u10A3u10A8u109Fu109Eu10A1u109Bu109Au1099u10A7u10A7u10A2, &Template_ServerSend_u10A3u10A8u109Fu109Eu10A1u109Bu109Au1099u10A7u10A7u10A2);
-	Injector::Inject(HF_ServerSend_FreezePlayers, ServerSend_FreezePlayers, &Template_ServerSend_FreezePlayers);
+	
 	Injector::Inject(HF_ServerSend_u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4, ServerSend_u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4, &Template_ServerSend_u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4);
 	Injector::Inject(HF_ServerSend_SpectatorSpawn_1, ServerSend_SpectatorSpawn_1, &Template_ServerSend_SpectatorSpawn_1);
 	Injector::Inject(HF_ServerSend_u10A5u10A5u10A5u10A0u10A6u10A3u10A5u109Fu109Du109Au10A7, ServerSend_u10A5u10A5u10A5u10A0u10A6u10A3u10A5u109Fu109Du109Au10A7, &Template_ServerSend_u10A5u10A5u10A5u10A0u10A6u10A3u10A5u109Fu109Du109Au10A7);
@@ -161,7 +162,7 @@ void Mod::Init()
 	Injector::Inject(HF_ServerSend_SyncClock, ServerSend_SyncClock, &Template_ServerSend_SyncClock);
 	Injector::Inject(HF_ServerSend_SendTeams, ServerSend_SendTeams, &Template_ServerSend_SendTeams);
 	*/
-	Injector::Inject(HF_ServerSend_GameModeAlert, ServerSend_GameModeAlert, &Template_ServerSend_GameModeAlert);
+	//Injector::Inject(HF_ServerSend_GameModeAlert, ServerSend_GameModeAlert, &Template_ServerSend_GameModeAlert);
 	/*
 	Injector::Inject(HF_ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4, ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4, &Template_ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4);
 	Injector::Inject(HF_ServerSend_LoadingSendIntoGame, ServerSend_LoadingSendIntoGame, &Template_ServerSend_LoadingSendIntoGame);

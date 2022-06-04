@@ -57,7 +57,6 @@ public:
 	static bool OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 damageDir);
 
 	static void GiveWeapon(long long toClient, int weaponId);
-	static void GiveWeaponHand(long long toClient, int weaponId);
 	static Weapon* GetWeaponById(int weaponId);
 
 	static std::vector<Player*> FindPlayers(std::string selector);

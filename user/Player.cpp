@@ -40,21 +40,3 @@ PermissionGroup* Player::GetPermissionGroup()
 {
 	return PermissionGroups::GetGroup(m_PermissionGroup);
 }
-
-void Player::OnSpawn(Vector3 spawnPos)
-{
-	if (m_FirstRoundSpawn)
-	{
-
-	}
-
-	m_FirstRoundSpawn = false;
-	m_IsAlive = true;
-}
-
-void Player::OnDie()
-{
-	m_CanSpawn = false;
-
-	m_IsAlive = false;
-}

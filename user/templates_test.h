@@ -696,13 +696,7 @@ void Template_ServerSend_u10A3u10A8u109Fu109Eu10A1u109Bu109Au1099u10A7u10A7u10A2
 
 	HF_ServerSend_u10A3u10A8u109Fu109Eu10A1u109Bu109Au1099u10A7u10A7u10A2->original(a, b, c, method);
 }
-auto HF_ServerSend_FreezePlayers = new HookFunction<void, bool, MethodInfo*>("ServerSend::FreezePlayers");
-void Template_ServerSend_FreezePlayers(bool a, MethodInfo* method)
-{
-	std::cout << "ServerSend::FreezePlayers" << " a=" << a << ", " << std::endl;
 
-	HF_ServerSend_FreezePlayers->original(a, method);
-}
 auto HF_ServerSend_u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4 = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4");
 void Template_ServerSend_u10A3u10A1u10A3u10A5u109Cu1099u10A2u109Eu10A7u109Bu10A4(uint64_t a, MethodInfo* method)
 {
