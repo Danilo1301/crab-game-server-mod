@@ -78,13 +78,16 @@ function convertInputText(input)
     console.log("\ncoutStr:\n" + coutStr);
 
     let output = "";
-    output += `auto HF_${className}_${methotName} = new HookFunction<${defArgsStr}>("${className}::${methotName}");\n`;
-    output += `void Template_${className}_${methotName}(${fnArgsStr})\n`;
+    output += `auto HF_${className}_${methotName} = new HookFunction<${returnType}, ${defArgsStr}>("${className}::${methotName}");\n`;
+    output += `${returnType} Template_${className}_${methotName}(${fnArgsStr})\n`;
     output += `{\n`;
     output += `	std::cout << "${className}::${methotName}" << ${coutStr} << std::endl;\n`;
     output += `	\n`;
-    output += `	HF_${className}_${methotName}->original(${originStr});\n`
-    output += `}`;
+    output += `	${(returnType != "void") ? "auto ret = " : ""}HF_${className}_${methotName}->original(${originStr});\n`
+
+    if(returnType != "void") output += `\n	return ret;\n`;
+
+    output += `}\n`;
     output += `	\n`;
 
     let output2 = "";
