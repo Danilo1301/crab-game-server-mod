@@ -39,7 +39,6 @@ public:
 			std::cout << prefix << "Failed to create hook" << std::endl;
 			return false;
 		}
-		//std::cout << prefix << "Hook created" << std::endl;
 
 		if (MH_EnableHook(fn->_target) != MH_OK) {
 			std::cout << prefix << "Enable hook failed" << std::endl;
@@ -57,7 +56,7 @@ public:
 			return;
 		}
 
-		m_AssemblyBase = (uintptr_t)GetModuleHandleW(L"GameAssembly.dll");
+		//m_AssemblyBase = (uintptr_t)GetModuleHandleW(L"GameAssembly.dll");
 
 		std::cout << "[Injector] MinHook initialized" << std::endl;
 	}

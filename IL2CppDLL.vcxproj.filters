@@ -105,9 +105,6 @@
     <ClInclude Include="user\pch.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates.h">
-      <Filter>user</Filter>
-    </ClInclude>
     <ClInclude Include="include\json_tool.h">
       <Filter>json</Filter>
     </ClInclude>
@@ -144,14 +141,20 @@
     <ClInclude Include="user\CommandArgs.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_test.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\templates\templates.h">
+      <Filter>user\templates</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_GameManager.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\templates\templates_LobbyManager.h">
+      <Filter>user\templates</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_GameServer.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\templates\templates_ServerSend.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_GameServer.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_GameManager.h">
+      <Filter>user\templates</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -169,6 +172,9 @@
     </Filter>
     <Filter Include="user\commands">
       <UniqueIdentifier>{3be61f82-2391-47a1-bee6-0621d6331a59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="user\templates">
+      <UniqueIdentifier>{0cee2c59-040d-45d4-a548-ffe5d330b93c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

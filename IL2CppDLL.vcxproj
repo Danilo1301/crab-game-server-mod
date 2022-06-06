@@ -82,10 +82,11 @@
     <ClInclude Include="user\Player.h" />
     <ClInclude Include="user\Server.h" />
     <ClInclude Include="user\SocketServer.h" />
-    <ClInclude Include="user\templates.h" />
-    <ClInclude Include="user\templates_GameManager.h" />
-    <ClInclude Include="user\templates_GameServer.h" />
-    <ClInclude Include="user\templates_test.h" />
+    <ClInclude Include="user\templates\templates.h" />
+    <ClInclude Include="user\templates\templates_GameManager.h" />
+    <ClInclude Include="user\templates\templates_GameServer.h" />
+    <ClInclude Include="user\templates\templates_LobbyManager.h" />
+    <ClInclude Include="user\templates\templates_ServerSend.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl" />

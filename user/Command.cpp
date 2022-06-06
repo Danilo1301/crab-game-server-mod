@@ -48,24 +48,6 @@ void Command::Execute(Message* message)
 
 bool Command::CheckPermissions(Player* player)
 {
-	auto permissionGroup = player->GetPermissionGroup();
-	auto permissions = permissionGroup->GetPermissions();
-
-	if (permissionGroup->HasPermission("*"))
-	{
-		return true;
-	}
-
-	for (auto perm : m_RequiredPermissions)
-	{
-		if (!permissionGroup->HasPermission(perm))
-		{
-			//Chat::SendServerMessage(perm + " perm is required");
-			return false;
-		}
-	}	
-
-	//if (player->m_Id == 1) return true;
 	return true;
 }
 
@@ -76,20 +58,20 @@ void Command::PrintSyntaxes()
 
 void Command::WrongSyntax()
 {
-	Chat::SendServerMessage("* wrong syntax, type: ( !help " + m_Cmd + " )");
+	///Chat::SendServerMessage("* wrong syntax, type: ( !help " + m_Cmd + " )");
 }
 
 void Command::PlayerNotFound()
 {
-	Chat::SendServerMessage("player not found");
+	//Chat::SendServerMessage("player not found");
 }
 
 void Command::PrintSyntax(std::string syntax)
 {
-	Chat::SendServerMessage("* !" + m_Cmd + " " + syntax);
+	//Chat::SendServerMessage("* !" + m_Cmd + " " + syntax);
 }
 
 void Command::NoPermission()
 {
-	Chat::SendServerMessage("no permission");
+	//Chat::SendServerMessage("no permission");
 }

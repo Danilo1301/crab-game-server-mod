@@ -31,40 +31,6 @@
 
 using namespace app;
 
-static uintptr_t m_AssemblyBase = 0;
-
-typedef struct _monoString {
-	void* klass;
-	void* monitor;
-	int length;
-	char chars[256];
-	int getLength()
-	{
-		return length;
-	}
-	char* getChars()
-	{
-		return chars;
-	}
-	std::string toCPPString()
-	{
-		char* p = getChars();
-
-		char fullStr[128];
-
-		for (int i = 0; i < getLength(); i++) {
-			int index = i * 2;
-			char b = *(p + index);
-
-			fullStr[i] = b;
-		}
-
-		fullStr[getLength()] = 0;
-
-		return std::string(fullStr);
-	}
-} monoString;
-
 //template <typename Out>
 static std::vector<std::string> split_1(const std::string& s, char delim) { //, Out result) {
 	std::istringstream iss(s);
@@ -75,17 +41,6 @@ static std::vector<std::string> split_1(const std::string& s, char delim) { //, 
 		parts.push_back(item);
 	}
 	return parts;
-}
-
-
-static std::string formatVector3(app::Vector3 vector) {
-	char str[256];
-	sprintf_s(str, "%.3f, %.3f, %.3f", vector.x, vector.y, vector.z);
-	return std::string(str);
-}
-
-static std::string formatVector3_full(app::Vector3 vector) {
-	return std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z);
 }
 
 static std::string formatStringVector(std::vector<std::string> vector) {
@@ -119,11 +74,6 @@ static std::vector<std::string> formatStringVector_1(std::vector<std::string> ve
 	if (str.length() > 0) lines.push_back(std::string(str));
 
 	return lines;
-}
-
-static monoString* createMonoString(const char* str) {
-	monoString* (*String_CreateString)(void* _this, const char* str) = (monoString * (*)(void*, const char*))(m_AssemblyBase + 8780720);
-	return String_CreateString(NULL, str);
 }
 
 static std::string toUpper(std::string data) {

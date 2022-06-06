@@ -19,6 +19,8 @@ function convertInputText(input)
 
     const fn = parts[2].replace(",", "");
     
+    console.log(fn);
+
     if(alreadyAddedFile.includes(fn + ","))
     {
         return ["", ""];
@@ -28,21 +30,21 @@ function convertInputText(input)
     const className = parts[2].split("_")[0];
     const methotName = fn.slice(fn.indexOf("_") + 1);
 
-    console.log("RETURN: " + returnType);
-    console.log("CLASS: " + className);
-    console.log("METHOD: " + methotName);
+    //console.log("RETURN: " + returnType);
+    //console.log("CLASS: " + className);
+    //console.log("METHOD: " + methotName);
 
     const startArgsIndex = input.indexOf("(", input.indexOf("(") + 1);
     const endArgsIndex = input.indexOf(")") + 1;
     const argsStr = input.slice(startArgsIndex + 1, endArgsIndex - 1);
 
-    console.log("startArgsIndex: " + startArgsIndex);
-    console.log("argsStr: " + argsStr);
+    //console.log("startArgsIndex: " + startArgsIndex);
+    //console.log("argsStr: " + argsStr);
 
     const args = argsStr.split(", ").map(arg => arg.split(" ")[0]);
     for(const a of args)
     {
-        console.log("arg: " + a);
+        //console.log("arg: " + a);
     }
 
     let coutStr = "";
@@ -74,8 +76,8 @@ function convertInputText(input)
 
         i++;
     }
-    console.log("\nfnArgsStr:\n" + fnArgsStr);
-    console.log("\ncoutStr:\n" + coutStr);
+    //console.log("\nfnArgsStr:\n" + fnArgsStr);
+    //console.log("\ncoutStr:\n" + coutStr);
 
     let output = "";
     output += `auto HF_${className}_${methotName} = new HookFunction<${returnType}, ${defArgsStr}>("${className}::${methotName}");\n`;
@@ -85,7 +87,11 @@ function convertInputText(input)
     output += `	\n`;
     output += `	${(returnType != "void") ? "auto ret = " : ""}HF_${className}_${methotName}->original(${originStr});\n`
 
-    if(returnType != "void") output += `\n	return ret;\n`;
+    if(returnType != "void")
+    {
+        output += `\n	std::cout << ret << std::endl;\n`;
+        output += `\n	return ret;\n`;
+    }
 
     output += `}\n`;
     output += `	\n`;
@@ -93,14 +99,14 @@ function convertInputText(input)
     let output2 = "";
     output2 += `Injector::Inject(HF_${className}_${methotName}, ${className}_${methotName}, &Template_${className}_${methotName});\n`;
 
-    console.log("\noutput:\n" + output);
+    //console.log("\noutput:\n" + output);
 
     return [output, output2];
 }
 
 let outputFile = '';
 
-console.log(inputFile)
+//console.log(inputFile)
 
 const parts = inputFile.split("\n");
 
