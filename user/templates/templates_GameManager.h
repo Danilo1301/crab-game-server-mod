@@ -30,7 +30,7 @@ void Template_GameManager_SyncObject(GameManager* a, u10A5u109Cu10A4u1099u10A0u1
 
 	HF_GameManager_SyncObject->original(a, b, method);
 }
-
+/*
 auto HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4");
 void Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4(GameManager* a, MethodInfo* method)
 {
@@ -38,7 +38,7 @@ void Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A
 
 	HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4->original(a, method);
 }
-
+*/
 auto HF_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A");
 void Template_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
@@ -292,6 +292,8 @@ void Template_GameManager_Start(GameManager* a, MethodInfo* method)
 {
 	std::cout << "GameManager::Start" << " a=" << a << ", " << std::endl;
 
+	Server::OnMapStart();
+
 	HF_GameManager_Start->original(a, method);
 }
 /*
@@ -384,10 +386,10 @@ void Template_GameManager_Update(GameManager* a, MethodInfo* method)
 {
 	//std::cout << "GameManager::Update" << " a=" << a << ", " << std::endl;
 
+	HF_GameManager_Update->original(a, method);
+
 	float dt = Time_get_deltaTime(NULL);
 	Server::Update(dt);
-
-	HF_GameManager_Update->original(a, method);
 }
 
 auto HF_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7");

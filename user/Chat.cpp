@@ -13,6 +13,14 @@ void Chat::Init()
 	std::cout << "[Chat] Init" << std::endl;
 
 	RegisterCommand((Command*)new CommandHelp());
+	RegisterCommand((Command*)new CommandTest());
+	RegisterCommand((Command*)new CommandRestart());
+	RegisterCommand((Command*)new CommandKill());
+	RegisterCommand((Command*)new CommandTime());
+	RegisterCommand((Command*)new CommandWeapon());
+	RegisterCommand((Command*)new CommandHand());
+	RegisterCommand((Command*)new CommandRespawn());
+	RegisterCommand((Command*)new CommandMap());
 }
 
 void Chat::Update(float dt)
@@ -33,7 +41,8 @@ void Chat::ProcessMessage(Message* message)
 
 	m_Messages.push_back(message);
 
-	if (message->m_IsCommand) {
+	if (message->m_IsCommand)
+	{
 		ProcessCommandMessage(message);
 	}
 
@@ -132,7 +141,7 @@ void Chat::SendAllMessagesInQuery()
 
 		RemoveMessage(message);
 
-		//std::cout << "[Chat] Messages left: " << m_Messages.size() << std::endl;
+		std::cout << "[Chat] Messages left: " << m_Messages.size() << std::endl;
 
 	}
 }
@@ -147,6 +156,8 @@ void Chat::RemoveMessage(Message* message)
 
 Message* Chat::SendServerMessage(std::string text)
 {
+	std::cout << "[Chat] SendServerMessage: " << text << std::endl;
+
 	Message* message = new Message((long long)1, text);
 	m_Messages.push_back(message);
 	return message;

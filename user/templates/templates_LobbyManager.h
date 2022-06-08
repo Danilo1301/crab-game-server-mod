@@ -576,7 +576,7 @@ void Template_LobbyManager_CloseLobby(LobbyManager* a, MethodInfo* method)
 
 	HF_LobbyManager_CloseLobby->original(a, method);
 }
-
+/*
 auto HF_LobbyManager_LobbyLoop = new HookFunction<void, LobbyManager*, MethodInfo*>("LobbyManager::LobbyLoop");
 void Template_LobbyManager_LobbyLoop(LobbyManager* a, MethodInfo* method)
 {
@@ -584,6 +584,7 @@ void Template_LobbyManager_LobbyLoop(LobbyManager* a, MethodInfo* method)
 
 	HF_LobbyManager_LobbyLoop->original(a, method);
 }
+*/
 /*
 auto HF_LobbyManager_GetClient = new HookFunction<Client*, LobbyManager*, uint64_t, MethodInfo*>("LobbyManager::GetClient");
 Client* Template_LobbyManager_GetClient(LobbyManager* a, uint64_t b, MethodInfo* method)
@@ -732,7 +733,7 @@ void Template_LobbyManager_RemovePlayerFromLobby(LobbyManager* a, CSteamID b, Me
 
 	HF_LobbyManager_RemovePlayerFromLobby->original(a, b, method);
 
-	//Server::OnRemovePlayerFromLobby(b.m_SteamID);
+	Server::OnRemovePlayerFromLobby(b.m_SteamID);
 }
 /*
 auto HF_LobbyManager_Awake = new HookFunction<void, LobbyManager*, MethodInfo*>("LobbyManager::Awake");
@@ -832,7 +833,7 @@ void Template_LobbyManager_BanPlayer(LobbyManager* a, uint64_t b, MethodInfo* me
 {
 	std::cout << "LobbyManager::BanPlayer" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
 
-	HF_LobbyManager_BanPlayer->original(a, b, method);
+	//HF_LobbyManager_BanPlayer->original(a, b, method);
 }
 /*
 auto HF_LobbyManager_u109Cu10A8u109Bu10A5u10A2u109Eu109Bu10A6u10A5u10A3u109D = new HookFunction<int32_t, LobbyManager*, MethodInfo*>("LobbyManager::u109Cu10A8u109Bu10A5u10A2u109Eu109Bu10A6u10A5u10A3u109D");

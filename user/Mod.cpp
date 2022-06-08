@@ -16,20 +16,27 @@ void Mod::Init()
 
 	Injector::Init();
 
-	bool loadAllTemplates = false;
+	bool loadAllTemplates = true;
+
+	Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
+	Injector::Inject(HF_ChatBox_AppendMessage, ChatBox_AppendMessage, &Template_ChatBox_AppendMessage);
 
 	if (!loadAllTemplates) {
-		Injector::Inject(HF_ChatBox_Update, ChatBox_Update, &Template_ChatBox_Update);
-
 		Injector::Inject(HF_GameManager_Update, GameManager_Update, &Template_GameManager_Update);
+		Injector::Inject(HF_GameManager_Start, GameManager_Start, &Template_GameManager_Start);
 
 		Injector::Inject(HF_LobbyManager_StartNewLobby, LobbyManager_StartNewLobby, &Template_LobbyManager_StartNewLobby);
 		Injector::Inject(HF_LobbyManager_AddPlayerToLobby, LobbyManager_AddPlayerToLobby, &Template_LobbyManager_AddPlayerToLobby);
 		Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
+		Injector::Inject(HF_LobbyManager_BanPlayer, LobbyManager_BanPlayer, &Template_LobbyManager_BanPlayer);
 
 		Injector::Inject(HF_ServerSend_GameSpawnPlayer, ServerSend_GameSpawnPlayer, &Template_ServerSend_GameSpawnPlayer);
 		Injector::Inject(HF_ServerSend_SendChatMessage, ServerSend_SendChatMessage, &Template_ServerSend_SendChatMessage);
+		Injector::Inject(HF_ServerSend_LoadMap_1, ServerSend_LoadMap_1, &Template_ServerSend_LoadMap_1);
+		Injector::Inject(HF_ServerSend_SpectatorSpawn, ServerSend_SpectatorSpawn, &Template_ServerSend_SpectatorSpawn);
+		Injector::Inject(HF_ServerSend_RespawnPlayer, ServerSend_RespawnPlayer, &Template_ServerSend_RespawnPlayer);
 
+		Injector::Inject(HF_GameServer_PlayerDied, GameServer_PlayerDied, &Template_GameServer_PlayerDied);
 	}
 	else {
 		Injector::Inject(HF_ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1, ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1, &Template_ServerSend_u10A1u1099u10A8u10A6u10A2u10A0u1099u10A4u10A4u10A6u10A1);
@@ -104,7 +111,7 @@ void Mod::Init()
 		Injector::Inject(HF_ServerSend_u10A4u109Du10A2u10A6u10A3u10A2u109Eu10A6u109Cu109Cu10A6, ServerSend_u10A4u109Du10A2u10A6u10A3u10A2u109Eu10A6u109Cu109Cu10A6, &Template_ServerSend_u10A4u109Du10A2u10A6u10A3u10A2u109Eu10A6u109Cu109Cu10A6);
 		Injector::Inject(HF_ServerSend_u10A3u109Du10A3u109Eu10A3u10A3u10A5u10A8u10A8u109Au10A6, ServerSend_u10A3u109Du10A3u109Eu10A3u10A3u10A5u10A8u10A8u109Au10A6, &Template_ServerSend_u10A3u109Du10A3u109Eu10A3u10A3u10A5u10A8u10A8u109Au10A6);
 		Injector::Inject(HF_ServerSend_SendSerializedInventory, ServerSend_SendSerializedInventory, &Template_ServerSend_SendSerializedInventory);
-		Injector::Inject(HF_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, &Template_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C);
+		//Injector::Inject(HF_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C, &Template_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C);
 		Injector::Inject(HF_ServerSend_SendCrabBall, ServerSend_SendCrabBall, &Template_ServerSend_SendCrabBall);
 		//Injector::Inject(HF_ServerSend__ctor, ServerSend__ctor, &Template_ServerSend__ctor);
 		Injector::Inject(HF_ServerSend_SendSerializedDrop, ServerSend_SendSerializedDrop, &Template_ServerSend_SendSerializedDrop);
@@ -164,7 +171,7 @@ void Mod::Init()
 		Injector::Inject(HF_ServerSend_StandoffUpdate, ServerSend_StandoffUpdate, &Template_ServerSend_StandoffUpdate);
 		Injector::Inject(HF_ServerSend_u109Fu109Du10A2u109Du10A8u109Bu109Du10A1u10A7u10A7u109F, ServerSend_u109Fu109Du10A2u109Du10A8u109Bu109Du10A1u10A7u10A7u109F, &Template_ServerSend_u109Fu109Du10A2u109Du10A8u109Bu109Du10A1u10A7u10A7u109F);
 		Injector::Inject(HF_ServerSend_u10A2u10A5u10A4u109Bu10A5u109Bu10A3u10A5u10A4u10A1u109E, ServerSend_u10A2u10A5u10A4u109Bu10A5u109Bu10A3u10A5u10A4u10A1u109E, &Template_ServerSend_u10A2u10A5u10A4u109Bu10A5u109Bu10A3u10A5u10A4u10A1u109E);
-		Injector::Inject(HF_ServerSend_SyncClock, ServerSend_SyncClock, &Template_ServerSend_SyncClock);
+		//Injector::Inject(HF_ServerSend_SyncClock, ServerSend_SyncClock, &Template_ServerSend_SyncClock);
 		Injector::Inject(HF_ServerSend_SendTeams, ServerSend_SendTeams, &Template_ServerSend_SendTeams);
 		Injector::Inject(HF_ServerSend_GameModeAlert, ServerSend_GameModeAlert, &Template_ServerSend_GameModeAlert);
 		Injector::Inject(HF_ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4, ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4, &Template_ServerSend_u109Fu10A6u1099u10A3u1099u10A7u10A3u109Au109Bu10A8u10A4);
@@ -231,7 +238,7 @@ void Mod::Init()
 		//Injector::Inject(HF_LobbyManager_u109Du109Du1099u10A7u109Bu109Fu10A0u10A7u109Eu109Du10A0, LobbyManager_u109Du109Du1099u10A7u109Bu109Fu10A0u10A7u109Eu109Du10A0, &Template_LobbyManager_u109Du109Du1099u10A7u109Bu109Fu10A0u10A7u109Eu109Du10A0);
 		Injector::Inject(HF_LobbyManager_GameEnded, LobbyManager_GameEnded, &Template_LobbyManager_GameEnded);
 		Injector::Inject(HF_LobbyManager_CloseLobby, LobbyManager_CloseLobby, &Template_LobbyManager_CloseLobby);
-		Injector::Inject(HF_LobbyManager_LobbyLoop, LobbyManager_LobbyLoop, &Template_LobbyManager_LobbyLoop);
+		//Injector::Inject(HF_LobbyManager_LobbyLoop, LobbyManager_LobbyLoop, &Template_LobbyManager_LobbyLoop);
 		//Injector::Inject(HF_LobbyManager_GetClient, LobbyManager_GetClient, &Template_LobbyManager_GetClient);
 		Injector::Inject(HF_LobbyManager_u10A3u10A5u10A5u10A0u10A5u10A4u10A8u10A8u1099u10A1u109D, LobbyManager_u10A3u10A5u10A5u10A0u10A5u10A4u10A8u10A8u1099u10A1u109D, &Template_LobbyManager_u10A3u10A5u10A5u10A0u10A5u10A4u10A8u10A8u1099u10A1u109D);
 		Injector::Inject(HF_LobbyManager_u109Du109Bu109Fu10A8u10A0u109Fu1099u10A3u109Au109Fu109B, LobbyManager_u109Du109Bu109Fu10A8u10A0u109Fu1099u10A3u109Au109Fu109B, &Template_LobbyManager_u109Du109Bu109Fu10A8u10A0u109Fu1099u10A3u109Au109Fu109B);
@@ -375,7 +382,7 @@ void Mod::Init()
 		Injector::Inject(HF_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2, GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2, &Template_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2);
 		Injector::Inject(HF_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E, GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E, &Template_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E);
 		Injector::Inject(HF_GameManager_SyncObject, GameManager_SyncObject, &Template_GameManager_SyncObject);
-		Injector::Inject(HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, &Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4);
+		//Injector::Inject(HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, &Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4);
 		Injector::Inject(HF_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A, GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A, &Template_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A);
 		Injector::Inject(HF_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, &Template_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099);
 		Injector::Inject(HF_GameManager_PunchPlayer, GameManager_PunchPlayer, &Template_GameManager_PunchPlayer);
@@ -496,4 +503,31 @@ void Mod::AppendLocalChatMessage(long long fromClient, std::string username, std
 void Mod::SendChatMessage(long long fromClient, std::string content)
 {
 	HF_ServerSend_SendChatMessage->original((uint64_t)fromClient, (String*)il2cpp_string_new(content.c_str()), NULL);
+}
+
+void Mod::SendDropItem(long long toClient, int itemId, int objectId, int ammo)
+{
+	std::cout << "[Mod] SendDropItem toClient=" << toClient << ", itemId='" << itemId << "', objectId='" << objectId << "', ammo='" << ammo << "'" << std::endl;
+
+	ServerSend_DropItem(toClient, itemId, objectId, ammo, NULL);
+}
+
+void Mod::ForceGiveItem(long long toClient, int itemId, int objectId)
+{
+	std::cout << "[Mod] ForceGiveItem toClient=" << toClient << ", itemId='" << itemId << "', objectId='" << objectId << "'" << std::endl;
+
+	ServerSend_ForceGiveItem(toClient, itemId, objectId, NULL);
+}
+
+void Mod::RestartGame()
+{
+	std::cout << "[Mod] RestartGame" << std::endl;
+
+	ServerSend_StartGame(NULL);
+}
+
+void Mod::SetCurrentGameModeTime(float time)
+{
+	auto gameMode = (*GameManager__TypeInfo)->static_fields->Instance->fields.gameMode;
+	GameMode_SetGameModeTimer(gameMode, time, 0, NULL);
 }

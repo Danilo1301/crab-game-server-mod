@@ -22,6 +22,10 @@ std::vector<Weapon> Server::m_Weapons = {
 };
 
 std::map<long long, Player*> Server::m_Players;
+int Server::m_UniqueObjectId = 100;
+
+int Server::m_MapId = -1;
+int Server::m_MapModeId = -1;
 
 void Server::Init()
 {
@@ -42,6 +46,7 @@ bool Server::HasPlayer(long long clientId)
 
 Player* Server::GetPlayer(long long clientId)
 {
+	if (!HasPlayer(clientId)) return NULL;
 	return m_Players.at(clientId);
 }
 
@@ -86,6 +91,67 @@ std::vector<Player*> Server::GetOnlinePlayers()
 	return players;
 }
 
+std::vector<Player*> Server::FindPlayers(std::string selector)
+{
+	std::vector<Player*> players;
+
+	std::map<long long, Player*>::iterator it;
+	for (it = m_Players.begin(); it != m_Players.end(); it++)
+	{
+		Player* player = it->second;
+
+		if (!player->m_IsOnline) continue;
+
+		if (selector == "*")
+		{
+			players.push_back(player);
+			continue;
+		}
+
+		if (selector == "*a")
+		{
+			if (!player->GetIsAlive()) continue;
+
+			players.push_back(player);
+			continue;
+		}
+
+		if (selector == "*d")
+		{
+			if (player->GetIsAlive()) continue;
+
+			players.push_back(player);
+			continue;
+		}
+
+		if (selector.rfind("#", 0) == 0)
+		{
+			std::string idstr;
+			std::remove_copy(selector.begin(), selector.end(), std::back_inserter(idstr), '#');
+
+			int id = std::atoi(idstr.c_str());
+
+			if (player->m_Id == id)
+			{
+				players.push_back(player);
+			}
+
+			continue;
+		}
+
+		std::string str1 = selector;
+		std::transform(str1.begin(), str1.end(), str1.begin(), [](unsigned char c) { return std::tolower(c); });
+		std::string str2 = player->m_Username;
+		std::transform(str2.begin(), str2.end(), str2.begin(), [](unsigned char c) { return std::tolower(c); });
+
+		if (str2.find(str1) != std::string::npos) {
+			players.push_back(player);
+		}
+	}
+
+	return players;
+}
+
 void Server::OnAddPlayerToLobby(long long clientId)
 {
 	if (!HasPlayer(clientId))
@@ -109,7 +175,6 @@ void Server::OnRemovePlayerFromLobby(long long clientId)
 void Server::OnPlayerFirstJoin(long long clientId)
 {
 	auto player = new Player(clientId);
-
 	player->UpdateInfo();
 
 	AddPlayer(player);
@@ -119,19 +184,174 @@ void Server::OnPlayerFirstJoin(long long clientId)
 
 void Server::OnPlayerJoin(Player* player)
 {
+	player->UpdateInfo();
+
 	std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined" << std::endl;
+
+	player->m_CanSpawnNextRound = true;
 }
 
 void Server::OnPlayerLeave(Player* player)
 {
 	std::cout << "[Server] " << player->GetDisplayNameExtra() << " left" << std::endl;
+
+	player->m_Client = NULL;
+	player->m_PlayerManager = NULL;
 }
 
 void Server::OnPlayerSpawn(Player* player, Vector3 position)
 {
 	player->UpdateInfo();
+	player->m_IsAlive = true;
+	player->m_DiedThisRound = false;
+	player->m_CanSpawnNextRound = false;
 
 	std::cout << "[Server] " << player->GetDisplayNameExtra() << " spawned at " << position << std::endl;
 
 	Chat::SendServerMessage("Player " + player->GetDisplayName() + " spawned");
+}
+
+bool Server::OnPlayerTryToSpawnSpectator(Player* player)
+{
+	std::cout << "[Server] OnPlayerTryToSpawnSpectator: " << player->GetDisplayNameExtra() << std::endl;
+
+	player->UpdateInfo();
+
+	if (player->m_CanSpawnNextRound)
+	{
+		auto byteArray = player->m_Client->fields.u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7;
+		auto numberId = player->m_Client->fields.u1099u109Au10A1u1099u10A8u109Eu10A0u10A0u109Eu109Au10A0;
+
+		std::cout << "[Server] Sending GameServer_PlayerSpawnRequest byteArray=" << byteArray << ", numberId=" << numberId << std::endl;
+
+		GameServer_PlayerSpawnRequest(
+			player->m_ClientId,
+			false,
+			byteArray, //byteArray
+			numberId, //numberId
+			NULL
+		);
+
+		Chat::SendServerMessage("Spawning, canceling spec");
+
+		return false;
+	}
+
+	Chat::SendServerMessage("Spawning spec");
+
+	std::cout << "[Server] Spawning spec" << std::endl;
+
+	player->m_PlayerManager = NULL;
+
+	return true;
+}
+
+
+void Server::OnPlayerDied(Player* deadPlayer, Player* killerPlayer, Vector3 damageDir)
+{
+	deadPlayer->m_IsAlive = false;
+	deadPlayer->m_DiedThisRound = true;
+
+	std::cout << "[Server] " << deadPlayer->GetDisplayNameExtra() << " died" << std::endl;
+
+	if (killerPlayer != NULL && killerPlayer != deadPlayer)
+	{
+		Chat::SendServerMessage(killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
+	}
+	else {
+		Chat::SendServerMessage(deadPlayer->GetDisplayName() + " died");
+	}
+}
+
+void Server::OnMapLoad(int map, int mode)
+{
+	m_MapId = map;
+	m_MapModeId = mode;
+}
+
+void Server::OnMapStart()
+{
+	Chat::SendServerMessage("Map started");
+
+	for (auto player : GetOnlinePlayers())
+	{
+		if (player->GetIsAlive())
+		{
+			player->m_CanSpawnNextRound = true;
+		}
+
+		player->m_PlayerManager = NULL;
+		player->m_IsAlive = false;
+		player->m_DiedThisRound = false;
+	}
+}
+
+void Server::GiveWeapon(long long toClient, int weaponId)
+{
+	if (!GetPlayer(toClient)->GetIsAlive()) return;
+
+	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);
+}
+
+Weapon* Server::GetWeaponById(int weaponId)
+{
+	for (auto& weapon : Server::m_Weapons)
+	{
+		if (weaponId == weapon.id)
+		{
+			return &weapon;
+		}
+	}
+	return NULL;
+}
+
+Player* Server::GetLobbyOwner()
+{
+	for (auto player : GetOnlinePlayers())
+	{
+		if (player->m_Id == 1) return player;
+	}
+	return NULL;
+}
+
+
+void Server::KillPlayer(long long clientId)
+{
+	std::cout << "[Mod] KillPlayer clientId=" << clientId << std::endl;
+
+	GameServer_PlayerDied(clientId, clientId, Vector3({ 0, 1, 0 }), NULL);
+	//ServerSend_PlayerDied(clientId, clientId, Vector3({ 0, 1, 0 }), NULL);
+}
+
+/*
+Bug: If host respawns with load, he won't see the players that were alive
+*/
+void Server::RespawnPlayer(long long clientId)
+{
+	std::cout << "[Mod] RespawnPlayer clientId=" << clientId << std::endl;
+
+	auto player = Server::GetPlayer(clientId);
+
+	bool load = false;
+	if (!player->GetIsAlive() && !player->m_DiedThisRound) load = true;
+
+	if (load)
+	{
+		ServerSend_LoadMap(Server::m_MapId, Server::m_MapModeId, clientId, NULL);
+		ServerSend_LoadingSendIntoGame(clientId, NULL);
+
+		GameServer_PlayerSpawnRequest(
+			clientId,
+			false,
+			player->m_Client->fields.u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, //byteArray
+			player->m_Client->fields.u1099u109Au10A1u1099u10A8u109Eu10A0u10A0u109Eu109Au10A0, //numberId
+			NULL
+		);
+	}
+	else {
+		auto gameServer = (*GameServer__TypeInfo)->static_fields->Instance;
+		GameServer_QueueRespawn(gameServer, clientId, 0.0f, NULL);
+	}
+
+	player->UpdateInfo();
 }

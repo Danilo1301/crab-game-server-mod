@@ -58,20 +58,20 @@ void Command::PrintSyntaxes()
 
 void Command::WrongSyntax()
 {
-	///Chat::SendServerMessage("* wrong syntax, type: ( !help " + m_Cmd + " )");
+	Chat::SendServerMessage("* wrong syntax, type: ( !help " + m_Cmd + " )");
 }
 
 void Command::PlayerNotFound()
 {
-	//Chat::SendServerMessage("player not found");
+	Chat::SendServerMessage("player not found");
 }
 
 void Command::PrintSyntax(std::string syntax)
 {
-	//Chat::SendServerMessage("* !" + m_Cmd + " " + syntax);
+	Chat::SendServerMessage("* !" + m_Cmd + " " + syntax);
 }
 
 void Command::NoPermission()
 {
-	//Chat::SendServerMessage("no permission");
+	Chat::SendServerMessage("no permission");
 }

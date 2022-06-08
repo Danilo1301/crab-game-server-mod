@@ -152,6 +152,11 @@ void Template_GameServer_PlayerDied(uint64_t a, uint64_t b, Vector3 c, MethodInf
 	std::cout << "GameServer::PlayerDied" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
 
 	HF_GameServer_PlayerDied->original(a, b, c, method);
+
+	auto deadPlayer = Server::GetPlayer(a);
+	auto killerPlayer = Server::GetPlayer(b);
+
+	Server::OnPlayerDied(deadPlayer, killerPlayer, c);
 }
 
 auto HF_GameServer_ChatCooldown = new HookFunction<void, GameServer*, Client*, float, MethodInfo*>("GameServer::ChatCooldown");

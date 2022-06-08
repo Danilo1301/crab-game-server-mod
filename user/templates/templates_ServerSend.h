@@ -95,9 +95,14 @@ void Template_ServerSend_PlayerActiveItem(uint64_t a, int32_t b, MethodInfo* met
 auto HF_ServerSend_SpectatorSpawn = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::SpectatorSpawn");
 void Template_ServerSend_SpectatorSpawn(uint64_t a, MethodInfo* method)
 {
-	std::cout << "ServerSend::SpectatorSpawn" << " a=" << a << ", " << std::endl;
+	std::cout << "ServerSend::SpectatorSpawn" << " a=" << a << std::endl;
+
+	if (!Server::OnPlayerTryToSpawnSpectator(Server::GetPlayer(a)))
+		return;
 
 	HF_ServerSend_SpectatorSpawn->original(a, method);
+
+	//
 }
 
 auto HF_ServerSend_RedLight = new HookFunction<void, uint64_t, bool, float, MethodInfo*>("ServerSend::RedLight");
@@ -489,9 +494,16 @@ void Template_ServerSend_SendChatMessage(uint64_t a, String* b, MethodInfo* meth
 
 	//HF_ServerSend_SendChatMessage->original(a, b, method);
 
-	auto message = new Message((long long)a, b->toCPPString());
+	auto owner = Server::GetLobbyOwner();
+	if (owner->m_ClientId == a) {
+		if (!owner->m_HideMessages) {
+			Mod::AppendLocalChatMessage(2, owner->m_Username, owner->GetChatSuffix() + " " + b->toCPPString());
+		}
+	}
 
 	if (Server::HasPlayer(a)) {
+		auto message = new Message((long long)a, b->toCPPString());
+
 		message->m_Player = Server::GetPlayer(a);
 		Chat::ProcessMessage(message);
 	}
@@ -592,7 +604,7 @@ void Template_ServerSend_SendSerializedInventory(uint64_t a, Byte__Array* b, int
 
 	HF_ServerSend_SendSerializedInventory->original(a, b, c, method);
 }
-
+/*
 auto HF_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C = new HookFunction<void, uint64_t, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("ServerSend::u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C");
 void Template_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C(uint64_t a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
@@ -600,7 +612,7 @@ void Template_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C
 
 	HF_ServerSend_u109Cu10A3u10A3u10A2u109Eu109Fu10A6u10A4u10A5u109Fu109C->original(a, b, method);
 }
-
+*/
 auto HF_ServerSend_SendCrabBall = new HookFunction<void, Vector3, int32_t, MethodInfo*>("ServerSend::SendCrabBall");
 void Template_ServerSend_SendCrabBall(Vector3 a, int32_t b, MethodInfo* method)
 {
@@ -631,6 +643,16 @@ void Template_ServerSend_RespawnPlayer(uint64_t a, Vector3 b, MethodInfo* method
 	std::cout << "ServerSend::RespawnPlayer" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
 
 	HF_ServerSend_RespawnPlayer->original(a, b, method);
+
+	auto player = Server::GetPlayer(a);
+
+	for (auto p : Server::GetOnlinePlayers())
+	{
+		auto byteArray = player->m_Client->fields.u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7;
+		auto numberId = player->m_Client->fields.u1099u109Au10A1u1099u10A8u109Eu10A0u10A0u109Eu109Au10A0;
+
+		ServerSend_GameSpawnPlayer(p->m_ClientId, a, b, 0, false, byteArray, numberId, NULL);
+	}
 }
 
 auto HF_ServerSend_SendKingScores = new HookFunction<void, List_1_System_ValueTuple_2__1*, MethodInfo*>("ServerSend::SendKingScores");
@@ -687,6 +709,8 @@ void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 	std::cout << "ServerSend::LoadMap_1" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
 
 	HF_ServerSend_LoadMap_1->original(a, b, method);
+
+	Server::OnMapLoad(a, b);
 }
 
 auto HF_ServerSend_SendFallingBlocks = new HookFunction<void, int32_t, float, int32_t, uint64_t, MethodInfo*>("ServerSend::SendFallingBlocks");
@@ -1075,7 +1099,7 @@ void Template_ServerSend_u10A2u10A5u10A4u109Bu10A5u109Bu10A3u10A5u10A4u10A1u109E
 
 	HF_ServerSend_u10A2u10A5u10A4u109Bu10A5u109Bu10A3u10A5u10A4u10A1u109E->original(a, b, method);
 }
-
+/*
 auto HF_ServerSend_SyncClock = new HookFunction<void, uint64_t, float, MethodInfo*>("ServerSend::SyncClock");
 void Template_ServerSend_SyncClock(uint64_t a, float b, MethodInfo* method)
 {
@@ -1083,7 +1107,7 @@ void Template_ServerSend_SyncClock(uint64_t a, float b, MethodInfo* method)
 
 	HF_ServerSend_SyncClock->original(a, b, method);
 }
-
+*/
 auto HF_ServerSend_SendTeams = new HookFunction<void, List_1_System_ValueTuple_2__1*, MethodInfo*>("ServerSend::SendTeams");
 void Template_ServerSend_SendTeams(List_1_System_ValueTuple_2__1* a, MethodInfo* method)
 {
