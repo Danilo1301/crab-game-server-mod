@@ -1740,8 +1740,6 @@ public:
 			cmd = args[0].str;
 		}
 
-		Chat::SendServerMessage("cmd: (" + cmd + ")");
-
 		if (VoteSystem::HasAnyVoting())
 		{
 			if (toLower(cmd).compare("yes") == 0)
