@@ -1,5 +1,5 @@
 {
     "version": "2.3",
     "required": false,
-    "changelog": "Added !fly and !votekick"
+    "changelog": "Added !fly and !votekick, fixed respawn"
 }
