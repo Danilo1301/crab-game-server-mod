@@ -6,6 +6,7 @@
 #include "SocketServer.h"
 #include "PermissionGroups.h"
 #include "Config.h"
+#include "VoteSystem.h"
 
 std::map<long long, Player*> Server::m_Players;
 long long Server::m_LobbyId = 0;
@@ -51,7 +52,6 @@ void Server::Init()
 
 	Chat::Init();
 
-	//oops
 	if (!PermissionGroups::HasGroup("default"))
 	{
 		auto permissionGroup = PermissionGroups::AddGroup("default");
@@ -68,6 +68,8 @@ void Server::Init()
 		permissionGroup->AddPermission("superpunch");
 		permissionGroup->AddPermission("forcefield");
 		permissionGroup->AddPermission("snowball2");
+		permissionGroup->AddPermission("vote");
+		permissionGroup->AddPermission("votekick");
 
 		for (auto weapon : m_Weapons)
 		{
@@ -107,11 +109,15 @@ void Server::Init()
 
 void Server::Update(float dt)
 {
+	//std::cout << "[Server] Update " << dt << std::endl;
+
 	m_SaveConfigTime += dt;
 	if (m_SaveConfigTime >= 40.0f) {
 		m_SaveConfigTime = 0;
 		SaveConfig();
 	}
+
+	VoteSystem::Update(dt);
 
 	if (m_Players.size() == 0) return;
 

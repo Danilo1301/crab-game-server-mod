@@ -7,8 +7,10 @@ class Mod {
 public:
 	static bool m_DebugMode;
 	static std::string m_Version;
+	static bool m_IsConsole;
 
 	static void Init();
+	static void InitConsole();
 
 	//static long long GetLobbyOwnerId();
 	static long long GetMySteamId();

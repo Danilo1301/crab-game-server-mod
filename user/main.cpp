@@ -20,6 +20,19 @@ void Run()
     Mod::Init();
 }
 
+int main()
+{
+    Mod::InitConsole();
+}
+
+/*
+Properties -> Linker -> System -> SubSystem
+(/SUBSYSTEM:WINDOWS) dll
+(/SUBSYSTEM:CONSOLE)
+
+Change extension
+*/
+
 /*
 u10A5u109Au109Eu109Eu1099u10A8u10A8u109Au109Du109Fu109C PlayerManager
 u109Du10A6u109Eu10A3u10A7u10A2u10A3u10A8u10A8u109Eu10A1 ChatBox
@@ -50,4 +63,6 @@ Test:
 [ok] permissions for weapons
 [ok] config
 [ok] perm create/remove group
+
+[11/06 - v2.3-dev]
 */

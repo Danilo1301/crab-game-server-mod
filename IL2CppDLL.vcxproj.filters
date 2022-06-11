@@ -61,6 +61,9 @@
     <ClCompile Include="user\PermissionGroups.cpp">
       <Filter>user</Filter>
     </ClCompile>
+    <ClCompile Include="user\VoteSystem.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user\main.h">
@@ -151,6 +154,9 @@
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\templates_GameServer.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\VoteSystem.h">
       <Filter>user</Filter>
     </ClInclude>
   </ItemGroup>

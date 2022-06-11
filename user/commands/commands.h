@@ -7,6 +7,7 @@
 #include "Chat.h"
 #include "Message.h"
 #include "Server.h"
+#include "VoteSystem.h"
 
 class CommandHelp : public Command {
 public:
@@ -481,14 +482,15 @@ public:
 			//Chat::SendServerMessage("tp someone to someone");
 
 			auto players = Server::FindPlayers(args[0].str);
-			auto toPlayer = Server::FindPlayers(args[1].str)[0];
+			auto targetPlayers = Server::FindPlayers(args[1].str);
 
-			if (players.size() == 0 || !toPlayer)
+			if (players.size() == 0 || targetPlayers.size() == 0)
 			{
 				PlayerNotFound();
 				return;
 			}
 
+			auto toPlayer = targetPlayers[0];
 			auto position = toPlayer->m_Position;
 
 			for (auto player : players)
@@ -1709,5 +1711,119 @@ public:
 	{
 		PrintSyntax("");
 		PrintSyntax("(speed)");
+	}
+};
+
+
+class CommandVote : public Command {
+public:
+	CommandVote()
+	{
+		Command::Command();
+
+		SetCmd("vote");
+		AddAlias("yes");
+		AddAlias("no");
+		AddRequiredPermission("vote");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		std::string cmd = message->m_Cmd;
+
+		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+
+		if (args.size() == 1)
+		{
+			cmd = args[0].str;
+		}
+
+		Chat::SendServerMessage("cmd: (" + cmd + ")");
+
+		if (VoteSystem::HasAnyVoting())
+		{
+			if (toLower(cmd).compare("yes") == 0)
+			{
+				VoteSystem::Vote(true, message->m_Player->m_ClientId);
+				return;
+			}
+
+			if (toLower(cmd).compare("no") == 0)
+			{
+				VoteSystem::Vote(false, message->m_Player->m_ClientId);
+				return;
+			}
+		}
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(yes / no)");
+		Chat::SendServerMessage("* !yes");
+		Chat::SendServerMessage("* !no");
+	}
+};
+
+
+class CommandVoteKick : public Command {
+public:
+	CommandVoteKick()
+	{
+		Command::Command();
+
+		SetCmd("votekick");
+		AddRequiredPermission("votekick");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		if (VoteSystem::HasAnyVoting())
+		{
+			Chat::SendServerMessage("wait until this votekick ends");
+			return;
+		}
+
+		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+
+		if (args.size() == 1)
+		{
+			auto targetPlayers = Server::FindPlayers(args[0].str);
+
+			if (targetPlayers.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			auto targetPlayer = targetPlayers[0];
+
+			if (targetPlayer->IsLobbyOwner())
+			{
+				Chat::SendServerMessage("cant kick this player");
+				return;
+			}
+
+			long long clientId = targetPlayer->m_ClientId;
+
+			VoteSystem::StartVote("Kick " + targetPlayer->GetDisplayName() + " ?", 20.0f, [clientId]() {
+				VoteSystem::SendEndVoteMessage();
+				Mod::KickPlayer(clientId);
+			}, []() {
+				VoteSystem::SendEndVoteMessage();
+			});
+
+			return;
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(player)");
 	}
 };

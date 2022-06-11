@@ -50,6 +50,8 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandConfig());
 	RegisterCommand((Command*)new CommandFly());
 	//RegisterCommand((Command*)new CommandDeathMatch());
+	RegisterCommand((Command*)new CommandVote());
+	RegisterCommand((Command*)new CommandVoteKick());
 }
 
 void Chat::Update(float dt)
@@ -226,6 +228,8 @@ bool Chat::ProcessWeaponCommand(Message* message)
 
 Message* Chat::SendServerMessage(std::string text)
 {
+	if (Mod::m_IsConsole) std::cout << "[Chat] SendServerMessage " << text << std::endl;
+
 	Message* message = new Message((long long)1, text);
 	m_Messages.push_back(message);
 	return message;

@@ -54,6 +54,7 @@
     <ClCompile Include="user\Player.cpp" />
     <ClCompile Include="user\Server.cpp" />
     <ClCompile Include="user\SocketServer.cpp" />
+    <ClCompile Include="user\VoteSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appdata\il2cpp-api-functions.h" />
@@ -86,6 +87,7 @@
     <ClInclude Include="user\templates_GameManager.h" />
     <ClInclude Include="user\templates_GameServer.h" />
     <ClInclude Include="user\templates_test.h" />
+    <ClInclude Include="user\VoteSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl" />

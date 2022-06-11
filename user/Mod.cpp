@@ -5,9 +5,11 @@
 #include "Config.h"
 #include "Server.h"
 #include "templates.h"
+#include "VoteSystem.h"
 
 bool Mod::m_DebugMode = false;
-std::string Mod::m_Version = "2.2" + std::string(m_DebugMode ? "-dev" : "");
+std::string Mod::m_Version = "2.3" + std::string(m_DebugMode ? "-dev" : "");
+bool Mod::m_IsConsole = false;
 
 void Mod::Init()
 {
@@ -265,7 +267,7 @@ void Mod::Init()
 	//jector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset);
 	*/
 
-
+	/*
 	Injector::Inject(HF_GameServer_CooldownChat, GameServer_CooldownChat, &Template_GameServer_CooldownChat);
 	Injector::Inject(HF_GameServer_CooldownClientChat, GameServer_CooldownClientChat, &Template_GameServer_CooldownClientChat);
 	Injector::Inject(HF_GameServer_ForceRemoveItemItemId, GameServer_ForceRemoveItemItemId, &Template_GameServer_ForceRemoveItemItemId);
@@ -320,13 +322,45 @@ void Mod::Init()
 	Injector::Inject(HF_GameServer_PlayerSpawnRequest, GameServer_PlayerSpawnRequest, &Template_GameServer_PlayerSpawnRequest);
 	Injector::Inject(HF_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3, GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3, &Template_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3);
 	Injector::Inject(HF_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D, GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D, &Template_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D);
-
+	*/
 
 	/*
 	//Injector::Inject(HF_ServerHandle_PlayerDamage, ServerHandle_PlayerDamage, &Template_ServerHandle_PlayerDamage); doesnt work
 	*/
 
 	Server::Init();
+}
+
+void Mod::InitConsole()
+{
+	m_IsConsole = true;
+
+	Server::Init();
+
+	VoteSystem::StartVote("kick test", 2.0f, []() {
+		std::cout << "vote pass" << std::endl;
+
+		VoteSystem::SendEndVoteMessage();
+	}, []() {
+		std::cout << "vote fail" << std::endl;
+
+		VoteSystem::SendEndVoteMessage();
+	});
+
+
+	int i = 0;
+	while (true)
+	{
+		if (i == 1) VoteSystem::Vote(true, 1);
+		if (i == 2) VoteSystem::Vote(true, 2);
+		if (i == 2) VoteSystem::Vote(false, 3);
+		//if (i == 3) VoteSystem::Vote(false, 3);
+
+		Sleep(250);
+		Server::Update(0.5f);
+
+		i++;
+	}
 }
 
 /*
@@ -346,12 +380,16 @@ void Mod::SendChatMessage(long long fromClient, std::string message)
 {
 	std::cout << "[Mod] SendChatMessage " << "(" << fromClient << "): '" << message << "'" << std::endl;
 
+	if (m_IsConsole) return;
+
 	HF_ServerSend_SendChatMessage->original(fromClient, createMonoString(message.c_str()), NULL);
 }
 
 void Mod::AppendLocalChatMessage(long long fromClient, std::string username, std::string message)
 {
 	std::cout << "[Mod] AppendLocalChatMessage " << username << "(" << fromClient << "): '" << message << "'" << std::endl;
+
+	if (m_IsConsole) return;
 
 	auto chatBox = (*ChatBox__TypeInfo)->static_fields->Instance;
 	ChatBox_AppendMessage(chatBox, fromClient, (String*)createMonoString(message.c_str()), (String*)createMonoString(username.c_str()), NULL);

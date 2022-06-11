@@ -1,0 +1,60 @@
+{
+   "admin" : {
+      "inherits_from" : "",
+      "name" : "admin",
+      "permissions" : [ "*" ]
+   },
+   "default" : {
+      "inherits_from" : "",
+      "name" : "default",
+      "permissions" : [
+         "help",
+         "ahelp",
+         "w",
+         "playerinfo",
+         "tp",
+         "kill",
+         "respawn",
+         "autorespawn",
+         "hover",
+         "jumppunch",
+         "superpunch",
+         "forcefield",
+         "snowball2",
+         "ak",
+         "glock",
+         "revolver",
+         "dual",
+         "bat",
+         "bomb",
+         "katana",
+         "knife",
+         "pipe",
+         "snowball",
+         "stick",
+         "milk",
+         "pizza",
+         "grenade"
+      ]
+   },
+   "moderator" : {
+      "inherits_from" : "default",
+      "name" : "moderator",
+      "permissions" : [
+         "kick",
+         "ban",
+         "bc",
+         "w.others",
+         "respawn.others",
+         "tp.others",
+         "god",
+         "god.others",
+         "time",
+         "r",
+         "mute",
+         "lobbyonly",
+         "start",
+         "fly"
+      ]
+   }
+}
