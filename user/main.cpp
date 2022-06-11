@@ -45,8 +45,8 @@ u109Du10A8u10A0u109Bu109Bu10A0u109Cu109Cu10A6u109Au10A7 ClientSend
 u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3 GameServer
 
 [01/06 - v2.2-dev]
-Todo:
 
+Todo:
 add cinfo, pinfo(alias)
 [ok]change perm (multiple perms at once)
 add pperm
@@ -65,4 +65,11 @@ Test:
 [ok] perm create/remove group
 
 [11/06 - v2.3-dev]
+
+Todo:
+[ok]add votekick
+
+Test:
+[ok]vote
+[ok]votekick
 */
