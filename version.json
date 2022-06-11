@@ -1,5 +1,5 @@
 {
-    "version": "2.2",
+    "version": "2.3",
     "required": false,
-    "changelog": "Config now saves locally; changed !perm"
+    "changelog": "Added !fly and !votekick"
 }
