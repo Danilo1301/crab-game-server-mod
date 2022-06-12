@@ -20,6 +20,8 @@ public:
 	bool m_IsAlive = false;
 	bool m_Spectating = false;
 
+	bool m_AutoDieEnabled = false;
+
 	bool m_FirstRoundSpawn = false;
 
 	//bool m_DiedInThisRound = false;

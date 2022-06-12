@@ -1825,3 +1825,32 @@ public:
 		PrintSyntax("(player)");
 	}
 };
+
+
+class CommandAutoDie : public Command {
+public:
+	CommandAutoDie()
+	{
+		Command::Command();
+
+		SetCmd("autodie");
+		AddRequiredPermission("autodie");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto player = message->m_Player;
+
+		player->m_AutoDieEnabled = !player->m_AutoDieEnabled;
+
+		if (player->m_AutoDieEnabled) Chat::SendServerMessage("on");
+		else Chat::SendServerMessage("off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};

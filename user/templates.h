@@ -119,18 +119,28 @@ void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedCl
 {
 	std::cout << "ServerSend::GameSpawnPlayer" << " toClientId=" << toClientId << ", " << " spawnedClientId=" << spawnedClientId << ", " << " spawnPos=" << formatVector3_full(spawnPos) << ", " << " d=" << d << ", " << " streamerMode=" << streamerMode << ", " << " byteArray=" << byteArray << ", " << " numberId=" << numberId << ", " << std::endl;
 
-	HF_ServerSend_GameSpawnPlayer->original(toClientId, spawnedClientId, spawnPos, d, streamerMode, byteArray, numberId, method);
-
-	
 	if (Server::HasPlayer(spawnedClientId))
 	{
 		Player* player = Server::GetPlayer(spawnedClientId);
 		player->m_ByteArray = byteArray;
 		player->m_SpawnNumberId = numberId;
 
+		if (player->m_AutoDieEnabled && !Server::m_IsAtLobby)
+		{
+			ServerSend_SpectatorSpawn(spawnedClientId, NULL);
+			return;
+		}
+	}
+
+	HF_ServerSend_GameSpawnPlayer->original(toClientId, spawnedClientId, spawnPos, d, streamerMode, byteArray, numberId, method);
+
+	
+	if (Server::HasPlayer(spawnedClientId))
+	{
+		Player* player = Server::GetPlayer(spawnedClientId);
+
 		if (toClientId == spawnedClientId)
 		{
-
 			if (!player->m_IsAlive)
 			{
 				player->m_IsAlive = true;
@@ -138,7 +148,31 @@ void Template_ServerSend_GameSpawnPlayer(uint64_t toClientId, uint64_t spawnedCl
 			}
 		}
 	}
-	
+
+	/*
+	if (Server::m_IsAtLobby && Server::m_LobbyOwner != NULL)
+	{
+		auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
+		auto activePlayers = gameManager->fields.activePlayers;
+
+		if (activePlayers->fields.count >= 2)
+		{
+			for (size_t i = 0; i < activePlayers->fields.count; i++)
+			{
+				auto key = activePlayers->fields.entries->vector[i].key;
+				auto playerManager = activePlayers->fields.entries->vector[i].value;
+
+
+				if (!playerManager) continue;
+
+				playerManager->fields.waitingReady = (key == Server::m_LobbyOwner->m_ClientId);
+			}
+
+			Mod::SendLocalInteract(4);
+			Mod::SendLocalInteract(4);
+		}
+	}
+	*/
 }
 
 auto HF_ServerSend_SpectatorSpawn = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::SpectatorSpawn");
@@ -150,17 +184,19 @@ void Template_ServerSend_SpectatorSpawn(uint64_t a, MethodInfo* method)
 	{
 		auto player = Server::GetPlayer(a);
 
-		if (player->m_IsOnline)
-		{
-			if (player->m_IsAlive && player->m_ByteArray)
+		if (!player->m_AutoDieEnabled) {
+
+			if (player->m_IsOnline)
 			{
-				GameServer_PlayerSpawnRequest(a, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
-				return;
+				if (player->m_IsAlive && player->m_ByteArray)
+				{
+					GameServer_PlayerSpawnRequest(a, false, player->m_ByteArray, player->m_SpawnNumberId, NULL);
+					return;
+				}
+
+				player->m_Spectating = true;
 			}
-
-			player->m_Spectating = true;
 		}
-
 	}
 
 	

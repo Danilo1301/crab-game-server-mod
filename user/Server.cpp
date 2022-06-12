@@ -96,6 +96,7 @@ void Server::Init()
 		moderatorPermissionGroup->AddPermission("lobbyonly");
 		moderatorPermissionGroup->AddPermission("start");
 		moderatorPermissionGroup->AddPermission("fly");
+		moderatorPermissionGroup->AddPermission("autodie");
 	}
 
 	if (!PermissionGroups::HasGroup("admin"))

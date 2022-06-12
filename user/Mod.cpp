@@ -8,7 +8,7 @@
 #include "VoteSystem.h"
 
 bool Mod::m_DebugMode = false;
-std::string Mod::m_Version = "2.3" + std::string(m_DebugMode ? "-dev" : "");
+std::string Mod::m_Version = "2.4" + std::string(m_DebugMode ? "-dev" : "");
 bool Mod::m_IsConsole = false;
 
 void Mod::Init()

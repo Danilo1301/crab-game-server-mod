@@ -4,6 +4,7 @@
 #include "Server.h"
 #include "PermissionGroups.h"
 #include "Chat.h"
+#include "Mod.h"
 
 Player::Player(long long clientId)
 {
@@ -58,5 +59,24 @@ void Player::OnSpawn(Vector3 spawnPos)
 		std::cout << "[Player] " << GetDisplayNameExtra() << " first round spawn" << std::endl;
 
 		m_RespawnPosition = spawnPos;
+	}
+
+	if (Server::m_IsAtLobby && Server::m_LobbyOwner == this)
+	{
+		auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
+		auto activePlayers = gameManager->fields.activePlayers;
+
+		for (size_t i = 0; i < activePlayers->fields.count; i++)
+		{
+			auto key = activePlayers->fields.entries->vector[i].key;
+			auto playerManager = activePlayers->fields.entries->vector[i].value;
+
+			if (!playerManager) continue;
+
+			playerManager->fields.waitingReady = true;
+		}
+
+		Mod::SendLocalInteract(4);
+		Mod::SendLocalInteract(4);
 	}
 }
