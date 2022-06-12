@@ -68,8 +68,10 @@ Test:
 
 Todo:
 [ok]add votekick
+[ok]fly
 
 Test:
 [ok]vote
 [ok]votekick
+[ok]fly
 */
