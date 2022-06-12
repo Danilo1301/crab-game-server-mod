@@ -84,12 +84,18 @@
     <ClInclude Include="user\SocketServer.h" />
     <ClInclude Include="user\templates\templates.h" />
     <ClInclude Include="user\templates\templates_GameManager.h" />
+    <ClInclude Include="user\templates\templates_GameModeBlockDrop.h" />
+    <ClInclude Include="user\templates\templates_GameModeFallingPlatforms.h" />
     <ClInclude Include="user\templates\templates_GameServer.h" />
     <ClInclude Include="user\templates\templates_LobbyManager.h" />
     <ClInclude Include="user\templates\templates_ServerSend.h" />
+    <ClInclude Include="user\templates\templates_test_GameMode_Init.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="user\a.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <!--<VCProjectVersion>16.0</VCProjectVersion>-->

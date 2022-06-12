@@ -156,6 +156,15 @@
     <ClInclude Include="user\templates\templates_GameManager.h">
       <Filter>user\templates</Filter>
     </ClInclude>
+    <ClInclude Include="user\templates\templates_GameModeFallingPlatforms.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_test_GameMode_Init.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_GameModeBlockDrop.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appdata">
@@ -181,5 +190,10 @@
     <None Include="include\json_valueiterator.inl">
       <Filter>json</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="user\a.txt">
+      <Filter>user</Filter>
+    </Text>
   </ItemGroup>
 </Project>

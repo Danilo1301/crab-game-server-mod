@@ -16,8 +16,9 @@ auto HF_ServerSend_GameOver = new HookFunction<void, uint64_t, MethodInfo*>("Ser
 void Template_ServerSend_GameOver(uint64_t a, MethodInfo* method)
 {
 	std::cout << "ServerSend::GameOver" << " a=" << a << ", " << std::endl;
+	std::cout << "ServerSend::GameOver cancelled" << " a=" << a << ", " << std::endl;
 
-	HF_ServerSend_GameOver->original(a, method);
+	//HF_ServerSend_GameOver->original(a, method);
 }
 
 auto HF_ServerSend_PingPong = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::PingPong");
@@ -316,8 +317,6 @@ void Template_ServerSend_u10A1u10A4u10A2u10A0u109Au10A5u10A0u109Fu10A2u1099u10A0
 auto HF_ServerSend_LoadMap = new HookFunction<void, int32_t, int32_t, uint64_t, MethodInfo*>("ServerSend::LoadMap");
 void Template_ServerSend_LoadMap(int32_t a, int32_t b, uint64_t c, MethodInfo* method)
 {
-	std::cout << "ServerSend::LoadMap" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
-
 	HF_ServerSend_LoadMap->original(a, b, c, method);
 }
 
@@ -781,6 +780,12 @@ auto HF_ServerSend_FreezePlayers = new HookFunction<void, bool, MethodInfo*>("Se
 void Template_ServerSend_FreezePlayers(bool a, MethodInfo* method)
 {
 	std::cout << "ServerSend::FreezePlayers" << " a=" << a << ", " << std::endl;
+
+	if (a)
+	{
+		std::cout << "ServerSend::FreezePlayers cancelled" << " a=" << a << ", " << std::endl;
+		return;
+	}
 
 	HF_ServerSend_FreezePlayers->original(a, method);
 }

@@ -1,5 +1,4 @@
-
-DO_APP_FUNC(0x00258320, String *, SteamFriends_GetPlayerNickname, (CSteamID steamIDPlayer, MethodInfo * method));
+DO_APP_FUNC(0x00258320, String *, SteamFriends_GetPlayerNickname, (CSteamID steamIDPlayer, MethodInfo * method)); //crash?
 
 itemId = (1 to 12)
 objectId = any id
@@ -15,6 +14,257 @@ u109Du10A8u10A0u109Bu109Bu10A0u109Cu109Cu10A6u109Au10A7 ClientSend
 u109Du10A8u10A4u109Bu1099u109Du10A2u10A1u10A3u10A0u10A3 GameServer
 u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4 Client
 u1099u10A8u10A0u10A3u10A5u10A3u109Cu10A5u10A8u109Cu10A7 GameModeFallingPlatforms
+
+
+u10A6u109Du10A7u109Eu109Au10A2u109Bu10A0u109Fu10A8u10A6
+? 18, crab
+
+GameModeFallingPlatforms
+? 8
+
+u109Cu10A7u10A4u109Eu10A1u109Bu10A2u109Du109Cu109Fu10A8
+GameModeBlockDrop
+48 15, block drop
+50 15
+
+u10A8u10A1u10A1u10A6u109Eu109Du10A3u109Au10A1u1099u10A3
+49 14, death from above
+
+
+
+[GameModeBlockDrop]
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B252ACB720,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B252ACB720,  c=0.5,
+000002B241573200
+ServerSend::SendChatMessage a=76561199219991370,  b=!map 50 15,
+ServerSend::LoadMap_1 a=50,  b=15,
+[Chat] Message from (Danilo[#2] (alive)) '!map 50 15'
+[Chat] Messages left: 0
+XX  ServerSend::SendFallingBlocks a=14,  b=1.2,  c=60214,  d=76561198092596612,
+GameManager::_ctor a=000002B176B4A8F0,
+* load
+ServerSend::LoadingSendIntoGame a=76561198092596612,
+ServerSend::LoadingState a=76561199219991370,  b=1,
+ServerSend::LoadingState a=76561199219991370,  b=1,
+* start
+GameManager::Start a=000002B176B4A8F0,
+[Chat] SendServerMessage: Map started
+GameModeBlockDrop::InitMode a=000002B252ACBF00,
+ServerSend::SendGameModeTimer a=76561198092596612,  b=11,  c=0,
+GameServer::PlayerSpawnRequest a=76561198092596612,  b=0,  c=000002B253016000,  d=1141,
+ServerSend::GameSpawnPlayer a=76561198092596612,  b=76561198092596612,  c=Vector3(-0.571636, -20.000000, -4.996716),  d=0,  e=0,  f=000002B253016000,  g=1141,
+GameManager::SpawnPlayer a=000002B176B4A8F0,  b=76561198092596612,  c=Vector3(-0.571636, -20.000000, -4.996716),  d=1,  e=0,  f=000002B221453000,  g=1141,
+LobbyManager::u109Cu109Eu109Bu10A8u109Au10A4u109Eu10A3u109Du109Bu109B a=000002B2530AEAE0,  b=CSteamID(0),
+LobbyManager::u109Cu109Eu109Bu10A8u109Au10A4u109Eu10A3u109Du109Bu109B a=000002B2530AEA80,  b=CSteamID(7500000),
+GameModeBlockDrop::u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B a=000002B252ACBF00,  b=76561198092596612,
+GameModeBlockDrop::u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7 a=000002B252ACBF00,
+[Player] UpdateInfo 76561198092596612
+[Player] Client found: 76561198092596612
+[client]
+0 : 000002B25A563420
+ : 000002B253016000
+bArrLen : 1141
+int1 : 1141
+int2 : 0
+int3 : 0
+int4 : 0
+------
+[Player] Uid found76561198092596612 : 1
+[Player] PlayerManager found: (active) 000002B176B49C00
+[Player] Alive = 1 from PlayerManager
+[Server] Danilo1301[#1] (alive) (76561198092596612) spawned at Vector3(-0.571636, -20.000000, -4.996716)
+[Chat] SendServerMessage: Player Danilo1301[#1] (alive) spawned
+ServerSend::GameSpawnPlayer a=76561199219991370,  b=76561198092596612,  c=Vector3(-0.571636, -20.000000, -4.996716),  d=0,  e=0,  f=000002B253016000,  g=1141,
+[Player] UpdateInfo 76561198092596612
+[Player] Client found: 76561198092596612
+[client]
+0 : 000002B25A563420
+ : 000002B253016000
+bArrLen : 1141
+int1 : 1141
+int2 : 0
+int3 : 0
+int4 : 0
+------
+[Player] Uid found76561198092596612 : 1
+[Player] PlayerManager found: (active) 000002B176B49C00
+[Player] Alive = 1 from PlayerManager
+[Server] Danilo1301[#1] (alive) (76561198092596612) spawned at Vector3(-0.571636, -20.000000, -4.996716)
+[Chat] SendServerMessage: Player Danilo1301[#1] (alive) spawned
+[Chat] Message from (1) 'Map started'
+[Chat] Messages left: 2
+[Chat] Message from (1) 'Player Danilo1301[#1] (alive) spawned'
+[Chat] Messages left: 1
+[Chat] Message from (1) 'Player Danilo1301[#1] (alive) spawned'
+[Chat] Messages left: 0
+* load 2nd player
+ServerSend::LoadingSendIntoGame a=76561199219991370,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=8.93446,  c=0,
+GameServer::PlayerSpawnRequest a=76561199219991370,  b=0,  c=000002B2414726E0,  d=44,
+ServerSend::GameSpawnPlayer a=76561198092596612,  b=76561199219991370,  c=Vector3(12.628418, -17.700001, 13.622463),  d=0,  e=0,  f=000002B2414726E0,  g=44,
+GameManager::SpawnPlayer a=000002B176B4A8F0,  b=76561199219991370,  c=Vector3(12.628418, -17.700001, 13.622463),  d=2,  e=0,  f=000002B25A6BB460,  g=44,
+LobbyManager::u109Cu109Eu109Bu10A8u109Au10A4u109Eu10A3u109Du109Bu109B a=000002B2530A82D0,  b=CSteamID(0),
+LobbyManager::u109Cu109Eu109Bu10A8u109Au10A4u109Eu10A3u109Du109Bu109B a=000002B2530A8270,  b=CSteamID(7500000),
+GameModeBlockDrop::u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B a=000002B252ACBF00,  b=76561199219991370,
+GameModeBlockDrop::u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7 a=000002B252ACBF00,
+ServerSend::GameSpawnPlayer a=76561199219991370,  b=76561199219991370,  c=Vector3(12.628418, -17.700001, 13.622463),  d=0,  e=0,  f=000002B2414726E0,  g=44,
+[Player] UpdateInfo 76561199219991370
+[Player] Client found: 76561199219991370
+[client]
+1 : 000002B252ACB720
+ : 000002B2414726E0
+bArrLen : 44
+int1 : 44
+int2 : 0
+int3 : 46
+int4 : 0
+------
+[Player] Uid found76561199219991370 : 2
+[Player] PlayerManager found: (active) 000002B176B49780
+[Player] Alive = 1 from PlayerManager
+[Server] Danilo[#2] (alive) (76561199219991370) spawned at Vector3(12.628418, -17.700001, 13.622463)
+[Chat] SendServerMessage: Player Danilo[#2] (alive) spawned
+ServerSend::GameSpawnPlayer a=76561199219991370,  b=76561198092596612,  c=Vector3(-0.571636, -19.597460, -4.996716),  d=0,  e=0,  f=000002B253016000,  g=1141,
+[Chat] Message from (1) 'Player Danilo[#2] (alive) spawned'
+[Chat] Messages left: 0
+*
+ServerSend::SendGameModeTimer a=76561198092596612,  b=5.98836,  c=0,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=5.98836,  c=0,
+*
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B24B9EF4C0
+ServerSend::SendChatMessage a=76561198092596612,  b=c1,
+[Chat] Message from (Danilo1301[#1] (alive)) 'c1'
+[Chat] Messages left: 0
+*
+ServerSend::SendGameModeTimer a=76561198092596612,  b=0.963758,  c=0,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=0.963758,  c=0,
+*
+ServerSend::SendModeState a=1,
+GameModeBlockDrop::OnFreezeOver a=000002B252ACBF00,
+GameModeBlockDrop::FindPlayersToKill a=000002B252ACBF00,
+1
+GameModeBlockDrop::FindPlayersToKill a=000002B252ACBF00,
+1
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.909091,  c=1.1,  d=19976,  e=76561198092596612,
+000002B24B9E5FA0
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.859091,  c=1.1,  d=19976,  e=76561199219991370,
+000002B24B9E5F00
+ServerSend::FreezePlayers a=0,
+*
+ServerSend::SendBlockCrush a=1.1,  b=19976,  c=76561199219991370,
+ServerSend::SendBlockCrush a=1.1,  b=19976,  c=76561198092596612,
+*
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B24BAA8980
+ServerSend::SendChatMessage a=76561198092596612,  b=c2,
+[Chat] Message from (Danilo1301[#1] (alive)) 'c2'
+[Chat] Messages left: 0
+*
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.892857,  c=1.12,  d=39703,  e=76561198092596612,
+000002B24BAA9550
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.842857,  c=1.12,  d=39703,  e=76561199219991370,
+000002B24BAA9500
+ServerSend::SendBlockCrush a=1.12,  b=39703,  c=76561199219991370,
+ServerSend::SendBlockCrush a=1.12,  b=39703,  c=76561198092596612,
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.877193,  c=1.14,  d=12105,  e=76561198092596612,
+000002B24B9E5F00
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.827193,  c=1.14,  d=12105,  e=76561199219991370,
+000002B24B9E5E60
+GameServer::u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownPunch a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B25A6B57C0
+GameServer::CheckPush a=000002B176B49C00,  b=000002B176B49780,
+ServerSend::PunchPlayer a=76561198092596612,  b=76561199219991370,  c=Vector3(-0.053989, 0.000000, 0.998542),
+GameManager::PunchPlayer a=000002B176B4A8F0,  b=76561198092596612,  c=76561199219991370,  d=Vector3(-0.053989, 0.000000, 0.998542),
+ServerSend::SendBlockCrush a=1.14,  b=12105,  c=76561199219991370,
+ServerSend::SendBlockCrush a=1.14,  b=12105,  c=76561198092596612,
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.862069,  c=1.16,  d=61508,  e=76561198092596612,
+000002B24B9E5DC0
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.809069,  c=1.16,  d=61508,  e=76561199219991370,
+000002B24B9E5D70
+ServerSend::SendGameModeTimer a=76561198092596612,  b=85.9724,  c=1,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=85.9724,  c=1,
+ServerSend::SendBlockCrush a=1.16,  b=61508,  c=76561199219991370,
+ServerSend::SendBlockCrush a=1.16,  b=61508,  c=76561198092596612,
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.847458,  c=1.18,  d=56061,  e=76561198092596612,
+000002B24B9E5C80
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.794458,  c=1.18,  d=56061,  e=76561199219991370,
+000002B24B9E5C30
+*
+ServerSend::PlayerDamage a=76561199219991370,  b=76561199219991370,  c=9999,  d=Vector3(0.000000, -1.000000, 0.000000),  e=-2,
+GameManager::PlayerTookDamage a=000002B176B4A8F0,  b=000002B24B9F5D50,
+GameServer::CheckHit a=76561199219991370,  b=76561199219991370,  c=-2,
+ServerSend::PlayerDamage a=76561199219991370,  b=76561199219991370,  c=9999,  d=Vector3(0.000000, -1.000000, 0.000000),  e=-2,
+GameManager::PlayerTookDamage a=000002B176B4A8F0,  b=000002B24B9F5C30,
+GameServer::CheckHit a=76561199219991370,  b=76561199219991370,  c=-2,
+GameServer::PlayerDied a=76561199219991370,  b=76561199219991370,  c=Vector3(0.000000, -1.000000, 0.000000),
+ServerSend::PlayerDied a=76561199219991370,  b=76561199219991370,  c=Vector3(0.000000, -1.000000, 0.000000),
+GameManager::PlayerDied a=000002B176B4A8F0,  b=76561199219991370,  c=76561199219991370,  d=Vector3(0.000000, -1.000000, 0.000000),
+GameManager::u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099 a=000002B176B4A8F0,  b=000002B176B49780,  c=3,
+000002B24B9E4B80
+GameModeBlockDrop::u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B a=000002B252ACBF00,  b=76561199219991370,
+GameModeBlockDrop::u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7 a=000002B252ACBF00,
+*
+ServerSend::SendGameModeTimer_1 a=1,  b=1,
+[Server] Danilo[#2] (dead) (76561199219991370) died
+[Chat] SendServerMessage: Danilo[#2] (dead) died
+[Chat] Message from (1) 'Danilo[#2] (dead) died'
+[Chat] Messages left: 0
+ServerSend::SendBlockCrush a=1.18,  b=56061,  c=76561199219991370,
+ServerSend::SendBlockCrush a=1.18,  b=56061,  c=76561198092596612,
+*
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B25A6AD2C0
+ServerSend::SendChatMessage a=76561198092596612,  b=c3,
+[Chat] Message from (Danilo1301[#1] (alive)) 'c3'
+[Chat] Messages left: 0
+*
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.833333,  c=1.2,  d=65100,  e=76561198092596612,
+000002B24BA13DC0
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.780333,  c=1.2,  d=65100,  e=76561199219991370,
+000002B24BA13D70
+*
+ServerSend::SendModeState a=2,
+GameModeBlockDrop::OnRoundOver a=000002B252ACBF00,     
+OnRoundOver cancelled     <---- didnt work
+ServerSend::GameOver a=76561198092596612,                   <---- maybe
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.819672,  c=1.22,  d=1193,  e=76561198092596612,
+000002B24B9E5F00
+GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 a=000002B252ACBF00,  b=0.769672,  c=1.22,  d=1193,  e=76561199219991370,
+000002B24B9E5E60
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B24BAA8B80
+ServerSend::SendChatMessage a=76561198092596612,  b=c4,
+[Chat] Message from (Danilo1301[#1] (alive)) 'c4'
+[Chat] Messages left: 0
+GameModeBlockDrop::InvokeSendFallingBlocks a=000002B252ACBF00,
+ServerSend::SendGameModeTimer a=76561198092596612,  b=4.65434,  c=3,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=4.65434,  c=3,
+ServerSend::SendSpectatingWho a=76561198092596612,  b=76561199219991370,  c=76561198092596612,
+GameServer::CooldownClientChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+GameServer::CooldownChat a=000002B241574D00,  b=000002B25A563420,  c=0.5,
+000002B24BBB1F80
+ServerSend::SendChatMessage a=76561198092596612,  b=gg,
+[Chat] Message from (Danilo1301[#1] (alive)) 'gg'
+[Chat] Messages left: 0
+ServerSend::SendWinner a=76561198092596612,  b=2000000,
+ServerSend::SendGameModeTimer a=76561198092596612,  b=0,  c=3,
+ServerSend::SendGameModeTimer a=76561199219991370,  b=0,  c=3,
+
+
+
 
 start lobby
 LobbyManager::StartNewLobby a=00000199E2DE9E40,  b=CSteamID(76561198092596612),  c=CSteamID(109775241789858965),

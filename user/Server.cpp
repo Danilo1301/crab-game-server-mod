@@ -37,6 +37,33 @@ void Server::Init()
 void Server::Update(float dt)
 {
 	Chat::Update(dt);
+
+	/*
+	auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
+	if (gameManager)
+	{
+		if (gameManager->fields.gameMode)
+		{
+			if (Server::m_MapModeId == 15)
+			{
+				auto gameMode = (GameModeBlockDrop*)gameManager->fields.gameMode;
+				std::cout << "[gameMode - 1]" << gameMode->fields.u109Du10A7u10A4u10A2u109Du10A8u109Du109Eu1099u10A8u10A7 << std::endl;
+			}
+		}
+	}
+
+	auto lobbyManager = (*LobbyManager__TypeInfo)->static_fields->Instance;
+	if (lobbyManager)
+	{
+		if (lobbyManager->fields.gameMode)
+		{
+			auto gamemodeData = lobbyManager->fields.gameMode;
+			std::cout << "[minPlayers]" << gamemodeData->fields.minPlayers << std::endl;
+			std::cout << "[maxPlayers]" << gamemodeData->fields.maxPlayers << std::endl;
+			std::cout << "[waitForRoundOverToDeclareSoloWinner ]" << gamemodeData->fields.waitForRoundOverToDeclareSoloWinner << std::endl;
+		}
+	}
+	*/
 }
 
 bool Server::HasPlayer(long long clientId)
@@ -227,8 +254,8 @@ bool Server::OnPlayerTryToSpawnSpectator(Player* player)
 		GameServer_PlayerSpawnRequest(
 			player->m_ClientId,
 			false,
-			byteArray, //byteArray
-			numberId, //numberId
+			byteArray,
+			numberId,
 			NULL
 		);
 

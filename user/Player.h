@@ -15,8 +15,6 @@ public:
 
 	bool m_DiedThisRound = false;
 
-	int m_NumberId = -1; //changeLater
-
 	bool m_CanSpawnNextRound = false;
 	bool m_HideMessages = false;
 

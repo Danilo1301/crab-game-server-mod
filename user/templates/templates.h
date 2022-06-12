@@ -4,6 +4,9 @@
 #include "templates_ServerSend.h"
 #include "templates_GameServer.h"
 #include "templates_GameManager.h"
+#include "templates_GameModeFallingPlatforms.h"
+#include "templates_test_GameMode_Init.h"
+#include "templates_GameModeBlockDrop.h"
 
 auto HF_ChatBox_Update = new HookFunction<void, ChatBox*, MethodInfo*>("ChatBox::Update");
 void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
@@ -24,3 +27,7 @@ void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, String* d
 
 	HF_ChatBox_AppendMessage->original(a, b, c, d, method);
 }
+
+
+
+
