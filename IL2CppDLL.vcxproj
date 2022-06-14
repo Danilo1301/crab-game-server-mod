@@ -46,6 +46,7 @@
     <ClCompile Include="user\Config.cpp" />
     <ClCompile Include="user\Injector.cpp" />
     <ClCompile Include="user\main.cpp" />
+    <ClCompile Include="user\MapSkip.cpp" />
     <ClCompile Include="user\Message.cpp" />
     <ClCompile Include="user\Mod.cpp" />
     <ClCompile Include="user\pch.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="user\Config.h" />
     <ClInclude Include="user\Injector.h" />
     <ClInclude Include="user\main.h" />
+    <ClInclude Include="user\MapSkip.h" />
     <ClInclude Include="user\Message.h" />
     <ClInclude Include="user\Mod.h" />
     <ClInclude Include="user\pch.h" />

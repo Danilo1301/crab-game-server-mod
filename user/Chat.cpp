@@ -53,6 +53,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandVote());
 	RegisterCommand((Command*)new CommandVoteKick());
 	RegisterCommand((Command*)new CommandAutoDie());
+	RegisterCommand((Command*)new CommandSkip());
 }
 
 void Chat::Update(float dt)

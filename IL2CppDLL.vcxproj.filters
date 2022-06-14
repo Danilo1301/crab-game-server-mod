@@ -64,6 +64,9 @@
     <ClCompile Include="user\VoteSystem.cpp">
       <Filter>user</Filter>
     </ClCompile>
+    <ClCompile Include="user\MapSkip.cpp">
+      <Filter>user</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user\main.h">
@@ -157,6 +160,9 @@
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\VoteSystem.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\MapSkip.h">
       <Filter>user</Filter>
     </ClInclude>
   </ItemGroup>

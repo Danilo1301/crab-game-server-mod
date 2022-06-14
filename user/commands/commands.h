@@ -8,6 +8,7 @@
 #include "Message.h"
 #include "Server.h"
 #include "VoteSystem.h"
+#include "MapSkip.h"
 
 class CommandHelp : public Command {
 public:
@@ -1847,6 +1848,36 @@ public:
 
 		if (player->m_AutoDieEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};
+
+
+class CommandSkip : public Command {
+public:
+	CommandSkip()
+	{
+		Command::Command();
+
+		SetCmd("skip");
+		AddRequiredPermission("skip");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		if (!MapSkip::CanSkip())
+		{
+			Chat::SendServerMessage("you can't skip now");
+			return;
+		}
+
+		MapSkip::VoteSkip(message->m_Player->m_ClientId);
 	}
 
 	virtual void PrintSyntaxes()

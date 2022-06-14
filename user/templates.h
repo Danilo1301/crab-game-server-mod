@@ -3,6 +3,7 @@
 #include "Injector.h"
 #include "Server.h"
 #include "Chat.h"
+#include "MapSkip.h"
 
 #include "templates_GameServer.h"
 #include "templates_GameManager.h"
@@ -226,6 +227,8 @@ void Template_ServerSend_LoadMap_1(int32_t a, int32_t b, MethodInfo* method)
 	GameServer_ForceRemoveAllWeapons(NULL);
 
 	HF_ServerSend_LoadMap_1->original(a, b, method);
+
+	MapSkip::OnMapLoad(a, b);
 }
 
 

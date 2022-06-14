@@ -70,6 +70,7 @@ void Server::Init()
 		permissionGroup->AddPermission("snowball2");
 		permissionGroup->AddPermission("vote");
 		permissionGroup->AddPermission("votekick");
+		permissionGroup->AddPermission("skip");
 
 		for (auto weapon : m_Weapons)
 		{
