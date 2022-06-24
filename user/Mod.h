@@ -8,6 +8,8 @@ public:
 	static bool m_DebugMode;
 	static std::string m_Version;
 
+	static void* ISteamMatchmaking_Instance;
+	static uint64_t ISteamMatchmaking_LobbyId;
 	static void Init();
 
 	static void AppendLocalChatMessage(long long fromClient, std::string username, std::string content);

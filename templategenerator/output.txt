@@ -1,768 +1,455 @@
-auto HF_GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5");
-void Template_GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetFavoriteGameCount = new HookFunction<int32_t, void*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetFavoriteGameCount");
+int32_t Template_NativeMethods_ISteamMatchmaking_GetFavoriteGameCount(void* a, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetFavoriteGameCount" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8 = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8");
-void Template_GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2");
-IEnumerator* Template_GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetFavoriteGameCount->original(a, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_FindPlayersToKill = new HookFunction<int32_t, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::FindPlayersToKill");
-int32_t Template_GameModeBlockDrop_FindPlayersToKill(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetFavoriteGame = new HookFunction<bool, void*, int32_t, AppId_t*, uint32_t*, uint16_t*, uint16_t*, uint32_t*, uint32_t*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetFavoriteGame");
+bool Template_NativeMethods_ISteamMatchmaking_GetFavoriteGame(void* a, int32_t b, AppId_t* c, uint32_t* d, uint16_t* e, uint16_t* f, uint32_t* g, uint32_t* h, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::FindPlayersToKill" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetFavoriteGame" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", "<< " h=" << h << ", " << std::endl;
 	
-	auto ret = HF_GameModeBlockDrop_FindPlayersToKill->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetFavoriteGame->original(a, b, c, d, e, f, g, h, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2");
-IEnumerator* Template_GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddFavoriteGame = new HookFunction<int32_t, void*, AppId_t, uint32_t, uint16_t, uint16_t, uint32_t, uint32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddFavoriteGame");
+int32_t Template_NativeMethods_ISteamMatchmaking_AddFavoriteGame(void* a, AppId_t b, uint32_t c, uint16_t d, uint16_t e, uint32_t f, uint32_t g, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddFavoriteGame" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
 	
-	auto ret = HF_GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_AddFavoriteGame->original(a, b, c, d, e, f, g, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8");
-void Template_GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_RemoveFavoriteGame = new HookFunction<bool, void*, AppId_t, uint32_t, uint16_t, uint16_t, uint32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_RemoveFavoriteGame");
+bool Template_NativeMethods_ISteamMatchmaking_RemoveFavoriteGame(void* a, AppId_t b, uint32_t c, uint16_t d, uint16_t e, uint32_t f, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_RemoveFavoriteGame" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E");
-void Template_GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E");
-IEnumerator* Template_GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_RemoveFavoriteGame->original(a, b, c, d, e, f, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1");
-void Template_GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_RequestLobbyList = new HookFunction<uint64_t, void*, MethodInfo*>("NativeMethods::ISteamMatchmaking_RequestLobbyList");
+uint64_t Template_NativeMethods_ISteamMatchmaking_RequestLobbyList(void* a, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_RequestLobbyList" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0");
-IEnumerator* Template_GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_RequestLobbyList->original(a, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D");
-void Template_GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter = new HookFunction<void, void*, InteropHelp_UTF8StringHandle*, InteropHelp_UTF8StringHandle*, ELobbyComparison__Enum, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListStringFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter(void* a, InteropHelp_UTF8StringHandle* b, InteropHelp_UTF8StringHandle* c, ELobbyComparison__Enum d, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListStringFilter" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter->original(a, b, c, d, method);
 }
 	
-auto HF_GameModeBlockDrop_OnRoundOver = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::OnRoundOver");
-void Template_GameModeBlockDrop_OnRoundOver(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter = new HookFunction<void, void*, InteropHelp_UTF8StringHandle*, int32_t, ELobbyComparison__Enum, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListNumericalFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter(void* a, InteropHelp_UTF8StringHandle* b, int32_t c, ELobbyComparison__Enum d, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::OnRoundOver" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListNumericalFilter" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_OnRoundOver->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter->original(a, b, c, d, method);
 }
 	
-auto HF_GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0");
-void Template_GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter = new HookFunction<void, void*, InteropHelp_UTF8StringHandle*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListNearValueFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter(void* a, InteropHelp_UTF8StringHandle* b, int32_t c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListNearValueFilter" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter->original(a, b, c, method);
 }
 	
-auto HF_GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F");
-void Template_GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable = new HookFunction<void, void*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable(void* a, int32_t b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable->original(a, b, method);
 }
 	
-auto HF_GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8");
-void Template_GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter = new HookFunction<void, void*, ELobbyDistanceFilter__Enum, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListDistanceFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter(void* a, ELobbyDistanceFilter__Enum b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListDistanceFilter" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter->original(a, b, method);
 }
 	
-auto HF_GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6 = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6");
-void Template_GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter = new HookFunction<void, void*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListResultCountFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter(void* a, int32_t b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListResultCountFilter" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6->original(a, b, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter->original(a, b, method);
 }
 	
-auto HF_GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0");
-void Template_GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter = new HookFunction<void, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter");
+void Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter(void* a, CSteamID b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter->original(a, b, method);
 }
 	
-auto HF_GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E");
-void Template_GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyByIndex = new HookFunction<uint64_t, void*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyByIndex");
+uint64_t Template_NativeMethods_ISteamMatchmaking_GetLobbyByIndex(void* a, int32_t b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyByIndex" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3");
-IEnumerator* Template_GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyByIndex->original(a, b, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B");
-void Template_GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_CreateLobby = new HookFunction<uint64_t, void*, ELobbyType__Enum, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_CreateLobby");
+uint64_t Template_NativeMethods_ISteamMatchmaking_CreateLobby(void* a, ELobbyType__Enum b, int32_t c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_CreateLobby" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C");
-void Template_GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D");
-void Template_GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7");
-void Template_GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8 = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8");
-void Template_GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B");
-void Template_GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099 = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099");
-void Template_GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_OnFreezeOver = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::OnFreezeOver");
-void Template_GameModeBlockDrop_OnFreezeOver(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::OnFreezeOver" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_OnFreezeOver->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8");
-void Template_GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5 = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5");
-void Template_GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3");
-void Template_GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B");
-void Template_GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2 = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2");
-void Template_GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B");
-IEnumerator* Template_GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_CreateLobby->original(a, b, c, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1 = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1");
-void Template_GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_JoinLobby = new HookFunction<uint64_t, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_JoinLobby");
+uint64_t Template_NativeMethods_ISteamMatchmaking_JoinLobby(void* a, CSteamID b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_JoinLobby" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B");
-void Template_GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6");
-void Template_GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B");
-void Template_GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E");
-void Template_GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D");
-void Template_GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7");
-void Template_GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0");
-void Template_GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E");
-void Template_GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3");
-void Template_GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3 = new HookFunction<int32_t, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3");
-int32_t Template_GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_JoinLobby->original(a, b, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8");
-void Template_GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_LeaveLobby = new HookFunction<void, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_LeaveLobby");
+void Template_NativeMethods_ISteamMatchmaking_LeaveLobby(void* a, CSteamID b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_LeaveLobby" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_LeaveLobby->original(a, b, method);
 }
 	
-auto HF_GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B");
-void Template_GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_InviteUserToLobby = new HookFunction<bool, void*, CSteamID, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_InviteUserToLobby");
+bool Template_NativeMethods_ISteamMatchmaking_InviteUserToLobby(void* a, CSteamID b, CSteamID c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_InviteUserToLobby" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1");
-void Template_GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6");
-void Template_GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7");
-void Template_GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A = new HookFunction<int32_t, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A");
-int32_t Template_GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_InviteUserToLobby->original(a, b, c, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2");
-IEnumerator* Template_GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetNumLobbyMembers = new HookFunction<int32_t, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetNumLobbyMembers");
+int32_t Template_NativeMethods_ISteamMatchmaking_GetNumLobbyMembers(void* a, CSteamID b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetNumLobbyMembers" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	auto ret = HF_GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetNumLobbyMembers->original(a, b, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E");
-void Template_GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex = new HookFunction<uint64_t, void*, CSteamID, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyMemberByIndex");
+uint64_t Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex(void* a, CSteamID b, int32_t c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyMemberByIndex" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_PlayerDied = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::PlayerDied");
-void Template_GameModeBlockDrop_PlayerDied(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::PlayerDied" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_PlayerDied->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_InitMode = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::InitMode");
-void Template_GameModeBlockDrop_InitMode(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::InitMode" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_InitMode->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099");
-void Template_GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_OnPlayerSpawnOrDespawn = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::OnPlayerSpawnOrDespawn");
-void Template_GameModeBlockDrop_OnPlayerSpawnOrDespawn(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::OnPlayerSpawnOrDespawn" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_OnPlayerSpawnOrDespawn->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D");
-void Template_GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4");
-void Template_GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099");
-void Template_GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2 = new HookFunction<void, GameModeBlockDrop*, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2");
-void Template_GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2(GameModeBlockDrop* a, uint64_t b, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2->original(a, b, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B");
-void Template_GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3");
-void Template_GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2 = new HookFunction<int32_t, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2");
-int32_t Template_GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex->original(a, b, c, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099");
-void Template_GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyData = new HookFunction<void*, void*, CSteamID, InteropHelp_UTF8StringHandle*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyData");
+void* Template_NativeMethods_ISteamMatchmaking_GetLobbyData(void* a, CSteamID b, InteropHelp_UTF8StringHandle* c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyData" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8");
-void Template_GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6");
-IEnumerator* Template_GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyData->original(a, b, c, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7");
-void Template_GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyData = new HookFunction<bool, void*, CSteamID, InteropHelp_UTF8StringHandle*, InteropHelp_UTF8StringHandle*, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyData");
+bool Template_NativeMethods_ISteamMatchmaking_SetLobbyData(void* a, CSteamID b, InteropHelp_UTF8StringHandle* c, InteropHelp_UTF8StringHandle* d, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyData" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F");
-void Template_GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4 = new HookFunction<void, GameModeBlockDrop*, uint64_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4");
-void Template_GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4(GameModeBlockDrop* a, uint64_t b, uint64_t c, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4->original(a, b, c, method);
-}
-	
-auto HF_GameModeBlockDrop_InvokeSendFallingBlocks = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::InvokeSendFallingBlocks");
-void Template_GameModeBlockDrop_InvokeSendFallingBlocks(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::InvokeSendFallingBlocks" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_InvokeSendFallingBlocks->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7");
-void Template_GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2");
-void Template_GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5 = new HookFunction<int32_t, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5");
-int32_t Template_GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5(GameModeBlockDrop* a, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLobbyData->original(a, b, c, d, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3");
-void Template_GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyDataCount = new HookFunction<int32_t, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyDataCount");
+int32_t Template_NativeMethods_ISteamMatchmaking_GetLobbyDataCount(void* a, CSteamID b, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyDataCount" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3->original(a, method);
-}
-	
-auto HF_GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0 = new HookFunction<IEnumerator*, GameModeBlockDrop*, float, float, int32_t, uint64_t, MethodInfo*>("GameModeBlockDrop::u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0");
-IEnumerator* Template_GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0(GameModeBlockDrop* a, float b, float c, int32_t d, uint64_t e, MethodInfo* method)
-{
-	std::cout << "GameModeBlockDrop::u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
-	
-	auto ret = HF_GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0->original(a, b, c, d, e, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyDataCount->original(a, b, method);
 
 	std::cout << ret << std::endl;
 
 	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E");
-void Template_GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex = new HookFunction<bool, void*, CSteamID, int32_t, void*, int32_t, void*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyDataByIndex");
+bool Template_NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex(void* a, CSteamID b, int32_t c, void* d, int32_t e, void* f, int32_t g, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyDataByIndex" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex->original(a, b, c, d, e, f, g, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7 = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7");
-void Template_GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_DeleteLobbyData = new HookFunction<bool, void*, CSteamID, InteropHelp_UTF8StringHandle*, MethodInfo*>("NativeMethods::ISteamMatchmaking_DeleteLobbyData");
+bool Template_NativeMethods_ISteamMatchmaking_DeleteLobbyData(void* a, CSteamID b, InteropHelp_UTF8StringHandle* c, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_DeleteLobbyData" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_DeleteLobbyData->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E");
-void Template_GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberData = new HookFunction<void*, void*, CSteamID, CSteamID, InteropHelp_UTF8StringHandle*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyMemberData");
+void* Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberData(void* a, CSteamID b, CSteamID c, InteropHelp_UTF8StringHandle* d, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyMemberData" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E->original(a, method);
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberData->original(a, b, c, d, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
 }
 	
-auto HF_GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A = new HookFunction<void, GameModeBlockDrop*, MethodInfo*>("GameModeBlockDrop::u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A");
-void Template_GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A(GameModeBlockDrop* a, MethodInfo* method)
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberData = new HookFunction<void, void*, CSteamID, InteropHelp_UTF8StringHandle*, InteropHelp_UTF8StringHandle*, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyMemberData");
+void Template_NativeMethods_ISteamMatchmaking_SetLobbyMemberData(void* a, CSteamID b, InteropHelp_UTF8StringHandle* c, InteropHelp_UTF8StringHandle* d, MethodInfo* method)
 {
-	std::cout << "GameModeBlockDrop::u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A" <<  " a=" << a << ", " << std::endl;
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyMemberData" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A->original(a, method);
+	HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberData->original(a, b, c, d, method);
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SendLobbyChatMsg = new HookFunction<bool, void*, CSteamID, Byte__Array*, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_SendLobbyChatMsg");
+bool Template_NativeMethods_ISteamMatchmaking_SendLobbyChatMsg(void* a, CSteamID b, Byte__Array* c, int32_t d, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SendLobbyChatMsg" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SendLobbyChatMsg->original(a, b, c, d, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyChatEntry = new HookFunction<int32_t, void*, CSteamID, int32_t, CSteamID*, Byte__Array*, int32_t, EChatEntryType__Enum*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyChatEntry");
+int32_t Template_NativeMethods_ISteamMatchmaking_GetLobbyChatEntry(void* a, CSteamID b, int32_t c, CSteamID* d, Byte__Array* e, int32_t f, EChatEntryType__Enum* g, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyChatEntry" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyChatEntry->original(a, b, c, d, e, f, g, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_RequestLobbyData = new HookFunction<bool, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_RequestLobbyData");
+bool Template_NativeMethods_ISteamMatchmaking_RequestLobbyData(void* a, CSteamID b, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_RequestLobbyData" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_RequestLobbyData->original(a, b, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyGameServer = new HookFunction<void, void*, CSteamID, uint32_t, uint16_t, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyGameServer");
+void Template_NativeMethods_ISteamMatchmaking_SetLobbyGameServer(void* a, CSteamID b, uint32_t c, uint16_t d, CSteamID e, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyGameServer" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
+	
+	HF_NativeMethods_ISteamMatchmaking_SetLobbyGameServer->original(a, b, c, d, e, method);
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyGameServer = new HookFunction<bool, void*, CSteamID, uint32_t*, uint16_t*, CSteamID*, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyGameServer");
+bool Template_NativeMethods_ISteamMatchmaking_GetLobbyGameServer(void* a, CSteamID b, uint32_t* c, uint16_t* d, CSteamID* e, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyGameServer" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyGameServer->original(a, b, c, d, e, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit = new HookFunction<bool, void*, CSteamID, int32_t, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyMemberLimit");
+bool Template_NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit(void* a, CSteamID b, int32_t c, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyMemberLimit" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit = new HookFunction<int32_t, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyMemberLimit");
+int32_t Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit(void* a, CSteamID b, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyMemberLimit" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit->original(a, b, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyType = new HookFunction<bool, void*, CSteamID, ELobbyType__Enum, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyType");
+bool Template_NativeMethods_ISteamMatchmaking_SetLobbyType(void* a, CSteamID b, ELobbyType__Enum c, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyType" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLobbyType->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyJoinable = new HookFunction<bool, void*, CSteamID, bool, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyJoinable");
+bool Template_NativeMethods_ISteamMatchmaking_SetLobbyJoinable(void* a, CSteamID b, bool c, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyJoinable" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLobbyJoinable->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_GetLobbyOwner = new HookFunction<uint64_t, void*, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_GetLobbyOwner");
+uint64_t Template_NativeMethods_ISteamMatchmaking_GetLobbyOwner(void* a, CSteamID b, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_GetLobbyOwner" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_GetLobbyOwner->original(a, b, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLobbyOwner = new HookFunction<bool, void*, CSteamID, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLobbyOwner");
+bool Template_NativeMethods_ISteamMatchmaking_SetLobbyOwner(void* a, CSteamID b, CSteamID c, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLobbyOwner" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLobbyOwner->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
+}
+	
+auto HF_NativeMethods_ISteamMatchmaking_SetLinkedLobby = new HookFunction<bool, void*, CSteamID, CSteamID, MethodInfo*>("NativeMethods::ISteamMatchmaking_SetLinkedLobby");
+bool Template_NativeMethods_ISteamMatchmaking_SetLinkedLobby(void* a, CSteamID b, CSteamID c, MethodInfo* method)
+{
+	std::cout << "NativeMethods::ISteamMatchmaking_SetLinkedLobby" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_NativeMethods_ISteamMatchmaking_SetLinkedLobby->original(a, b, c, method);
+
+	std::cout << ret << std::endl;
+
+	return ret;
 }
 	
 
-Injector::Inject(HF_GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5, GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5, &Template_GameModeBlockDrop_u109Au109Cu10A3u10A6u109Cu109Bu109Eu10A8u109Eu10A7u10A5);
-Injector::Inject(HF_GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8, GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8, &Template_GameModeBlockDrop_u109Du109Cu10A8u109Bu109Cu10A0u10A0u10A0u10A8u10A0u10A8);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2, GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2, &Template_GameModeBlockDrop_u109Bu10A8u10A0u10A2u10A4u10A8u109Cu10A1u10A0u109Cu10A2);
-Injector::Inject(HF_GameModeBlockDrop_FindPlayersToKill, GameModeBlockDrop_FindPlayersToKill, &Template_GameModeBlockDrop_FindPlayersToKill);
-Injector::Inject(HF_GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2, GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2, &Template_GameModeBlockDrop_u10A8u109Bu10A2u109Cu10A4u10A5u109Eu10A7u109Fu10A1u10A2);
-Injector::Inject(HF_GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8, GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8, &Template_GameModeBlockDrop_u10A7u10A1u109Du109Au10A0u10A8u10A6u10A0u10A2u10A7u10A8);
-Injector::Inject(HF_GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E, GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E, &Template_GameModeBlockDrop_u1099u109Fu10A4u10A5u10A7u109Du10A5u10A3u109Bu109Cu109E);
-Injector::Inject(HF_GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E, GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E, &Template_GameModeBlockDrop_u10A2u1099u109Du1099u10A5u109Du10A1u10A5u10A1u109Bu109E);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1, GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1, &Template_GameModeBlockDrop_u109Bu109Au10A5u10A0u10A2u10A8u10A6u109Eu109Cu10A3u10A1);
-Injector::Inject(HF_GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0, GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0, &Template_GameModeBlockDrop_u10A0u10A3u10A1u109Eu109Au10A0u109Au109Fu109Du10A1u10A0);
-Injector::Inject(HF_GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D, GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D, &Template_GameModeBlockDrop_u109Du109Eu109Cu10A8u10A3u1099u10A1u10A2u109Eu10A8u109D);
-Injector::Inject(HF_GameModeBlockDrop_OnRoundOver, GameModeBlockDrop_OnRoundOver, &Template_GameModeBlockDrop_OnRoundOver);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0, GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0, &Template_GameModeBlockDrop_u10A1u10A6u10A0u109Fu109Eu109Cu10A6u10A7u109Fu10A2u10A0);
-Injector::Inject(HF_GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F, GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F, &Template_GameModeBlockDrop_u109Eu10A1u10A2u109Cu10A8u109Fu10A5u109Au10A7u1099u109F);
-Injector::Inject(HF_GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8, GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8, &Template_GameModeBlockDrop_u109Cu109Au109Bu10A6u10A0u10A2u109Fu109Du10A0u10A5u10A8);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6, GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6, &Template_GameModeBlockDrop_u10A1u109Du10A3u10A0u109Eu10A0u10A2u109Cu10A1u10A3u10A6);
-Injector::Inject(HF_GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0, GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0, &Template_GameModeBlockDrop_u1099u10A1u109Cu109Eu10A4u109Cu10A0u109Cu10A0u10A8u10A0);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E, GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E, &Template_GameModeBlockDrop_u10A6u10A6u109Cu109Du10A5u1099u10A7u109Du109Du1099u109E);
-Injector::Inject(HF_GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3, GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3, &Template_GameModeBlockDrop_u10A5u109Eu10A6u10A7u1099u10A5u109Eu1099u109Fu109Du10A3);
-Injector::Inject(HF_GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B, GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B, &Template_GameModeBlockDrop_u109Du10A1u1099u1099u10A5u10A1u109Fu10A3u109Du10A7u109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C, GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C, &Template_GameModeBlockDrop_u10A6u10A5u10A2u10A8u10A3u10A5u10A7u10A2u10A8u10A2u109C);
-Injector::Inject(HF_GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D, GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D, &Template_GameModeBlockDrop_u10A5u10A0u10A4u10A7u10A5u1099u1099u10A8u10A6u1099u109D);
-Injector::Inject(HF_GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7, GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7, &Template_GameModeBlockDrop_u1099u1099u10A3u10A4u10A6u10A4u109Eu10A8u10A4u10A5u10A7);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8, GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8, &Template_GameModeBlockDrop_u10A6u10A6u109Eu10A1u10A4u10A4u10A4u109Fu1099u10A3u10A8);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B, GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B, &Template_GameModeBlockDrop_u109Fu10A4u10A0u10A5u1099u10A2u10A8u1099u10A2u10A5u109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099, GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099, &Template_GameModeBlockDrop_u10A4u10A2u109Cu109Fu10A8u109Du10A4u10A5u10A5u109Fu1099);
-Injector::Inject(HF_GameModeBlockDrop_OnFreezeOver, GameModeBlockDrop_OnFreezeOver, &Template_GameModeBlockDrop_OnFreezeOver);
-Injector::Inject(HF_GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8, GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8, &Template_GameModeBlockDrop_u109Du109Bu10A8u109Eu10A8u10A3u10A6u109Du109Eu10A7u10A8);
-Injector::Inject(HF_GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5, GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5, &Template_GameModeBlockDrop_u10A7u10A8u10A0u109Cu10A8u109Du109Du10A2u10A3u109Au10A5);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3, GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3, &Template_GameModeBlockDrop_u109Fu109Bu10A6u10A4u10A2u109Au109Cu10A6u109Fu10A1u10A3);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B, GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B, &Template_GameModeBlockDrop_u109Fu109Au109Du109Cu109Eu10A0u10A8u10A4u109Eu10A0u109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2, GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2, &Template_GameModeBlockDrop_u10A5u109Au109Du1099u10A3u10A7u109Bu1099u109Du10A8u10A2);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B, GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B, &Template_GameModeBlockDrop_u109Bu10A7u10A1u109Eu1099u10A4u10A8u1099u109Du109Du109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1, GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1, &Template_GameModeBlockDrop_u10A6u10A1u10A3u10A5u109Fu109Bu109Eu10A7u109Bu10A4u10A1);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B, GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B, &Template_GameModeBlockDrop_u10A6u1099u10A7u10A0u10A3u109Au10A6u109Du10A4u109Au109B);
-Injector::Inject(HF_GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6, GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6, &Template_GameModeBlockDrop_u1099u10A4u109Du10A2u10A5u10A5u109Bu109Eu109Fu10A3u10A6);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B, GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B, &Template_GameModeBlockDrop_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E, GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E, &Template_GameModeBlockDrop_u10A6u109Eu10A2u10A3u109Eu10A4u109Fu109Eu10A4u109Fu109E);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D, GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D, &Template_GameModeBlockDrop_u109Bu10A0u109Eu10A0u10A2u109Du109Eu109Du10A1u10A0u109D);
-Injector::Inject(HF_GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7, GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7, &Template_GameModeBlockDrop_u10A7u10A5u10A7u109Cu109Fu10A7u109Eu1099u10A0u10A0u10A7);
-Injector::Inject(HF_GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0, GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0, &Template_GameModeBlockDrop_u109Au10A4u10A2u10A8u109Cu109Du109Fu10A5u10A7u109Cu10A0);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E, GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E, &Template_GameModeBlockDrop_u10A1u10A3u109Fu10A7u10A6u109Au109Eu10A5u10A2u109Bu109E);
-Injector::Inject(HF_GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3, GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3, &Template_GameModeBlockDrop_u10A3u10A3u1099u109Bu10A0u109Au109Au10A1u10A0u109Fu10A3);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3, GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3, &Template_GameModeBlockDrop_u109Fu10A3u10A2u10A8u10A6u10A0u10A3u109Au10A5u109Du10A3);
-Injector::Inject(HF_GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8, GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8, &Template_GameModeBlockDrop_u10A5u109Du1099u10A8u109Cu10A1u109Du109Fu10A1u109Cu10A8);
-Injector::Inject(HF_GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B, GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B, &Template_GameModeBlockDrop_u1099u109Du109Bu109Bu10A3u10A2u109Cu10A0u10A2u109Fu109B);
-Injector::Inject(HF_GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1, GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1, &Template_GameModeBlockDrop_u109Au109Bu1099u10A8u10A3u10A5u10A5u10A4u109Fu10A3u10A1);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6, GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6, &Template_GameModeBlockDrop_u10A1u109Fu10A6u109Fu109Cu109Bu109Bu10A8u10A8u10A0u10A6);
-Injector::Inject(HF_GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7, GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7, &Template_GameModeBlockDrop_u109Au10A2u109Eu10A8u10A5u109Fu10A4u10A2u10A5u1099u10A7);
-Injector::Inject(HF_GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A, GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A, &Template_GameModeBlockDrop_u10A3u10A3u10A5u10A6u10A1u10A2u1099u109Du1099u10A4u109A);
-Injector::Inject(HF_GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2, GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2, &Template_GameModeBlockDrop_u10A0u10A8u10A2u10A0u10A6u10A2u10A0u10A2u10A1u10A8u10A2);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E, GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E, &Template_GameModeBlockDrop_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E);
-Injector::Inject(HF_GameModeBlockDrop_PlayerDied, GameModeBlockDrop_PlayerDied, &Template_GameModeBlockDrop_PlayerDied);
-Injector::Inject(HF_GameModeBlockDrop_InitMode, GameModeBlockDrop_InitMode, &Template_GameModeBlockDrop_InitMode);
-Injector::Inject(HF_GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099, GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099, &Template_GameModeBlockDrop_u10A3u10A5u109Eu109Eu109Cu10A6u109Eu109Au109Eu10A4u1099);
-Injector::Inject(HF_GameModeBlockDrop_OnPlayerSpawnOrDespawn, GameModeBlockDrop_OnPlayerSpawnOrDespawn, &Template_GameModeBlockDrop_OnPlayerSpawnOrDespawn);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D, GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D, &Template_GameModeBlockDrop_u10A6u109Au109Eu10A2u10A6u109Eu10A6u109Bu10A4u109Du109D);
-Injector::Inject(HF_GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4, GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4, &Template_GameModeBlockDrop_u109Eu1099u109Fu109Eu1099u109Fu109Cu10A2u10A7u109Bu10A4);
-Injector::Inject(HF_GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099, GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099, &Template_GameModeBlockDrop_u109Au109Fu10A6u10A8u109Au10A8u109Eu10A4u109Fu10A5u1099);
-Injector::Inject(HF_GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2, GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2, &Template_GameModeBlockDrop_u109Eu10A4u109Bu109Eu1099u10A5u10A1u10A6u10A0u109Du10A2);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B, GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B, &Template_GameModeBlockDrop_u109Fu10A7u10A6u1099u109Au10A7u109Fu10A2u10A1u109Au109B);
-Injector::Inject(HF_GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3, GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3, &Template_GameModeBlockDrop_u10A8u10A3u10A7u109Du10A8u10A2u10A5u109Bu109Du10A2u10A3);
-Injector::Inject(HF_GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2, GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2, &Template_GameModeBlockDrop_u10A7u10A2u10A4u109Bu10A0u1099u109Bu10A4u109Bu109Fu10A2);
-Injector::Inject(HF_GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099, GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099, &Template_GameModeBlockDrop_u10A3u10A0u10A3u109Fu10A6u10A2u109Du10A3u10A8u10A3u1099);
-Injector::Inject(HF_GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8, GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8, &Template_GameModeBlockDrop_u10A1u10A7u109Eu10A5u109Cu10A1u10A4u10A2u10A7u109Au10A8);
-Injector::Inject(HF_GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6, GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6, &Template_GameModeBlockDrop_u109Eu109Fu10A6u1099u109Du109Au10A5u109Au10A6u10A2u10A6);
-Injector::Inject(HF_GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7, GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7, &Template_GameModeBlockDrop_u109Au10A6u109Fu1099u109Fu109Du10A1u10A8u10A2u109Eu10A7);
-Injector::Inject(HF_GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F, GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F, &Template_GameModeBlockDrop_u10A4u10A5u109Cu109Cu109Bu109Du10A5u10A4u109Au109Cu109F);
-Injector::Inject(HF_GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4, GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4, &Template_GameModeBlockDrop_u109Fu109Du10A1u10A8u10A4u10A7u109Fu10A5u109Eu10A2u10A4);
-Injector::Inject(HF_GameModeBlockDrop_InvokeSendFallingBlocks, GameModeBlockDrop_InvokeSendFallingBlocks, &Template_GameModeBlockDrop_InvokeSendFallingBlocks);
-Injector::Inject(HF_GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7, GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7, &Template_GameModeBlockDrop_u10A4u10A8u10A0u109Bu10A4u10A5u109Eu10A5u10A3u109Cu10A7);
-Injector::Inject(HF_GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2, GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2, &Template_GameModeBlockDrop_u1099u10A7u109Bu1099u10A4u10A0u10A0u10A8u10A6u10A7u10A2);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5, GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5, &Template_GameModeBlockDrop_u109Bu10A5u1099u10A1u10A0u10A7u10A3u10A3u109Cu10A2u10A5);
-Injector::Inject(HF_GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3, GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3, &Template_GameModeBlockDrop_u10A6u109Fu10A7u10A8u1099u10A3u1099u10A4u10A3u109Bu10A3);
-Injector::Inject(HF_GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0, GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0, &Template_GameModeBlockDrop_u10A8u10A4u10A4u10A8u109Cu10A2u109Au109Bu109Cu109Fu10A0);
-Injector::Inject(HF_GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E, GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E, &Template_GameModeBlockDrop_u109Bu109Fu10A3u10A7u10A8u10A0u10A4u10A4u10A6u1099u109E);
-Injector::Inject(HF_GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7, GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7, &Template_GameModeBlockDrop_u10A8u109Eu10A8u10A0u10A4u10A4u10A3u10A4u10A2u10A4u10A7);
-Injector::Inject(HF_GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E, GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E, &Template_GameModeBlockDrop_u109Eu10A3u1099u109Eu10A0u10A3u109Bu10A3u10A1u109Du109E);
-Injector::Inject(HF_GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A, GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A, &Template_GameModeBlockDrop_u109Cu1099u10A3u10A7u1099u10A0u109Bu109Eu109Au109Fu109A);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetFavoriteGameCount, NativeMethods_ISteamMatchmaking_GetFavoriteGameCount, &Template_NativeMethods_ISteamMatchmaking_GetFavoriteGameCount);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetFavoriteGame, NativeMethods_ISteamMatchmaking_GetFavoriteGame, &Template_NativeMethods_ISteamMatchmaking_GetFavoriteGame);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddFavoriteGame, NativeMethods_ISteamMatchmaking_AddFavoriteGame, &Template_NativeMethods_ISteamMatchmaking_AddFavoriteGame);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_RemoveFavoriteGame, NativeMethods_ISteamMatchmaking_RemoveFavoriteGame, &Template_NativeMethods_ISteamMatchmaking_RemoveFavoriteGame);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_RequestLobbyList, NativeMethods_ISteamMatchmaking_RequestLobbyList, &Template_NativeMethods_ISteamMatchmaking_RequestLobbyList);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListStringFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNumericalFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListNearValueFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable, NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListFilterSlotsAvailable);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListDistanceFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListResultCountFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter, NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter, &Template_NativeMethods_ISteamMatchmaking_AddRequestLobbyListCompatibleMembersFilter);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyByIndex, NativeMethods_ISteamMatchmaking_GetLobbyByIndex, &Template_NativeMethods_ISteamMatchmaking_GetLobbyByIndex);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_CreateLobby, NativeMethods_ISteamMatchmaking_CreateLobby, &Template_NativeMethods_ISteamMatchmaking_CreateLobby);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_JoinLobby, NativeMethods_ISteamMatchmaking_JoinLobby, &Template_NativeMethods_ISteamMatchmaking_JoinLobby);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_LeaveLobby, NativeMethods_ISteamMatchmaking_LeaveLobby, &Template_NativeMethods_ISteamMatchmaking_LeaveLobby);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_InviteUserToLobby, NativeMethods_ISteamMatchmaking_InviteUserToLobby, &Template_NativeMethods_ISteamMatchmaking_InviteUserToLobby);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetNumLobbyMembers, NativeMethods_ISteamMatchmaking_GetNumLobbyMembers, &Template_NativeMethods_ISteamMatchmaking_GetNumLobbyMembers);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex, NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex, &Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberByIndex);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyData, NativeMethods_ISteamMatchmaking_GetLobbyData, &Template_NativeMethods_ISteamMatchmaking_GetLobbyData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyData, NativeMethods_ISteamMatchmaking_SetLobbyData, &Template_NativeMethods_ISteamMatchmaking_SetLobbyData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyDataCount, NativeMethods_ISteamMatchmaking_GetLobbyDataCount, &Template_NativeMethods_ISteamMatchmaking_GetLobbyDataCount);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex, NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex, &Template_NativeMethods_ISteamMatchmaking_GetLobbyDataByIndex);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_DeleteLobbyData, NativeMethods_ISteamMatchmaking_DeleteLobbyData, &Template_NativeMethods_ISteamMatchmaking_DeleteLobbyData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberData, NativeMethods_ISteamMatchmaking_GetLobbyMemberData, &Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberData, NativeMethods_ISteamMatchmaking_SetLobbyMemberData, &Template_NativeMethods_ISteamMatchmaking_SetLobbyMemberData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SendLobbyChatMsg, NativeMethods_ISteamMatchmaking_SendLobbyChatMsg, &Template_NativeMethods_ISteamMatchmaking_SendLobbyChatMsg);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyChatEntry, NativeMethods_ISteamMatchmaking_GetLobbyChatEntry, &Template_NativeMethods_ISteamMatchmaking_GetLobbyChatEntry);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_RequestLobbyData, NativeMethods_ISteamMatchmaking_RequestLobbyData, &Template_NativeMethods_ISteamMatchmaking_RequestLobbyData);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyGameServer, NativeMethods_ISteamMatchmaking_SetLobbyGameServer, &Template_NativeMethods_ISteamMatchmaking_SetLobbyGameServer);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyGameServer, NativeMethods_ISteamMatchmaking_GetLobbyGameServer, &Template_NativeMethods_ISteamMatchmaking_GetLobbyGameServer);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit, NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit, &Template_NativeMethods_ISteamMatchmaking_SetLobbyMemberLimit);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit, NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit, &Template_NativeMethods_ISteamMatchmaking_GetLobbyMemberLimit);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyType, NativeMethods_ISteamMatchmaking_SetLobbyType, &Template_NativeMethods_ISteamMatchmaking_SetLobbyType);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyJoinable, NativeMethods_ISteamMatchmaking_SetLobbyJoinable, &Template_NativeMethods_ISteamMatchmaking_SetLobbyJoinable);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_GetLobbyOwner, NativeMethods_ISteamMatchmaking_GetLobbyOwner, &Template_NativeMethods_ISteamMatchmaking_GetLobbyOwner);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLobbyOwner, NativeMethods_ISteamMatchmaking_SetLobbyOwner, &Template_NativeMethods_ISteamMatchmaking_SetLobbyOwner);
+Injector::Inject(HF_NativeMethods_ISteamMatchmaking_SetLinkedLobby, NativeMethods_ISteamMatchmaking_SetLinkedLobby, &Template_NativeMethods_ISteamMatchmaking_SetLinkedLobby);

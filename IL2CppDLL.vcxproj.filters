@@ -165,6 +165,9 @@
     <ClInclude Include="user\templates\templates_GameModeBlockDrop.h">
       <Filter>user\templates</Filter>
     </ClInclude>
+    <ClInclude Include="user\templates\templates_ISteamMatchmaking.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="appdata">

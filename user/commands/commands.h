@@ -33,7 +33,6 @@ public:
 	}
 };
 
-
 class CommandTest : public Command {
 public:
 	CommandTest()
@@ -49,7 +48,37 @@ public:
 
 		auto test = toLower(message->m_CmdArgs);
 
-		Chat::SendServerMessage("Test:" + test);
+		
+
+		if (test.compare("name") == 0)
+		{
+			/*
+			NativeMethods::ISteamMatchmaking_SetLobbyData a=000001BCDD9A0AD0,  b=CSteamID(109775243075616573),  c=000001BCE0B448A0,  d=000001BCE0B44840,
+			[ key(LobbyName), value(cool name) ]
+			*/
+
+		
+				//InteropHelp_UTF8StringHandle__Boxed* boxed = (Quaternion__Boxed*)il2cpp_object_new((Il2CppClass*)*Quaternion__TypeInfo);
+
+			
+			CSteamID id;
+			id.m_SteamID = Mod::ISteamMatchmaking_LobbyId;
+
+			NativeMethods_ISteamMatchmaking_SetLobbyData(Mod::ISteamMatchmaking_Instance, id, stringToUTF8StringHandle("LobbyName"), stringToUTF8StringHandle("Random name"), NULL);
+		
+			Chat::SendServerMessage("Changing name to: Random name");
+		}
+
+		if (test.compare("playercount") == 0)
+		{
+			CSteamID id;
+			id.m_SteamID = Mod::ISteamMatchmaking_LobbyId;
+
+			NativeMethods_ISteamMatchmaking_SetLobbyData(Mod::ISteamMatchmaking_Instance, id, stringToUTF8StringHandle("PlayersIn"), stringToUTF8StringHandle("1255"), NULL);
+
+			
+		}
+
 
 		if (test.compare("players") == 0)
 		{

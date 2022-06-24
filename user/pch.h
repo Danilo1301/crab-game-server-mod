@@ -105,3 +105,10 @@ static bool is_number(const std::string& s)
 	while (it != s.end() && std::isdigit(*it)) ++it;
 	return !s.empty() && it == s.end();
 }
+
+static InteropHelp_UTF8StringHandle* stringToUTF8StringHandle(std::string str)
+{
+	auto h = new InteropHelp_UTF8StringHandle();
+	InteropHelp_UTF8StringHandle__ctor(h, (String*)il2cpp_string_new(str.c_str()), NULL);
+	return h;
+}

@@ -7,6 +7,7 @@
 #include "templates_GameModeFallingPlatforms.h"
 #include "templates_test_GameMode_Init.h"
 #include "templates_GameModeBlockDrop.h"
+#include "templates_ISteamMatchmaking.h"
 
 auto HF_ChatBox_Update = new HookFunction<void, ChatBox*, MethodInfo*>("ChatBox::Update");
 void Template_ChatBox_Update(ChatBox* a, MethodInfo* method)
