@@ -209,7 +209,6 @@ uint64_t Template_NativeMethods_ISteamMatchmaking_CreateLobby(void* a, ELobbyTyp
 
 	std::cout << "NativeMethods::ISteamMatchmaking_CreateLobby" << " a=" << a << ", " << " b=" << (int)b << ", " << " c=" << c << ", " << std::endl;
 
-
 	auto ret = HF_NativeMethods_ISteamMatchmaking_CreateLobby->original(a, b, c, method);
 
 	Mod::ISteamMatchmaking_Instance = a;
