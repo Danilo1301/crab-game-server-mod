@@ -19,3 +19,12 @@ void Run()
 
     Mod::Init();
 }
+
+int main()
+{
+    //try to make Release Console works
+    Mod::m_ConsoleMode = true;
+    Mod::Init();
+
+    return 0;
+}

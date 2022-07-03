@@ -15,6 +15,7 @@ public:
 
 	static void RegisterCommand(Command* command);
 
+	static void ProcessRawMessage(long long id, std::string content);
 	static void ProcessMessage(Message* message);
 	static void ProcessCommandMessage(Message* message);
 

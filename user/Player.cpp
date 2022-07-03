@@ -39,21 +39,15 @@ std::string Player::GetDisplayNameExtra()
 
 void Player::UpdateInfo()
 {
-	std::cout << "[Player] UpdateInfo " << m_ClientId << std::endl;
+	std::cout << "[Player : " << m_ClientId << "] UpdateInfo " << std::endl;
 
 	m_PlayerManager = NULL;
 	m_Client = NULL;
 
-	//m_Username = (SteamFriends_GetPlayerNickname(CSteamID({ (uint64_t)m_ClientId }), NULL))->toCPPString();
-	//std::cout << "username:" << m_Username << std::endl;
-
-	//
-	
 	auto lobbyManager = (*LobbyManager__TypeInfo)->static_fields->Instance;
 
 	auto clientArray = lobbyManager->fields.u10A8u109Cu10A1u10A5u10A6u10A0u109Du10A3u10A5u10A7u10A8;
 	auto arrLen = Array_get_Length((Array*)clientArray, NULL);
-
 	for (size_t i = 0; i < arrLen; i++)
 	{
 		auto value = clientArray->vector[i];
@@ -64,6 +58,7 @@ void Player::UpdateInfo()
 		{
 			m_Client = value;
 
+			/*
 			std::cout << "[Player] Client found: " << m_ClientId << std::endl;
 
 			std::cout << "[client]" << std::endl;
@@ -78,9 +73,10 @@ void Player::UpdateInfo()
 			std::cout << "int3" << " : " << value->fields.u10A3u10A2u109Fu109Bu109Cu10A8u10A0u109Fu10A6u109Au109A << std::endl;
 			std::cout << "int4" << " : " << value->fields.u10A3u10A5u10A2u10A3u10A8u10A3u109Au109Bu10A3u10A3u10A1 << std::endl;
 			std::cout << "------" << std::endl;
+			*/
 		}
 	}
-	
+
 	//
 
 	auto steamIdToUID = (*LobbyManager__TypeInfo)->static_fields->steamIdToUID;
@@ -89,11 +85,10 @@ void Player::UpdateInfo()
 		auto key = steamIdToUID->fields.entries->vector[i].key;
 		auto value = steamIdToUID->fields.entries->vector[i].value;
 
-
 		if (key == m_ClientId)
 		{
 			m_Id = value + 1;
-			std::cout << "[Player] Uid found" << key << " : " << value + 1 << std::endl;
+			//std::cout << "[Player] Uid found" << key << " : " << value + 1 << std::endl;
 			break;
 		}
 	}
@@ -102,8 +97,6 @@ void Player::UpdateInfo()
 
 	if ((*GameManager__TypeInfo)->static_fields->Instance)
 	{
-		//std::cout << "getting player manager" << std::endl;
-		
 		auto activePlayers = (*GameManager__TypeInfo)->static_fields->Instance->fields.activePlayers;
 		for (size_t i = 0; i < activePlayers->fields.count; i++)
 		{
@@ -115,10 +108,7 @@ void Player::UpdateInfo()
 			if (key == m_ClientId)
 			{
 				m_PlayerManager = value;
-
-				std::cout << "[Player] PlayerManager found: (active) " << m_PlayerManager << std::endl;
-				
-
+				//std::cout << "[Player] PlayerManager found: (active) " << m_PlayerManager << std::endl;
 				break;
 			}
 		}
@@ -133,7 +123,7 @@ void Player::UpdateInfo()
 
 			if (key == m_ClientId)
 			{
-				std::cout << "[Player] PlayerManager found: (spectators) " << m_PlayerManager << std::endl;
+				//std::cout << "[Player] PlayerManager found: (spectators) " << m_PlayerManager << std::endl;
 				//m_PlayerManager = value;
 				break;
 			}
@@ -144,9 +134,21 @@ void Player::UpdateInfo()
 	{
 		m_IsAlive = !m_PlayerManager->fields.dead;
 		m_Username = m_PlayerManager->fields.username->toCPPString();
-
-		std::cout << "[Player] Alive = " << m_IsAlive << " from PlayerManager" << std::endl;
 	}
 
-	//std::cout << "PlayerManager: " << m_PlayerManager << std::endl;
+	std::cout << "[Player : " << GetDisplayNameExtra() << "] m_Id " << m_Id << ", " << m_PlayerManager << ", " << " m_Client " << m_Client << std::endl;
+}
+
+bool Player::CheckIsAlive()
+{
+	//std::cout << "[Player : " << GetDisplayNameExtra() << "] CheckIsAlive" << std::endl;
+
+	m_IsAlive = false;
+
+	if (m_PlayerManager)
+	{
+		m_IsAlive = !m_PlayerManager->fields.dead;
+	}
+
+	return m_IsAlive;
 }

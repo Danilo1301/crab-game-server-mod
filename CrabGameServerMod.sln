@@ -6,16 +6,16 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CrabGameServerMod", "IL2Cpp
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
+		Release Console|x64 = Release Console|x64
+		Release Console|x86 = Release Console|x86
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Debug|x64.ActiveCfg = Debug|x64
-		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Debug|x64.Build.0 = Debug|x64
-		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Debug|x86.ActiveCfg = Debug|Win32
-		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Debug|x86.Build.0 = Debug|Win32
+		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release Console|x64.ActiveCfg = Release Console|x64
+		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release Console|x64.Build.0 = Release Console|x64
+		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release Console|x86.ActiveCfg = Release Console|Win32
+		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release Console|x86.Build.0 = Release Console|Win32
 		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release|x64.ActiveCfg = Release|x64
 		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release|x64.Build.0 = Release|x64
 		{AAD26A93-6CEA-4597-A2AF-A2F9DAF2E9BF}.Release|x86.ActiveCfg = Release|Win32

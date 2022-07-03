@@ -4,6 +4,8 @@
 
 Command::Command()
 {
+	m_CurrentArgs.clear();
+	m_CurrentMessage = NULL;
 }
 
 void Command::SetCmd(std::string cmd)
@@ -43,7 +45,25 @@ void Command::AddAlias(std::string cmd)
 
 void Command::Execute(Message* message)
 {
+	m_CurrentMessage = message;
+	m_CurrentArgs = CommandArg::GetArgs(message->m_CmdArgs);
+
 	//std::cout << "[Command : " << m_Cmd << "] Execute" << std::endl;
+}
+
+Player* Command::GetPlayer()
+{
+	return m_CurrentMessage->m_Player;
+}
+
+bool Command::HasArg(int index)
+{
+	return index < m_CurrentArgs.size();
+}
+
+CommandArg Command::GetArg(int index)
+{
+	return m_CurrentArgs[index];
 }
 
 bool Command::CheckPermissions(Player* player)

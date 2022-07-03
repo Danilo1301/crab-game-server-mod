@@ -61,6 +61,9 @@
     <ClCompile Include="user\PermissionGroups.cpp">
       <Filter>user</Filter>
     </ClCompile>
+    <ClCompile Include="user\templates\templates.cpp">
+      <Filter>user\templates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user\main.h">
@@ -144,29 +147,8 @@
     <ClInclude Include="user\templates\templates.h">
       <Filter>user\templates</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates\templates_LobbyManager.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_ServerSend.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_GameServer.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_GameManager.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_GameModeFallingPlatforms.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_test_GameMode_Init.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_GameModeBlockDrop.h">
-      <Filter>user\templates</Filter>
-    </ClInclude>
-    <ClInclude Include="user\templates\templates_ISteamMatchmaking.h">
-      <Filter>user\templates</Filter>
+    <ClInclude Include="user\Event.h">
+      <Filter>user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

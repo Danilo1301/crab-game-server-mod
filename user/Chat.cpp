@@ -5,6 +5,8 @@
 #include "Mod.h"
 #include "commands/commands.h"
 
+#include "templates/templates.h"
+
 std::vector<Message*> Chat::m_Messages;
 std::vector<Command*> Chat::m_Commands;
 
@@ -12,15 +14,14 @@ void Chat::Init()
 {
 	std::cout << "[Chat] Init" << std::endl;
 
-	RegisterCommand((Command*)new CommandHelp());
-	RegisterCommand((Command*)new CommandTest());
-	RegisterCommand((Command*)new CommandRestart());
-	RegisterCommand((Command*)new CommandKill());
-	RegisterCommand((Command*)new CommandTime());
-	RegisterCommand((Command*)new CommandWeapon());
-	RegisterCommand((Command*)new CommandHand());
-	RegisterCommand((Command*)new CommandRespawn());
-	RegisterCommand((Command*)new CommandMap());
+	/*
+	Event_ChatBox_AppendMessage->before.push_back([](ChatBox*, uint64_t fromClient, String* message, String* username, MethodInfo*)
+	{
+		std::cout << "[Chat] Received AppendMessage event " << fromClient << ", " << message->toCPPString() << ", " << username->toCPPString() << std::endl;
+
+		return true;
+	});
+	*/
 }
 
 void Chat::Update(float dt)
@@ -35,16 +36,29 @@ void Chat::RegisterCommand(Command* command)
 	m_Commands.push_back(command);
 }
 
+void Chat::ProcessRawMessage(long long id, std::string content)
+{
+	std::cout << "[Chat] ProcessRawMessage from " << id << ", '" << content << "'" << std::endl;
+
+	if (!Server::HasPlayer(id)) return;
+	
+	auto owner = Server::GetLobbyOwner();
+	if (owner->m_ClientId == id) {
+		if (!owner->m_HideMessages) {
+			Mod::AppendLocalChatMessage(2, owner->m_Username, owner->GetChatSuffix() + " " + content);
+		}
+	}
+
+	auto message = new Message(id, content);
+	message->m_Player = Server::GetPlayer(id);
+	Chat::ProcessMessage(message);
+}
+
 void Chat::ProcessMessage(Message* message)
 {
 	//std::cout << "[Chat] Process Message from (" << message->m_FromClient << ") '" << message->m_Content << "'" << std::endl;
 
 	m_Messages.push_back(message);
-
-	if (message->m_IsCommand)
-	{
-		ProcessCommandMessage(message);
-	}
 
 	/*
 	if (message->m_Player->m_HideMessages) {
@@ -114,7 +128,6 @@ void Chat::ProcessCommandMessage(Message* message)
 	
 }
 
-
 void Chat::SendAllMessagesInQuery()
 {
 	while (m_Messages.size() > 0)
@@ -136,12 +149,20 @@ void Chat::SendAllMessagesInQuery()
 
 		std::cout << "[Chat] Message from (" << fromStr << ") '" << message->m_Content << "'" << std::endl;
 
+		if (message->m_IsCommand)
+		{
+			ProcessCommandMessage(message);
+			RemoveMessage(message);
+			return;
+		}
+
+
 		if (message->m_SendType == MessageSendType::FORCE_PRIVATE) Mod::AppendLocalChatMessage(2, "[PRIVATE]", content);
 		if (message->m_SendType == MessageSendType::NORMAL || message->m_SendType == MessageSendType::FORCE_SEND) Mod::SendChatMessage(message->m_FromClient, content);
 
 		RemoveMessage(message);
 
-		std::cout << "[Chat] Messages left: " << m_Messages.size() << std::endl;
+		std::cout << "[Chat] Message sent (" << m_Messages.size() << " left)" << std::endl;
 
 	}
 }

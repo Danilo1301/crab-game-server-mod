@@ -2,14 +2,14 @@
 
 #include "pch.h"
 #include "Injector.h"
+#include "Player.h"
 
 class Mod {
 public:
 	static bool m_DebugMode;
 	static std::string m_Version;
+	static bool m_ConsoleMode;
 
-	static void* ISteamMatchmaking_Instance;
-	static uint64_t ISteamMatchmaking_LobbyId;
 	static void Init();
 
 	static void AppendLocalChatMessage(long long fromClient, std::string username, std::string content);
@@ -18,6 +18,7 @@ public:
 	static void SendDropItem(long long toClient, int itemId, int objectId, int ammo);
 	static void ForceGiveItem(long long toClient, int itemId, int objectId);
 
-	static void RestartGame();
 	static void SetCurrentGameModeTime(float time);
+
+	static void RespawnSpectator(Player* player);
 };
