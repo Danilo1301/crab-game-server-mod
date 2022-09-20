@@ -1,60 +1,35 @@
 #include "pch-il2cpp.h"
 #include "Server.h"
 
-#include "Mod.h"
 #include "Chat.h"
-#include "SocketServer.h"
-#include "PermissionGroups.h"
+#include "Mod.h"
+#include "Weapon.h"
 #include "Config.h"
-#include "VoteSystem.h"
+#include "EquipItem.h"
+#include "PermissionGroups.h"
+#include "ModeDeathMatch.h"
+#include "UpdateCheck.h"
+#include "templates/templates.h"
 
-std::map<long long, Player*> Server::m_Players;
-long long Server::m_LobbyId = 0;
-bool Server::m_HasCheckedUpdates = false;
-Player* Server::m_LobbyOwner = NULL;
-int Server::m_UniqueObjectId = 100;
+std::map<long long, Player*> Server::Players;
 
-int Server::m_PunchDamageId = -1;
-bool Server::m_CanUseItem = true;
+int Server::MapId = -1;
+int Server::MapModeId = -1;
+long long Server::LobbyId = 0;
 
-bool Server::m_IsAtLobby = false;
-bool Server::m_RedLightState = false;
-
-bool Server::m_AutoStartEnabled = false;
-int Server::m_AutoStartTime = 15;
-float Server::m_TimeUntilAutoStart = 0;
-
-bool Server::m_UpdateRequired = false;
-bool sentUpdateCheck = false;
-
-float Server::m_SaveConfigTime = 0;
-
-std::vector<Weapon> Server::m_Weapons = {
-		{ "Ak", 0 },
-		{ "Glock", 1 },
-		{ "Revolver", 2 },
-		{ "Dual", 3 },
-		{ "Bat", 4 },
-		{ "Bomb", 5 },
-		{ "Katana", 6 },
-		{ "Knife", 7 },
-		{ "Pipe", 8 },
-		{ "Snowball", 9 },
-		{ "Stick", 10 },
-		{ "Milk", 11 },
-		{ "Pizza", 12 },
-		{ "Grenade", 13 }
-};
+float Server::AutoSaveTimeLeft = 0.0f;
+float Server::AutoSaveInterval = 20.0f;
 
 void Server::Init()
 {
-	LoadConfig();
+	std::cout << "[Server] Init" << std::endl;
 
-	Chat::Init();
+	Config::Load();
 
 	if (!PermissionGroups::HasGroup("default"))
 	{
 		auto permissionGroup = PermissionGroups::AddGroup("default");
+		permissionGroup->Name = "Default";
 		permissionGroup->AddPermission("help");
 		permissionGroup->AddPermission("ahelp");
 		permissionGroup->AddPermission("w");
@@ -71,200 +46,106 @@ void Server::Init()
 		permissionGroup->AddPermission("vote");
 		permissionGroup->AddPermission("votekick");
 		permissionGroup->AddPermission("skip");
-
-		for (auto weapon : m_Weapons)
-		{
-			permissionGroup->AddPermission(toLower(weapon.name));
-		}
+		for (auto weapon : WeaponList) permissionGroup->AddPermission(toLower(weapon.name));
 	}
 
-	if (!PermissionGroups::HasGroup("moderator"))
+	if (!PermissionGroups::HasGroup("mod"))
 	{
-		auto moderatorPermissionGroup = PermissionGroups::AddGroup("moderator");
-		moderatorPermissionGroup->m_InheritsFromGroup = "default";
-
-		moderatorPermissionGroup->AddPermission("kick");
-		moderatorPermissionGroup->AddPermission("ban");
-		moderatorPermissionGroup->AddPermission("bc");
-		moderatorPermissionGroup->AddPermission("w.others");
-		moderatorPermissionGroup->AddPermission("respawn.others");
-		moderatorPermissionGroup->AddPermission("tp.others");
-		moderatorPermissionGroup->AddPermission("god");
-		moderatorPermissionGroup->AddPermission("god.others");
-		moderatorPermissionGroup->AddPermission("time");
-		moderatorPermissionGroup->AddPermission("r");
-		moderatorPermissionGroup->AddPermission("mute");
-		moderatorPermissionGroup->AddPermission("lobbyonly");
-		moderatorPermissionGroup->AddPermission("start");
-		moderatorPermissionGroup->AddPermission("fly");
-		moderatorPermissionGroup->AddPermission("autodie");
+		auto permissionGroup = PermissionGroups::AddGroup("mod");
+		permissionGroup->Name = "Mod";
+		permissionGroup->InheritsFromGroup = "default";
+		permissionGroup->AddPermission("kick");
+		permissionGroup->AddPermission("ban");
+		permissionGroup->AddPermission("bc");
+		permissionGroup->AddPermission("w.others");
+		permissionGroup->AddPermission("respawn.others");
+		permissionGroup->AddPermission("tp.others");
+		permissionGroup->AddPermission("tp.others");
+		permissionGroup->AddPermission("god");
+		permissionGroup->AddPermission("god.others");
+		permissionGroup->AddPermission("time");
+		permissionGroup->AddPermission("r");
+		permissionGroup->AddPermission("mute");
+		permissionGroup->AddPermission("lobbyonly");
+		permissionGroup->AddPermission("start");
 	}
 
 	if (!PermissionGroups::HasGroup("admin"))
 	{
-		auto adminPermissionGroup = PermissionGroups::AddGroup("admin");
-		adminPermissionGroup->AddPermission("*");
+		auto permissionGroup = PermissionGroups::AddGroup("admin");
+		permissionGroup->Name = "Admin";
+		permissionGroup->AddPermission("*");
 	}
 
-	SaveConfig();
+	Config::Save();
+
+	Chat::Init();
 }
 
 void Server::Update(float dt)
 {
-	//std::cout << "[Server] Update " << dt << std::endl;
+	if (!Mod::IsInAnyLobby()) return;
 
-	m_SaveConfigTime += dt;
-	if (m_SaveConfigTime >= 40.0f) {
-		m_SaveConfigTime = 0;
-		SaveConfig();
-	}
+	//std::cout << "[Server] owner " << Mod::GetCurrentLobbyOwnerId() << " | lobby " << LobbyId << " | myid " << Mod::GetMySteamId() << std::endl;
 
-	VoteSystem::Update(dt);
+	EquipItem::Update();
 
-	if (m_Players.size() == 0) return;
+	if (!Mod::IsLobbyOwner()) return;
 
-	if (m_LobbyOwner->m_ClientId != Mod::GetMySteamId()) return;
+	UpdateCheck::Check();
 
-	if (!ProcessUpdateCheck()) return;
+	Chat::Update(dt);
 
 	UpdatePlayersPosition();
 
-	for (auto pair : m_Players)
+	ProcessAutoSave(dt);
+
+	ModeDeathMatch::Update(dt);
+
+	//ProcessSpawnRequest
+	for (auto pair : Players)
 	{
 		auto player = pair.second;
 
-		if (player->m_FlyEnabled)
-		{
-			if (player->m_FlyVelocity > 0)
-			{
-				player->m_FlyVelocity -= 1.0f * dt;
+		if (!player->SpawnCallbackRequest) continue;
+		player->SpawnCallbackRequest = false;
 
-				if (player->m_FlyVelocity < 0) player->m_FlyVelocity = 0;
-			}
-
-			Vector3 newPos = player->m_Position;
-
-			if (player->m_FlyVelocity > 0)
-				newPos = newPos + (player->m_LookDir) * (player->m_FlyVelocity * player->m_FlySpeed) * dt;
-
-			Mod::SetPlayerPosition(player->m_ClientId, newPos);
-		}
-
-		if (player->m_RespawnTime > 0)
-		{
-			player->m_RespawnTime -= dt;
-			if (player->m_RespawnTime < 0)
-			{
-				player->m_RespawnTime = 0;
-				Mod::RespawnPlayer(player->m_ClientId, player->m_RespawnPosition);
-			}
-		}
-
-
-		if (player->m_HoveringPlayer != -1)
-		{
-			player->m_HoveringAngle += 6 * dt;
-
-			if (HasPlayer(player->m_HoveringPlayer))
-			{
-				auto toHoverPlayer = GetPlayer(player->m_HoveringPlayer);
-
-				if (toHoverPlayer->m_IsAlive)
-				{
-					float height = 4.5f;
-					float distance = player->m_HoveringRadius;
-
-					auto lDirection = Vector3({
-						std::sin(player->m_HoveringAngle) * distance,
-						0,
-						std::cos(player->m_HoveringAngle) * distance
-						});
-
-					Mod::SetPlayerPosition(player->m_ClientId, Vector3({
-						lDirection.x + toHoverPlayer->m_Position.x,
-						lDirection.y + toHoverPlayer->m_Position.y + height,
-						lDirection.z + toHoverPlayer->m_Position.z
-						}));
-				}
-			}
-
-		}
-
-
-		/*
-		if (player->m_ParticleEnabled)
-		{
-			player->m_ParticleTime -= dt;
-
-			if (player->m_ParticleTime < 0)
-			{
-				player->m_ParticleTime = 1.0f;
-
-				auto id = m_UniqueObjectId++;
-
-				Mod::ForceGiveItem(player->m_ClientId, 9, id);
-				Mod::UseItemAll(player->m_ClientId, 9, id, Vector3({ player->m_Position.x, player->m_Position.y - 1000, player->m_Position.z }));
-				Mod::UseItemAll(player->m_ClientId, 9, id, Vector3({ player->m_Position.x, player->m_Position.y - 1000, player->m_Position.z }));
-			}
-		}
-		*/
+		Server::OnPlayerSpawn(player, player->Positon);
 	}
 
-
-
-	if (m_AutoStartEnabled)
+	//ProcessRespawn
+	for (auto pair : Players)
 	{
-		if (m_Players.size() > 1)
+		auto player = pair.second;
+
+		if (player->RespawnTime > 0)
 		{
-			if (m_TimeUntilAutoStart == 0 && m_IsAtLobby)
+			player->RespawnTime -= dt;
+			if (player->RespawnTime < 0)
 			{
-				m_TimeUntilAutoStart = (float)m_AutoStartTime;
-
-				Chat::SendServerMessage("Starting game in " + std::to_string(m_AutoStartTime) + " seconds");
-			}
-
-			if (m_TimeUntilAutoStart > 0)
-			{
-				m_TimeUntilAutoStart -= 1 * dt;
-
-				//std::cout << "start in " << m_TimeUntilAutoStart << std::endl;
-
-				if (m_TimeUntilAutoStart <= 0)
-				{
-					m_TimeUntilAutoStart = -1;
-
-					Mod::SetAllPlayersReady();
-					Chat::SendServerMessage("Starting game in 3 seconds");
-				}
+				player->RespawnTime = 0;
+				RespawnPlayer(player);
 			}
 		}
 	}
-	else {
-		m_TimeUntilAutoStart = 0;
-	}
-
-	Chat::Update(dt);
-}
-
-void Server::LoadConfig()
-{
-	Config::LoadJSON();
-}
-
-void Server::SaveConfig()
-{
-	Config::SaveJSON();
 }
 
 void Server::UpdatePlayersPosition()
 {
+	/*
 	for (auto pair : m_Players)
 	{
 		auto player = pair.second;
 		player->m_PlayerManager = NULL;
 	}
+	*/
+
+	if (!*GameManager__TypeInfo) return;
 
 	auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
+
+	if (!gameManager) return;
+
 	auto activePlayers = gameManager->fields.activePlayers;
 
 	for (size_t i = 0; i < activePlayers->fields.count; i++)
@@ -275,13 +156,16 @@ void Server::UpdatePlayersPosition()
 		if (!playerManager) continue;
 
 		auto player = GetPlayer(key);
-		player->m_PlayerManager = playerManager;
+
+		if (!player) return;
+
+		//player->PlayerManager = playerManager;
 
 		auto transform = Component_get_transform((Component*)playerManager, nullptr);
 		auto pos = Transform_get_position(transform, nullptr);
 
-		if (!player->m_FlyEnabled)
-			player->m_Position = pos;
+		//if (!player->m_FlyEnabled)
+		player->Positon = pos;
 
 		//auto headTransform = playerManager->fields.head;
 		//auto headPos = Transform_get_position(headTransform, nullptr);
@@ -294,7 +178,7 @@ void Server::UpdatePlayersPosition()
 
 		auto quat = PlayerManager_GetRotation(playerManager, NULL); //thank god (or thank Dani) this function exists lol
 		auto forward = Quaternion_op_Multiply_1(quat, Vector3_get_forward(NULL), NULL);
-		player->m_LookDir = Vector3_Normalize(forward, NULL);
+		player->LookDir = Vector3_Normalize(forward, NULL);
 
 		//Quaternion__Boxed* myQuat = (Quaternion__Boxed*)il2cpp_object_new((Il2CppClass*)*Quaternion__TypeInfo);
 		//Quaternion__ctor(myQuat, quat.x, quat.y, quat.z, quat.w, NULL);
@@ -302,16 +186,13 @@ void Server::UpdatePlayersPosition()
 
 		/*
 		auto quatEuler = Quaternion_get_eulerAngles(myQuat, NULL);
-
 		auto pitch = -quatEuler.y * (M_PI / 180.0);
 		auto yaw = quatEuler.x * (M_PI / 180.0);
-
 		Vector3 direction(
 			std::cos(yaw) * std::cos(pitch),
 			std::sin(yaw) * std::cos(pitch),
 			std::sin(pitch)
 		);
-
 		std::cout << "quatEuler" << quatEuler.toString() << std::endl;
 		std::cout << "direction" << direction.toString() << std::endl;
 		*/
@@ -337,102 +218,38 @@ void Server::UpdatePlayersPosition()
 		//std::cout << key << " transform pos" << pos.x << ", " << pos.y << ", " << pos.z << std::endl;
 		//std::cout << "head pos" << headPos.x << ", " << headPos.y << ", " << headPos.z << std::endl;
 
-
-
-			//std::cout << key << " transform pos" << Mod::FormatVector(GetPlayer(key)->m_Position) << std::endl;
-
+		//std::cout << key << " transform pos" << Mod::FormatVector(GetPlayer(key)->m_Position) << std::endl;
 	}
 }
 
-bool Server::ProcessUpdateCheck() {
-	if (!m_HasCheckedUpdates) {
-		if (!SocketServer::m_Connected && !SocketServer::m_Connecting) {
+void Server::ProcessAutoSave(float dt)
+{
+	//std::cout << "[Server] autosave " << AutoSaveTimeLeft << std::endl;
 
-			//std::cout << "needs to connect" << std::endl;
-			SocketServer::Connect();
-
-			Mod::AppendLocalChatMessage(3, "Mod", "Checking for updates...");
-		}
-
-		if (!SocketServer::m_Connected) {
-			//std::cout << "not connected" << std::endl;
-			return false;
-		}
-
-		//std::cout << "not checked" << std::endl;
-
-		if (!sentUpdateCheck) {
-			sentUpdateCheck = true;
-
-			//std::cout << "sent" << std::endl;
-
-			Json::Value data;
-			data["version"] = Mod::m_Version;
-			data["lobbyId"] = m_LobbyId;
-			data["ownerId"] = m_LobbyOwner ? m_LobbyOwner->m_ClientId : NULL;
-
-			SocketServer::Emit("joinLobby", data);
-
-		}
-		else {
-			if (!SocketServer::m_LastPacket.isNull()) {
-				auto packet = SocketServer::m_LastPacket;
-
-				if (packet["id"].asString().compare("update") == 0) {
-					m_HasCheckedUpdates = true;
-
-					auto data = packet["data"];
-
-					auto version = data["version"].asString();
-					auto required = data["required"].asBool();
-					auto changelog = data["changelog"].asString();
-
-					if (version.compare(Mod::m_Version) == 0) {
-						Mod::AppendLocalChatMessage(3, "Mod", "Mod started!");
-
-						//m_HasCheckedUpdates = true;
-					}
-					else {
-						std::string requiredText = (required ? "REQUIRED" : "optional");
-
-						Mod::AppendLocalChatMessage(1, "Mod", "-----------------------------------");
-						Mod::AppendLocalChatMessage(1, "Mod", "New version available (" + requiredText + ")");
-						Mod::AppendLocalChatMessage(1, "Mod", "Current: v" + Mod::m_Version + " | New: v" + version);
-						Mod::AppendLocalChatMessage(1, "Mod", "About: " + changelog);
-						Mod::AppendLocalChatMessage(1, "Mod", "Download URL:  https://bit.ly/crabgame-mod");
-
-						if (Mod::m_DebugMode)
-						{
-							SocketServer::m_LastPacket = Json::nullValue;
-							SocketServer::Close();
-							return true;
-						}
-
-						m_UpdateRequired = required;
-					}
-
-					SocketServer::m_LastPacket = Json::nullValue;
-					SocketServer::Close();
-				}
-			}
-		}
-
-		return false;
+	AutoSaveTimeLeft -= dt;
+	if (AutoSaveTimeLeft < 0)
+	{
+		AutoSaveTimeLeft = AutoSaveInterval;
+		Config::Save();
 	}
-
-	if (m_UpdateRequired) return false;
-
-	return true;
 }
 
 bool Server::HasPlayer(long long clientId)
 {
-	return m_Players.find(clientId) != m_Players.end();
+	return Players.find(clientId) != Players.end();
+}
+
+Player* Server::GetPlayer(long long clientId)
+{
+	if (!HasPlayer(clientId)) return NULL;
+	return Players.at(clientId);
 }
 
 Player* Server::AddPlayer(Player* player)
 {
-	m_Players.insert(std::pair<long long, Player*>(player->m_ClientId, player));
+	std::cout << "[Server] AddPlayer " << player->GetDisplayNameExtra() << std::endl;
+
+	Players.insert(std::pair<long long, Player*>(player->ClientId, player));
 	return player;
 }
 
@@ -440,153 +257,303 @@ void Server::RemovePlayer(Player* player)
 {
 	std::cout << "[Server] RemovePlayer " << player->GetDisplayNameExtra() << std::endl;
 
-	m_Players.erase(player->m_ClientId);
+	Players.erase(player->ClientId);
 	delete player;
 }
 
-Player* Server::GetPlayer(long long clientId)
+std::vector<Player*> Server::GetPlayers()
 {
-	return m_Players.at(clientId);
-}
-
-void Server::TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager)
-{
-	auto username = (monoString*)playerManager->fields.username;
-
-	bool newPlayer = false;
-	Player* player = NULL;
-
-	if (HasPlayer(clientId))
-	{
-		player = GetPlayer(clientId);
-	}
-	else
-	{
-		player = new Player(clientId);
-		Server::AddPlayer(player);
-
-		newPlayer = true;
-	}
-
-	player->m_Id = playerId;
-	player->m_Username = username->toCPPString();
-	player->m_IsAlive = false;
-	player->m_Spectating = false;
-
-	if (playerId == 1) {
-		Server::m_LobbyOwner = player;
-		player->m_PermissionGroup = "admin";
-	}
-
-	if (!player->m_IsOnline)
-	{
-		player->m_IsOnline = true;
-		player->m_ByteArray = NULL;
-
-		Server::OnPlayerJoin(player);
-	}
-
-	if (newPlayer)
-	{
-		std::cout << "[Server] New player " << player->GetDisplayNameExtra() << " (" << std::to_string(m_Players.size()) << " in total)" << std::endl;
-	}
-
-}
-
-void Server::RemoveAllPlayers()
-{
-	while (m_Players.size() > 0) {
-		auto player = (*m_Players.begin()).second;
-		RemovePlayer(player);
-	}
-}
-
-void Server::OnCreateLobby()
-{
-	std::cout << "[Server] Lobby created " << m_LobbyId << std::endl;
-
-	for (auto pair : m_Players)
+	std::vector<Player*> players;
+	for (auto pair : Players)
 	{
 		auto player = pair.second;
+		players.push_back(player);
+	}
+	return players;
+}
 
-		player->m_IsOnline = false;
-		player->m_IsAlive = false;
+std::vector<Player*> Server::GetOnlinePlayers()
+{
+	std::vector<Player*> players;
+	auto allPlayers = GetPlayers();
+
+	for (auto player : allPlayers)
+	{
+		if (!player->IsOnline) continue;
+		players.push_back(player);
+	}
+	return players;
+}
+
+void Server::OnAddPlayerToLobby(long long clientId)
+{
+	bool firstJoin = !HasPlayer(clientId);
+
+	if (firstJoin)
+	{
+		auto newPlayer = new Player(clientId);
+		newPlayer->UpdateInfo();
+
+		AddPlayer(newPlayer);
 	}
 
-	Chat::RemoveAllMessages();
+	auto player = GetPlayer(clientId);
+	player->UpdateInfo();
+	player->IsOnline = true;
 
-	m_HasCheckedUpdates = false;
-	sentUpdateCheck = false;
-	m_UpdateRequired = false;
+	OnPlayerJoin(player);
+
+	if(firstJoin) OnPlayerFirstJoin(player);
+}
+
+void Server::OnRemovePlayerFromLobby(long long clientId)
+{
+	auto player = GetPlayer(clientId);
+	player->IsOnline = false;
+
+	OnPlayerLeave(player);
+}
+
+void Server::OnPlayerFirstJoin(Player* player)
+{
+	std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined for the first time" << std::endl;
+
+	player->FirstEverSpawn = true;
+
+	//if (player->IsLobbyOwner()) player->PermissionGroupId = "admin";
+	//lobby owner hasnt been updated yet :/
+
+	Config::Save();
 }
 
 void Server::OnPlayerJoin(Player* player)
 {
-	std::cout << "[Server] Player joined: " << player->GetDisplayNameExtra() << std::endl;
+	std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined" << std::endl;
+
+	player->IsOnline = true;
+	player->SpawnedThisRound = false; //alreay added at OnLeave
+	player->DiedThisRound = false; //alreay added at OnLeave
+
+	//alreay added at OnLeave
+	//if he spawns (lobby example), alive is set to true
+	//if this is set to true, it will spawn even if game is already running YEY
+	player->IsAlive = false;
+
+	ModeDeathMatch::OnPlayerJoin(player);
+	
 }
 
 void Server::OnPlayerLeave(Player* player)
 {
-	std::cout << "[Server] Player left: " << player->GetDisplayNameExtra() << std::endl;
+	std::cout << "[Server] " << player->GetDisplayNameExtra() << " left" << std::endl;
+
+	player->Client = NULL;
+	player->PlayerManager = NULL;
+	player->IsAlive = false;
+	player->Id = -1;
+	player->IsOnline = false;
+	player->SpawnedThisRound = false;
+	player->DiedThisRound = false;
 }
 
-bool Server::OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 damageDir)
+/*
+Called when game sends an info that someone spawned
+Can be called multiple times, so need to check its first time with .SpawnedThisRound
+*/
+void Server::OnGameSpawnPlayer(Player* player, Vector3 position)
 {
-	if (Server::HasPlayer(deadClient))
+	player->UpdateInfo();
+
+	if (player->SpawnedThisRound)
 	{
-		Player* deadPlayer = GetPlayer(deadClient);
-		//Server::ChangePlayerIsAliveState(deadPlayer, false);
-
-		if (deadPlayer->m_Godmode) return false;
-
-		deadPlayer->m_IsAlive = false;
-
-		if (deadClient == damageDoerId)
-		{
-			Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
-		}
-		else
-		{
-			if (HasPlayer(damageDoerId)) {
-				Player* killerPlayer = GetPlayer(damageDoerId);
-
-				Chat::SendServerMessage("" + killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
-
-			} else {
-				Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
-			}
-		}
-
-		if (HasPlayer(deadClient)) {
-			auto player = GetPlayer(deadClient);
-
-			if (player->m_AutoRespawnEnabled) {
-				player->m_RespawnTime = 1.6f;
-			}
-		}
+		//Chat::SendServerMessage(spawnedPlayer->GetDisplayNameExtra() + " already spawned, ignoring");
+		return;
 	}
+
+	player->SpawnedThisRound = true;
+	player->SpawnCallbackRequest = true;
+	//Server::OnPlayerSpawn(player, player->Positon);
+}
+
+bool Server::OnPlayerTryToSpawnSpectator(Player* player)
+{
+	player->UpdateInfo();
+
+	std::cout << "[Server] OnPlayerTryToSpawnSpectator: " << player->GetDisplayNameExtra() << std::endl;
+	std::cout << "         IsAlive= " << (player->IsAlive ? "TRUE" : "FALSE") << std::endl;
+
+	//wants to spawn spectator but IsAlive is set to true
+	if (player->IsAlive)
+	{
+		if (!player->Client)
+		{
+			Chat::SendServerMessage("OnPlayerTryToSpawnSpectator: Client not found");
+			return true;
+		}
+
+		auto byteArray = player->Client->fields.u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7;
+		auto numberId = player->Client->fields.u1099u109Au10A1u1099u10A8u109Eu10A0u10A0u109Eu109Au10A0;
+
+		std::cout << "[Server] Sending GameServer_PlayerSpawnRequest byteArray=" << byteArray << ", numberId=" << numberId << std::endl;
+
+		GameServer_PlayerSpawnRequest(
+			player->ClientId,
+			false,
+			byteArray,
+			numberId,
+			NULL
+		);
+
+		//Chat::SendServerMessage("[try-spawn-spec] alive=true, spawning in game");
+
+		return false;
+	}
+
+	//Chat::SendServerMessage("[try-spawn-spec] spawning spectator");
+
+	std::cout << "[Server] Spawning spec" << std::endl;
+
+	//player->PlayerManager = NULL; //why did I add this?
 
 	return true;
 }
 
-void Server::GiveWeapon(long long toClient, int weaponId)
-{
-	if (!GetPlayer(toClient)->m_IsAlive) return;
 
-	Mod::SendDropItem(toClient, weaponId, m_UniqueObjectId++, 30);
-}
-
-Weapon* Server::GetWeaponById(int weaponId)
+/*
+* Called after player spawns
+*/
+void Server::OnPlayerSpawn(Player* player, Vector3 position)
 {
-	for (auto& weapon : Server::m_Weapons)
+	player->IsAlive = true;
+
+	std::cout << "[Server] OnPlayerSpawn " << player->GetDisplayNameExtra() << ", at " << position << std::endl;
+
+	//Chat::SendServerMessage(player->GetDisplayNameExtra() + " spawned at " + position.format_3());
+
+	if (player->FirstEverSpawn)
 	{
-		if (weaponId == weapon.id)
-		{
-			return &weapon;
-		}
+		player->FirstEverSpawn = false;
+
+		if (player->IsLobbyOwner()) player->PermissionGroupId = "admin";
+
+		//Chat::SendServerMessage(player->GetDisplayName() + " is new here :)");
 	}
 
-	return NULL;
+	ModeDeathMatch::OnPlayerSpawn(player, position);
+}
+
+/*
+return true - player dies
+return false - player stays alive
+*/
+bool Server::OnPlayerDied(Player* deadPlayer, Player* killerPlayer, Vector3 damageDir)
+{
+	if (deadPlayer->Godmode)
+		return false;
+
+	deadPlayer->IsAlive = false;
+	deadPlayer->DiedThisRound = true;
+
+	if (deadPlayer->ClientId == killerPlayer->ClientId)
+	{
+		Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
+		std::cout << "[Server] " << deadPlayer->GetDisplayNameExtra() << " died" << std::endl;
+	}
+	else
+	{
+		Chat::SendServerMessage("" + killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
+		std::cout << "[Server] " << killerPlayer->GetDisplayNameExtra() << " killed " << deadPlayer ->GetDisplayNameExtra() << std::endl;
+
+	}
+
+	ModeDeathMatch::OnPlayerDied(deadPlayer, killerPlayer, damageDir);
+
+	return true;
+}
+
+void Server::KillPlayer(Player* player)
+{
+	std::cout << "[Server] KillPlayer " << player->GetDisplayNameExtra() << std::endl;
+
+	GameServer_PlayerDied(player->ClientId, player->ClientId, Vector3({ 0, 1, 0 }), NULL);
+	//ServerSend_PlayerDied(clientId, clientId, Vector3({ 0, 1, 0 }), NULL);
+}
+
+
+/*
+Wtf, actually fixed?
+Bug: If host respawns with load, he won't see the players that were alive
+*/
+void Server::RespawnPlayer(Player* player)
+{
+	std::cout << "[Mod] RespawnPlayer " << player->GetDisplayNameExtra() << std::endl;
+
+	//Chat::SendServerMessage("[respawn] trying to respawn");
+
+	//not alive and not already spawned, usually when spawning as spec in next game, or when join already started game
+	if (!player->IsAlive && !player->DiedThisRound)
+	{
+		//Chat::SendServerMessage("[respawn] send load game");
+
+		RespawnSpectator(player);
+	}
+	else {
+		auto gameServer = (*GameServer__TypeInfo)->static_fields->Instance;
+		GameServer_QueueRespawn(gameServer, player->ClientId, 0.0f, NULL);
+
+		Server::OnPlayerSpawn(player, player->Positon);
+	}
+
+	player->IsAlive = true;
+
+	//update playermanager
+	player->PlayerManager = NULL;
+	player->UpdateInfo();
+}
+
+/*
+Old respawn, or now a set position/tp
+*/
+void Server::RespawnActivePlayerAtPos(long long clientId, Vector3 position)
+{
+	if (Server::HasPlayer(clientId))
+	{
+		//TESTHERE
+
+		auto player = Server::GetPlayer(clientId);
+		player->IsAlive = true;
+
+		std::cout << "[Server] RespawnActivePlayerAtPos " << player->GetDisplayNameExtra() << std::endl;
+	}
+
+	//std::cout << "[Mod] RespawnPlayer clientId=" << clientId << formatVector3_full(position) << std::endl;
+
+	ServerSend_RespawnPlayer(clientId, position, NULL);
+}
+
+void Server::RespawnSpectator(Player* player)
+{
+	std::cout << "[Server] RespawnSpectator " << player->GetDisplayNameExtra() << std::endl;
+
+	//to get client
+	player->UpdateInfo();
+
+	if (!player->Client)
+	{
+		Chat::SendServerMessage("RespawnSpectator: client not found");
+		return;
+	}
+
+	ServerSend_LoadMap(Server::MapId, Server::MapModeId, player->ClientId, NULL);
+	ServerSend_LoadingSendIntoGame(player->ClientId, NULL);
+
+	GameServer_PlayerSpawnRequest(
+		player->ClientId,
+		false,
+		player->Client->fields.u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, //byteArray
+		player->Client->fields.u1099u109Au10A1u1099u10A8u109Eu10A0u10A0u109Eu109Au10A0, //numberId
+		NULL
+	);
 }
 
 std::vector<Player*> Server::FindPlayers(std::string selector)
@@ -596,11 +563,11 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 	std::vector<Player*> players;
 
 	std::map<long long, Player*>::iterator it;
-	for (it = m_Players.begin(); it != m_Players.end(); it++)
+	for (it = Players.begin(); it != Players.end(); it++)
 	{
 		Player* player = it->second;
 
-		if (!player->m_IsOnline) continue;
+		if (!player->IsOnline) continue;
 
 		if (selector == "*")
 		{
@@ -610,7 +577,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 
 		if (selector == "*a")
 		{
-			if (!player->m_IsAlive) continue;
+			if (!player->IsAlive) continue;
 
 			players.push_back(player);
 			continue;
@@ -618,7 +585,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 
 		if (selector == "*d")
 		{
-			if (player->m_IsAlive) continue;
+			if (player->IsAlive) continue;
 
 			players.push_back(player);
 			continue;
@@ -631,7 +598,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 
 			int id = std::atoi(idstr.c_str());
 
-			if (player->m_Id == id)
+			if (player->Id == id)
 			{
 				players.push_back(player);
 			}
@@ -641,7 +608,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 
 		std::string str1 = selector;
 		std::transform(str1.begin(), str1.end(), str1.begin(), [](unsigned char c) { return std::tolower(c); });
-		std::string str2 = player->m_Username;
+		std::string str2 = player->Username;
 		std::transform(str2.begin(), str2.end(), str2.begin(), [](unsigned char c) { return std::tolower(c); });
 
 		if (str2.find(str1) != std::string::npos) {
@@ -650,4 +617,66 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 	}
 
 	return players;
+}
+
+void Server::GiveWeapon(Player* player, int weaponId)
+{
+	std::cout << "[Server] GiveWeapon " << weaponId << " to " << player->GetDisplayNameExtra() << std::endl;
+
+	//if (!player->IsAlive) return;
+
+	Mod::ForceGiveItem(player->ClientId, weaponId, Mod::UniqueObjectId++);
+}
+
+void Server::DropWeapon(Player* player, int weaponId, int ammo)
+{
+	std::cout << "[Server] DropWeapon " << weaponId << " to " << player->GetDisplayNameExtra() << std::endl;
+
+	//if (!player->IsAlive) return;
+
+	//Mod::ForceGiveItem(player->ClientId, weaponId, Mod::UniqueObjectId++);
+	Mod::SendDropItem(player->ClientId, weaponId, Mod::UniqueObjectId++, ammo);
+}
+
+void Server::OnMapLoad(int map, int mode)
+{
+	std::cout << "[Server] OnMapLoad" << std::endl;
+
+	MapId = map;
+	MapModeId = mode;
+}
+
+void Server::OnMapStart()
+{
+	std::cout << "[Server] OnMapStart" << std::endl;
+
+	for (auto player : GetOnlinePlayers())
+	{
+		player->DiedThisRound = false;
+		player->SpawnedThisRound = false;
+	}
+
+	GameServer_ForceRemoveAllWeapons(NULL);
+}
+
+void Server::OnLobbyStart(long long lobbyId)
+{
+	std::cout << "[Server] OnLobbyStart " << lobbyId << std::endl;
+
+	LobbyId = lobbyId;
+}
+
+void Server::RestartGame()
+{
+	Mod::RestartGame();
+
+	OnMapLoad(MapId, MapModeId);
+	//OnMapStart(); ///gets called automatically by game
+}
+
+void Server::OnPunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method)
+{
+	//HOW TF DOES THIS CRASH
+	//normal punch
+	HF_ServerSend_PunchPlayer->original(playerId, punchedPlayerId, dir, method);
 }
