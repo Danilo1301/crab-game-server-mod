@@ -12,29 +12,36 @@ fazer as funcoes static
 ---------------- TESTS / CHANGES
 
 [3.0]
-permissions dont save OK
-equipitem OK
-iniwrite OK
-find players by number (1-100 or 10000000000)
-pos not updating OK
-testing config OK
-test broadcast DOESNT HIDE
-test chat private, etc NOT WORKING
-jumppunch OK
-superpunch OK
-ISSUE: when you !respawn, onSpawn doesnt get called FIXED
-ISSUE: instant-onSpawn spawns a ghost weapon to host only FIXED
-ISSUE: onSpawn is not getting called anymore LOL, wait nvm FIXED
-OK, SO THE NONINSTANT-SPAWN WORKS PERFECTLY WTF (with guns)
-add aliases for weapons OK
-fix chat private/hidden issues, and AppendMessage
-ISSUE: when you !r, player that died still spawns as spect I THINK ITS FIXED
-tirar help message OK
-adicionar !w com drop OK
-tirar mensagem spec e de DEATH OK
-change ShowPlayerIds to ShowPlayerIdsAfterName
-change DeathStatus too
-TRY LATER: in "TESTHERE", test if !player->IsAlive, then try respawn 
+[X] permissions dont save
+[X] equipitem
+[X] iniwrite
+[ ] find players by number (1-100 or 10000000000)
+[X] pos not updating OK
+[X] testing config OK
+[X] test broadcast DOESNT HIDE
+[X] jumppunch OK
+[X] superpunch OK
+[X] ISSUE: when you !respawn, onSpawn doesnt get called FIXED
+[X] ISSUE: instant-onSpawn spawns a ghost weapon to host only FIXED
+[X] ISSUE: onSpawn is not getting called anymore LOL, wait nvm FIXED
+	OK, SO THE NONINSTANT-SPAWN WORKS PERFECTLY WTF (with guns)
+[X] add aliases for weapons OK
+[X] fix chat private/hidden/vanish issues and AppendMessage
+[X] ISSUE: when you !r, player that died still spawns as spect I THINK ITS FIXED
+[X] tirar help message OK
+[X] adicionar !w com drop OK
+[X] tirar mensagem spec e de DEATH OK
+[X] change ShowPlayerIds to ShowPlayerIdsAfterName OK
+[ ] change DeathStatus too
+[ ] TRY LATER: in "TESTHERE", test if !player->IsAlive, then try respawn 
+[X] test fly OK
+[ ] ISSUE: autostart message not showing
+[ ] multisnowball
+[X] vote
+[X] votekick
+[ ] autodie
+[ ] skip
+[ ] add auto start time to config
 
 ---------------- RELEASE
 

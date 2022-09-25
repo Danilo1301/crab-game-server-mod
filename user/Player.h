@@ -34,11 +34,15 @@ public:
 	float RespawnTime = 0.0f;
 
 	Vector3 LookDir = Vector3(0, 0, 1);
-	Vector3 Positon = Vector3(0, 0, 0);
+	Vector3 Position = Vector3(0, 0, 0);
 
 	bool FlyEnabled = false;
 	float FlyVelocity = 0;
 	float FlySpeed = 15.0f;
+
+	Player* HoveringPlayer = NULL;
+	float HoveringRadius = 0;
+	float HoveringAngle = -1;
 
 	std::string PermissionGroupId = "default";
 

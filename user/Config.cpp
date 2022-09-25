@@ -79,8 +79,8 @@ void Config::Save()
 
 	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
 	INIWrite::AddLine("[Server]");
-	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIds);
-	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterUsername);
+	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
+	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
 	INIWrite::AddBool("help_message_show", Chat::ShowHelpMessage);
 	INIWrite::AddString("help_message", Chat::HelpMessage);
 	INIWrite::AddFloat("help_message_interval", Chat::BroadcastHelpInterval);
@@ -133,8 +133,8 @@ void Config::Load()
 	//config.ini
 	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
 
-	Chat::ShowPlayerIds = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
-	Chat::ShowDeathStateAfterUsername = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
+	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
+	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
 	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
 	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
 	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");

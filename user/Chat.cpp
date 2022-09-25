@@ -12,8 +12,8 @@ float Chat::BroadcastHelpTimeLeft = 0.0f;
 bool Chat::ShowHelpMessage = true;
 std::string Chat::HelpMessage = " Type !help for a list of commands";
 
-bool Chat::ShowPlayerIds = true;
-bool Chat::ShowDeathStateAfterUsername = true;
+bool Chat::ShowPlayerIdsAfterName = true;
+bool Chat::ShowDeathStateAfterName = true;
 
 void Chat::Init()
 {
@@ -45,6 +45,13 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandJumpPunch());
 	RegisterCommand((Command*)new CommandSuperPunch());
 	RegisterCommand((Command*)new CommandForceField());
+	RegisterCommand((Command*)new CommandAutoStart());
+	RegisterCommand((Command*)new CommandFly());
+	RegisterCommand((Command*)new CommandLobbyOnly());
+	RegisterCommand((Command*)new CommandDeathMatch());
+	RegisterCommand((Command*)new CommandHover());
+	RegisterCommand((Command*)new CommandVote());
+	RegisterCommand((Command*)new CommandVoteKick());
 }
 
 void Chat::Update(float dt)
@@ -110,7 +117,9 @@ void Chat::RemoveMessage(Message* message)
 
 void Chat::ProcessMessage(Message* message)
 {
-	std::cout << "[Chat] ProcessMessage from (" << message->FromClientId << ") '" << message->Content << "'" << std::endl;
+	std::cout << "[Chat] ProcessMessage from (" << (message->FromPlayer ? message->FromPlayer->GetDisplayNameExtra() : std::to_string(message->FromClientId)) << ") '" << message->Content << "'" << std::endl;
+
+	bool isOwnerMessage = message->FromClientId == Server::GetLobbyOwner()->ClientId;
 
 	if (message->FromPlayer != NULL)
 	{
@@ -140,6 +149,12 @@ void Chat::ProcessMessage(Message* message)
 		}
 	}
 
+
+	if (message->FromPlayer && !isOwnerMessage)
+	{
+		message->Content = message->FromPlayer->GetChatSuffix() + " " + message->Content;
+	}
+
 	switch (message->SendType)
 	{
 	case MessageSendType::FORCE_PRIVATE:
@@ -150,6 +165,11 @@ void Chat::ProcessMessage(Message* message)
 		break;
 	default:
 		Mod::SendChatMessage(message->FromClientId, message->Content);
+
+		if (isOwnerMessage)
+		{
+			Mod::AppendLocalChatMessage(2, message->FromPlayer->Username, message->FromPlayer->GetChatSuffix() + " " + message->Content);
+		}
 		break;
 	}
 
@@ -194,16 +214,14 @@ void Chat::ProcessCommandMessage(Message* message)
 		return;
 	}
 
-	/*
-	if (command->m_LobbyOnly && !Server::m_IsAtLobby)
+	if (command->LobbyOnly && !Server::IsAtLobby())
 	{
-		if (!message->m_Player->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
+		if (!message->FromPlayer->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
 		{
 			SendServerMessage("you must be on lobby");
-			continue;
+			return;
 		}
 	}
-	*/
 
 	try
 	{
@@ -261,16 +279,8 @@ void Chat::SendServerMessage(std::vector<std::string> lines)
 
 void Chat::OnTrySendChatMessage(long long clientId, std::string content)
 {
-	/*
-	auto owner = Server::GetLobbyOwner();
-	if (owner->m_ClientId == a) {
-		if (!owner->m_HideMessages) {
-			Mod::AppendLocalChatMessage(2, owner->m_Username, owner->GetChatSuffix() + " " + b->toCPPString());
-		}
-	}
-	*/
-
-	if (Server::HasPlayer(clientId)) {
+	if (Server::HasPlayer(clientId))
+	{
 		auto message = new Message(Server::GetPlayer(clientId), content);
 		Chat::AddMessageAndProcess(message);
 	}

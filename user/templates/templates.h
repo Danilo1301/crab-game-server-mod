@@ -31,7 +31,7 @@ static void Template_ChatBox_AppendMessage(ChatBox* a, uint64_t b, String* c, St
 {
 	//std::cout << "ChatBox::AppendMessage" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
 
-	//if (b == 0) return;
+	if (b == 0) return;
 
 	HF_ChatBox_AppendMessage->original(a, b, c, d, method);
 }

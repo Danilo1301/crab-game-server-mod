@@ -216,11 +216,14 @@ static auto HF_ServerSend_PunchPlayer = new HookFunction<void, uint64_t, uint64_
 static void Template_ServerSend_PunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method)
 {
 	//std::cout << "ServerSend::PunchPlayer" << " playerId=" << playerId << ", " << " punchedPlayerId=" << punchedPlayerId << ", " << " dir=" << dir << std::endl;
+	
+	Server::OnPunchPlayer(playerId, punchedPlayerId, dir, method);
 
 	auto player = Server::GetPlayer(playerId);
 	
 	if (player)
 	{
+
 		//fly
 		if (player->FlyEnabled)
 		{

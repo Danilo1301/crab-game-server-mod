@@ -15,8 +15,8 @@ public:
 	static bool ShowHelpMessage;
 	static std::string HelpMessage;
 
-	static bool ShowPlayerIds;
-	static bool ShowDeathStateAfterUsername;
+	static bool ShowPlayerIdsAfterName;
+	static bool ShowDeathStateAfterName;
 
 	static void Init();
 	static void Update(float dt);

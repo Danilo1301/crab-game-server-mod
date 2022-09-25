@@ -5,10 +5,14 @@
 #include "Mod.h"
 #include "Weapon.h"
 #include "Config.h"
-#include "EquipItem.h"
 #include "PermissionGroups.h"
-#include "ModeDeathMatch.h"
-#include "UpdateCheck.h"
+#include "systems/ModeDeathMatch.h"
+#include "systems/EquipItem.h"
+#include "systems/UpdateCheck.h"
+#include "systems/AutoStart.h"
+#include "systems/Fly.h"
+#include "systems/VoteSystem.h"
+#include "systems/Hover.h"
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
@@ -92,15 +96,14 @@ void Server::Update(float dt)
 
 	if (!Mod::IsLobbyOwner()) return;
 
-	UpdateCheck::Check();
-
-	Chat::Update(dt);
-
 	UpdatePlayersPosition();
 
-	ProcessAutoSave(dt);
-
+	VoteSystem::Update(dt);
+	UpdateCheck::Check();
 	ModeDeathMatch::Update(dt);
+	AutoStart::Update(dt);
+	Fly::Update(dt);
+	Hover::Update(dt);
 
 	//ProcessSpawnRequest
 	for (auto pair : Players)
@@ -110,7 +113,7 @@ void Server::Update(float dt)
 		if (!player->SpawnCallbackRequest) continue;
 		player->SpawnCallbackRequest = false;
 
-		Server::OnPlayerSpawn(player, player->Positon);
+		Server::OnPlayerSpawn(player, player->Position);
 	}
 
 	//ProcessRespawn
@@ -128,6 +131,10 @@ void Server::Update(float dt)
 			}
 		}
 	}
+
+	Chat::Update(dt);
+
+	ProcessAutoSave(dt);
 }
 
 void Server::UpdatePlayersPosition()
@@ -164,8 +171,8 @@ void Server::UpdatePlayersPosition()
 		auto transform = Component_get_transform((Component*)playerManager, nullptr);
 		auto pos = Transform_get_position(transform, nullptr);
 
-		//if (!player->m_FlyEnabled)
-		player->Positon = pos;
+		if (!player->FlyEnabled) //otherwise players will fall slowly
+			player->Position = pos;
 
 		//auto headTransform = playerManager->fields.head;
 		//auto headPos = Transform_get_position(headTransform, nullptr);
@@ -501,7 +508,7 @@ void Server::RespawnPlayer(Player* player)
 		auto gameServer = (*GameServer__TypeInfo)->static_fields->Instance;
 		GameServer_QueueRespawn(gameServer, player->ClientId, 0.0f, NULL);
 
-		Server::OnPlayerSpawn(player, player->Positon);
+		Server::OnPlayerSpawn(player, player->Position);
 	}
 
 	player->IsAlive = true;
@@ -562,19 +569,39 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 
 	std::vector<Player*> players;
 
-	std::map<long long, Player*>::iterator it;
-	for (it = Players.begin(); it != Players.end(); it++)
+	for (auto player : GetPlayers())
 	{
-		Player* player = it->second;
+		//contains only digits - "23" or "76561199219991380"
+		if (std::all_of(selector.begin(), selector.end(), ::isdigit))
+		{
+			auto id = std::stoll(selector);
+
+			// "76561199219991380" - dont need to be online
+			if (player->ClientId == id)
+			{
+				players.push_back(player);
+			}
+
+			// "23"
+			if (player->Id == id)
+			{
+				if (!player->IsOnline) continue;
+
+				players.push_back(player);
+			}
+			continue;
+		}
 
 		if (!player->IsOnline) continue;
 
+		// all - "*"
 		if (selector == "*")
 		{
 			players.push_back(player);
 			continue;
 		}
 
+		// all alive - "*a"
 		if (selector == "*a")
 		{
 			if (!player->IsAlive) continue;
@@ -583,6 +610,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 			continue;
 		}
 
+		// all dead - "*d"
 		if (selector == "*d")
 		{
 			if (player->IsAlive) continue;
@@ -591,6 +619,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 			continue;
 		}
 
+		// by id "#23"
 		if (selector.rfind("#", 0) == 0)
 		{
 			std::string idstr;
@@ -606,6 +635,7 @@ std::vector<Player*> Server::FindPlayers(std::string selector)
 			continue;
 		}
 
+		// any string
 		std::string str1 = selector;
 		std::transform(str1.begin(), str1.end(), str1.begin(), [](unsigned char c) { return std::tolower(c); });
 		std::string str2 = player->Username;
@@ -644,6 +674,8 @@ void Server::OnMapLoad(int map, int mode)
 
 	MapId = map;
 	MapModeId = mode;
+
+	AutoStart::OnMapLoad(map, mode);
 }
 
 void Server::OnMapStart()
@@ -657,6 +689,8 @@ void Server::OnMapStart()
 	}
 
 	GameServer_ForceRemoveAllWeapons(NULL);
+
+	AutoStart::OnMapStart();
 }
 
 void Server::OnLobbyStart(long long lobbyId)
@@ -678,5 +712,21 @@ void Server::OnPunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 
 {
 	//HOW TF DOES THIS CRASH
 	//normal punch
-	HF_ServerSend_PunchPlayer->original(playerId, punchedPlayerId, dir, method);
+	//HF_ServerSend_PunchPlayer->original(playerId, punchedPlayerId, dir, method);
+
+	if (Server::HasPlayer(playerId)) Fly::OnPunch(Server::GetPlayer(playerId));
+}
+
+bool Server::IsAtLobby()
+{
+	return MapModeId == 0;
+}
+
+Player* Server::GetLobbyOwner()
+{
+	for (auto player : GetOnlinePlayers())
+	{
+		if (player->Id == 1) return player;
+	}
+	return NULL;
 }

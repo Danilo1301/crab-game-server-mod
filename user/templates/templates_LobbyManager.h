@@ -874,7 +874,7 @@ static String* Template_LobbyManager_NameVal(LobbyManager* a, MethodInfo* method
 static auto HF_LobbyManager_BanPlayer = new HookFunction<void, LobbyManager*, uint64_t, MethodInfo*>("LobbyManager::BanPlayer");
 static void Template_LobbyManager_BanPlayer(LobbyManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "LobbyManager::BanPlayer" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
+	//std::cout << "LobbyManager::BanPlayer" << " a=" << a << ", " << " b=" << b << ", " << std::endl;
 
 	//HF_LobbyManager_BanPlayer->original(a, b, method);
 }

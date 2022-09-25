@@ -8,7 +8,10 @@
 #include "Server.h"
 #include "Weapon.h"
 #include "PermissionGroups.h"
-#include "EquipItem.h"
+#include "systems/EquipItem.h"
+#include "systems/AutoStart.h"
+#include "systems/ModeDeathMatch.h"
+#include "systems/VoteSystem.h"
 
 class CommandHelp : public Command {
 public:
@@ -140,7 +143,7 @@ public:
 
 			auto player = players[0];
 
-			Server::RespawnActivePlayerAtPos(message->FromPlayer->ClientId, player->Positon);
+			Server::RespawnActivePlayerAtPos(message->FromPlayer->ClientId, player->Position);
 
 			return;
 		}
@@ -158,7 +161,7 @@ public:
 				return;
 			}
 
-			auto position = toPlayer->Positon;
+			auto position = toPlayer->Position;
 
 			for (auto player : players)
 			{
@@ -273,6 +276,7 @@ public:
 		{
 			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeLeft));
 			Chat::SendServerMessage("save: " + std::to_string(Server::AutoSaveTimeLeft));
+			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart));
 			return;
 		}
 
@@ -935,7 +939,7 @@ public:
 				Chat::SendServerMessage(
 					"Group=" + player->GetPermissionGroup()->Name + ", " +
 					"IsAlive=" + (player->IsAlive ? "TRUE" : "FALSE") + ", " +
-					"Position=" + player->Positon.format_3()
+					"Position=" + player->Position.format_3()
 				);
 			}
 			return;
@@ -1469,7 +1473,6 @@ public:
 	}
 };
 
-/*
 class CommandAutoStart : public Command {
 public:
 	CommandAutoStart()
@@ -1484,7 +1487,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1492,24 +1495,24 @@ public:
 			{
 				if (args[0].str.compare("on") == 0)
 				{
-					Server::m_AutoStartEnabled = true;
 					Chat::SendServerMessage("Auto start enabled");
+					AutoStart::SetEnabled(true);
 					return;
 				}
 
 				if (args[0].str.compare("off") == 0)
 				{
-					Server::m_AutoStartEnabled = false;
 					Chat::SendServerMessage("Auto start disabled");
+					AutoStart::SetEnabled(false);
 					return;
 				}
 			}
 
 			if (args[0].isNumber)
 			{
-				int time = args[0].AsInt();
+				float time = args[0].AsFloat();
 
-				Server::m_AutoStartTime = time;
+				AutoStart::Time = time;
 
 				Chat::SendServerMessage("Auto start time set to " + std::to_string(time));
 				return;
@@ -1525,7 +1528,7 @@ public:
 		PrintSyntax("(seconds)");
 	}
 };
-*/
+
 
 
 class CommandJumpPunch : public Command {
@@ -1699,51 +1702,6 @@ public:
 };
 
 
-class CommandLobbyOnly : public Command {
-public:
-	CommandLobbyOnly()
-	{
-		Command::Command();
-
-		SetCmd("lobbyonly");
-		AddRequiredPermission("lobbyonly");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 1)
-		{
-			char cmd[256];
-			if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
-
-				for (auto command : Chat::m_Commands) {
-					if (command->Check(cmd)) {
-
-						command->m_LobbyOnly = !command->m_LobbyOnly;
-						if (command->m_LobbyOnly) Chat::SendServerMessage("command '" + command->m_Cmd + "' is now lobby-only");
-						else Chat::SendServerMessage("command '" + command->m_Cmd + "' is no longer lobby-only");
-
-						return;
-					}
-				}
-
-				Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
-				return;
-			}
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("(command)");
-	}
-};
 
 
 class CommandConfig : public Command {
@@ -1791,7 +1749,54 @@ public:
 		Chat::SendServerMessage("* To load config you must restart game");
 	}
 };
+*/
 
+
+class CommandLobbyOnly : public Command {
+public:
+	CommandLobbyOnly()
+	{
+		Command::Command();
+
+		SetCmd("lobbyonly");
+		AddRequiredPermission("lobbyonly");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			char cmd[256];
+			if (sscanf_s(message->CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
+
+				auto command = Chat::FindCommand(cmd);
+
+				if (!command)
+				{
+					Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
+					return;
+				}
+
+				command->LobbyOnly = !command->LobbyOnly;
+				if (command->LobbyOnly) Chat::SendServerMessage("command '" + command->Cmd + "' is now lobby-only");
+				else Chat::SendServerMessage("command '" + command->Cmd + "' is no longer lobby-only");
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(command)");
+	}
+};
 
 class CommandFly : public Command {
 public:
@@ -1807,9 +1812,9 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1817,7 +1822,7 @@ public:
 			{
 				auto speed = args[0].AsFloat();
 
-				player->m_FlySpeed = speed;
+				player->FlySpeed = speed;
 
 				char str[256];
 				sprintf_s(str, "fly speed set to %.2f", speed);
@@ -1826,9 +1831,9 @@ public:
 			}
 		}
 
-		player->m_FlyEnabled = !player->m_FlyEnabled;
+		player->FlyEnabled = !player->FlyEnabled;
 
-		if (player->m_FlyEnabled) Chat::SendServerMessage("on");
+		if (player->FlyEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
 	}
 
@@ -1838,4 +1843,220 @@ public:
 		PrintSyntax("(speed)");
 	}
 };
-*/
+
+class CommandDeathMatch : public Command {
+public:
+	CommandDeathMatch()
+	{
+		Command::Command();
+
+		SetCmd("dm");
+		AddRequiredPermission("dm");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		ModeDeathMatch::Enabled = !ModeDeathMatch::Enabled;
+
+		if (ModeDeathMatch::Enabled) Chat::SendServerMessage("DM mode on");
+		else Chat::SendServerMessage("DM mode off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};
+
+
+class CommandHover : public Command {
+public:
+	CommandHover()
+	{
+		Command::Command();
+
+		SetCmd("hover");
+		AddRequiredPermission("hover");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			if (toLower(message->CmdArgs).rfind("off") == 0)
+			{
+				message->FromPlayer->HoveringPlayer = NULL;
+				Chat::SendServerMessage("off");
+				return;
+			}
+
+			auto players = Server::FindPlayers(args[0].str);
+
+			if (players.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			message->FromPlayer->HoveringPlayer = players[0];
+			message->FromPlayer->HoveringRadius = 0;
+
+			Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
+
+			return;
+		}
+
+		if (args.size() == 2)
+		{
+			if (args[1].isNumber)
+			{
+				auto players = Server::FindPlayers(args[0].str);
+				auto radius = args[1].AsFloat();
+
+				if (players.size() == 0)
+				{
+					PlayerNotFound();
+					return;
+				}
+
+				message->FromPlayer->HoveringPlayer = players[0];
+				message->FromPlayer->HoveringRadius = radius;
+
+				Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(player)");
+		PrintSyntax("(player) (radius)");
+		PrintSyntax("off - To disable");
+	}
+};
+
+
+class CommandVote : public Command {
+public:
+	CommandVote()
+	{
+		Command::Command();
+
+		SetCmd("vote");
+		AddAlias("yes");
+		AddAlias("no");
+		AddRequiredPermission("vote");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		std::string cmd = message->Cmd;
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			cmd = args[0].str;
+		}
+
+		if (VoteSystem::HasAnyVoting())
+		{
+			if (toLower(cmd).compare("yes") == 0)
+			{
+				VoteSystem::Vote(true, message->FromPlayer->ClientId);
+				return;
+			}
+
+			if (toLower(cmd).compare("no") == 0)
+			{
+				VoteSystem::Vote(false, message->FromPlayer->ClientId);
+				return;
+			}
+		}
+
+		PrintSyntaxes();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(yes / no)");
+		Chat::SendServerMessage("* !yes");
+		Chat::SendServerMessage("* !no");
+	}
+};
+
+
+class CommandVoteKick : public Command {
+public:
+	CommandVoteKick()
+	{
+		Command::Command();
+
+		SetCmd("votekick");
+		AddRequiredPermission("votekick");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		if (VoteSystem::HasAnyVoting())
+		{
+			Chat::SendServerMessage("wait until this votekick ends");
+			return;
+		}
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			auto targetPlayers = Server::FindPlayers(args[0].str);
+
+			if (targetPlayers.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			auto targetPlayer = targetPlayers[0];
+
+			if (targetPlayer->IsLobbyOwner())
+			{
+				Chat::SendServerMessage("cant kick this player");
+				return;
+			}
+
+			long long clientId = targetPlayer->ClientId;
+
+			VoteSystem::StartVote("Kick " + targetPlayer->Username + " [" + std::to_string(targetPlayer->Id) + "] ?", 20.0f, [clientId]()
+			{
+				VoteSystem::SendEndVoteMessage();
+				Mod::KickPlayer(clientId);
+			}, []()
+			{
+				VoteSystem::SendEndVoteMessage();
+			});
+
+			return;
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(player)");
+	}
+};

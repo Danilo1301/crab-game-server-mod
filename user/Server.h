@@ -77,4 +77,8 @@ public:
 
 	//From Template_ServerSend_PunchPlayer (only works inside template function wtf)
 	static void OnPunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method);
+
+	static bool IsAtLobby();
+
+	static Player* GetLobbyOwner();
 };

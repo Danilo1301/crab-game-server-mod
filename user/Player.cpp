@@ -15,8 +15,8 @@ Player::Player(long long clientId)
 
 std::string Player::GetChatSuffix()
 {
-	bool showIds = Chat::ShowPlayerIds;
-	bool showIsAlive = Chat::ShowDeathStateAfterUsername;
+	bool showIds = Chat::ShowPlayerIdsAfterName;
+	bool showIsAlive = Chat::ShowDeathStateAfterName;
 
 	std::string strId = "[#" + std::to_string(Id) + "]";
 	std::string strAlive = IsAlive ? "(alive)" : "(dead)";

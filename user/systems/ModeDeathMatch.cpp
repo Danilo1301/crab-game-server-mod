@@ -5,7 +5,7 @@
 #include "Mod.h"
 #include "Server.h"
 
-bool ModeDeathMatch::Enabled = true;
+bool ModeDeathMatch::Enabled = false;
 
 void ModeDeathMatch::Update(float dt)
 {

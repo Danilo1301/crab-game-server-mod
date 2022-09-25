@@ -58,15 +58,27 @@
     <ClCompile Include="user\Config.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\EquipItem.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\UpdateCheck.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
     <ClCompile Include="user\SocketServer.cpp" />
-    <ClCompile Include="user\ModeDeathMatch.cpp">
-      <Filter>user</Filter>
+    <ClCompile Include="user\systems\AutoStart.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\UpdateCheck.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\EquipItem.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\Fly.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\ModeDeathMatch.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\Hover.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\VoteSystem.cpp">
+      <Filter>user\systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,9 +166,6 @@
     <ClInclude Include="user\templates\templates_ServerSend.h">
       <Filter>user\templates</Filter>
     </ClInclude>
-    <ClInclude Include="user\EquipItem.h">
-      <Filter>user</Filter>
-    </ClInclude>
     <ClInclude Include="user\commands\commands.h">
       <Filter>user\commands</Filter>
     </ClInclude>
@@ -175,15 +184,30 @@
     <ClInclude Include="user\INIRead.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\UpdateCheck.h">
-      <Filter>user</Filter>
-    </ClInclude>
     <ClInclude Include="user\Config.h">
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\SocketServer.h" />
-    <ClInclude Include="user\ModeDeathMatch.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\systems\AutoStart.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\UpdateCheck.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\EquipItem.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\Fly.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\ModeDeathMatch.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\Hover.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\VoteSystem.h">
+      <Filter>user\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -204,6 +228,9 @@
     </Filter>
     <Filter Include="user\commands">
       <UniqueIdentifier>{5237e95c-d90e-4251-b072-639821cb27f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="user\systems">
+      <UniqueIdentifier>{3eaa328c-6a3f-4516-90ff-e22321c5ccd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
