@@ -13,6 +13,7 @@
 #include "systems/Fly.h"
 #include "systems/VoteSystem.h"
 #include "systems/Hover.h"
+#include "systems/MapSkip.h"
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
@@ -676,6 +677,7 @@ void Server::OnMapLoad(int map, int mode)
 	MapModeId = mode;
 
 	AutoStart::OnMapLoad(map, mode);
+	MapSkip::OnMapLoad(map, mode);
 }
 
 void Server::OnMapStart()
@@ -729,4 +731,12 @@ Player* Server::GetLobbyOwner()
 		if (player->Id == 1) return player;
 	}
 	return NULL;
+}
+
+//only works inside template too
+bool Server::OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int objectId, MethodInfo* method)
+{
+	if (!player) return true;
+
+	return true;
 }

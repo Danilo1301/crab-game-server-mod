@@ -15,7 +15,7 @@ fazer as funcoes static
 [X] permissions dont save
 [X] equipitem
 [X] iniwrite
-[ ] find players by number (1-100 or 10000000000)
+[X] find players by number (1-100 or 10000000000)
 [X] pos not updating OK
 [X] testing config OK
 [X] test broadcast DOESNT HIDE
@@ -36,12 +36,14 @@ fazer as funcoes static
 [ ] TRY LATER: in "TESTHERE", test if !player->IsAlive, then try respawn 
 [X] test fly OK
 [ ] ISSUE: autostart message not showing
-[ ] multisnowball
+[X] multisnowball
 [X] vote
 [X] votekick
 [ ] autodie
-[ ] skip
+[X] skip
 [ ] add auto start time to config
+[~] heroku server dying
+[ ] fix skip during TAG, BOMB mode / also set timer to 1 to skip faster
 
 ---------------- RELEASE
 

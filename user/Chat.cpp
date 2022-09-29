@@ -13,7 +13,7 @@ bool Chat::ShowHelpMessage = true;
 std::string Chat::HelpMessage = " Type !help for a list of commands";
 
 bool Chat::ShowPlayerIdsAfterName = true;
-bool Chat::ShowDeathStateAfterName = true;
+bool Chat::ShowDeathStateAfterName = false;
 
 void Chat::Init()
 {
@@ -52,6 +52,8 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandHover());
 	RegisterCommand((Command*)new CommandVote());
 	RegisterCommand((Command*)new CommandVoteKick());
+	RegisterCommand((Command*)new CommandSkip());
+	RegisterCommand((Command*)new CommandMultiSnowball());
 }
 
 void Chat::Update(float dt)

@@ -392,7 +392,21 @@ static void Template_ServerSend_UseItemAll(uint64_t a, int32_t b, Vector3 c, int
 {
 	std::cout << "ServerSend::UseItemAll" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
 
+	if (!Server::OnTryUseUseItemAll(Server::GetPlayer(a), b, c, d, method))
+		return;
+
 	HF_ServerSend_UseItemAll->original(a, b, c, d, method);
+
+	if (Server::HasPlayer(a))
+	{
+		if (Server::GetPlayer(a)->MultiSnowballEnabled)
+		{
+			HF_ServerSend_UseItemAll->original(a, b, Vector3({ c.x + 2, c.y, c.z }), d, method);
+			HF_ServerSend_UseItemAll->original(a, b, Vector3({ c.x - 2, c.y, c.z }), d, method);
+			HF_ServerSend_UseItemAll->original(a, b, Vector3({ c.x, c.y, c.z + 2 }), Mod::UniqueObjectId++, method);
+			HF_ServerSend_UseItemAll->original(a, b, Vector3({ c.x, c.y, c.z - 2 }), Mod::UniqueObjectId++, method);
+		}
+	}
 }
 
 static auto HF_ServerSend_u109Cu109Au1099u10A7u109Du10A7u10A1u10A1u10A5u109Du109D = new HookFunction<void, uint64_t, MethodInfo*>("ServerSend::u109Cu109Au1099u10A7u109Du10A7u10A1u10A1u10A5u109Du109D");
@@ -1341,6 +1355,7 @@ static void Inject_Templates_ServerSend()
 		Injector::Inject(HF_ServerSend_PlayerDied, ServerSend_PlayerDied, &Template_ServerSend_PlayerDied);
 		Injector::Inject(HF_ServerSend_PunchPlayer, ServerSend_PunchPlayer, &Template_ServerSend_PunchPlayer);
 		Injector::Inject(HF_ServerSend_SendModeState, ServerSend_SendModeState, &Template_ServerSend_SendModeState);
+		Injector::Inject(HF_ServerSend_UseItemAll, ServerSend_UseItemAll, &Template_ServerSend_UseItemAll);
 
 		return;
 	}

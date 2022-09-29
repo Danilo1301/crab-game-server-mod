@@ -81,4 +81,8 @@ public:
 	static bool IsAtLobby();
 
 	static Player* GetLobbyOwner();
+
+	//From Template_ServerSend_UseItemAll
+	static bool OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int objectId, MethodInfo* method);
+
 };

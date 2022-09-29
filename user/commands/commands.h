@@ -12,6 +12,7 @@
 #include "systems/AutoStart.h"
 #include "systems/ModeDeathMatch.h"
 #include "systems/VoteSystem.h"
+#include "systems/MapSkip.h"
 
 class CommandHelp : public Command {
 public:
@@ -1673,34 +1674,6 @@ public:
 };
 
 
-class CommandMultiSnowball : public Command {
-public:
-	CommandMultiSnowball()
-	{
-		Command::Command();
-
-		SetCmd("snowball2");
-		AddRequiredPermission("snowball2");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto player = message->m_Player;
-
-		player->m_MultiSnowballEnabled = !player->m_MultiSnowballEnabled;
-
-		if (player->m_MultiSnowballEnabled) Chat::SendServerMessage("on");
-		else Chat::SendServerMessage("off");
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-	}
-};
-
 
 
 
@@ -2058,5 +2031,62 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("(player)");
+	}
+};
+
+class CommandSkip : public Command {
+public:
+	CommandSkip()
+	{
+		Command::Command();
+
+		SetCmd("skip");
+		AddRequiredPermission("skip");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		if (!MapSkip::CanSkip())
+		{
+			Chat::SendServerMessage("you can't skip now");
+			return;
+		}
+
+		MapSkip::VoteSkip(message->FromPlayer->ClientId);
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};
+
+class CommandMultiSnowball : public Command {
+public:
+	CommandMultiSnowball()
+	{
+		Command::Command();
+
+		SetCmd("snowball2");
+		AddRequiredPermission("snowball2");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto player = message->FromPlayer;
+
+		player->MultiSnowballEnabled = !player->MultiSnowballEnabled;
+
+		if (player->MultiSnowballEnabled) Chat::SendServerMessage("on");
+		else Chat::SendServerMessage("off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
 	}
 };

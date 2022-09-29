@@ -169,7 +169,7 @@ void Config::ProcessV2toV3ConfigLoad()
 {
 	if (Exists(GetPath(PATH_SERVER_FOLDER)) && !Exists(GetPath(PATH_VERSION_FILE)))
 	{
-		std::string msg = "The server folder (v1/v2) is incompatible with this new version (v3)\n\n> You need to DELETE the '/server/' folder to continue\n\nServer folder at:\n> " + GetPath(PATH_SERVER_FOLDER) + "";
+		std::string msg = "The server folder (v1/v2) is incompatible with this new version (v3)\n\n> You need to DELETE the '/server/' folder to continue\n(Don't forget to backup)\n\nServer folder at:\n> " + GetPath(PATH_SERVER_FOLDER) + "";
 		MessageBoxA(NULL, msg.c_str(), "Incompatible config", MB_OK | MB_ICONERROR);
 
 		exit(0);

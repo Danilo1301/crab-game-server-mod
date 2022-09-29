@@ -72,6 +72,7 @@
     <ClCompile Include="user\systems\EquipItem.cpp" />
     <ClCompile Include="user\systems\Fly.cpp" />
     <ClCompile Include="user\systems\Hover.cpp" />
+    <ClCompile Include="user\systems\MapSkip.cpp" />
     <ClCompile Include="user\systems\ModeDeathMatch.cpp" />
     <ClCompile Include="user\systems\UpdateCheck.cpp" />
     <ClCompile Include="user\systems\VoteSystem.cpp" />
@@ -109,6 +110,7 @@
     <ClInclude Include="user\systems\EquipItem.h" />
     <ClInclude Include="user\systems\Fly.h" />
     <ClInclude Include="user\systems\Hover.h" />
+    <ClInclude Include="user\systems\MapSkip.h" />
     <ClInclude Include="user\systems\ModeDeathMatch.h" />
     <ClInclude Include="user\systems\UpdateCheck.h" />
     <ClInclude Include="user\systems\VoteSystem.h" />
