@@ -1,226 +1,262 @@
 #include "pch-il2cpp.h"
 #include "Chat.h"
-
 #include "Server.h"
 #include "Mod.h"
 #include "commands/commands.h"
 
-std::vector<Message*> Chat::m_Messages;
-std::vector<Command*> Chat::m_Commands;
+std::vector<Message*> Chat::Messages;
+std::vector<Command*> Chat::Commands;
 
-bool Chat::m_ShowHelpMessage = true;
-float Chat::m_BroadCastHelpTime = 0;
+float Chat::BroadcastHelpInterval = 60.0f;
+float Chat::BroadcastHelpTimeLeft = 0.0f;
+bool Chat::ShowHelpMessage = true;
+std::string Chat::HelpMessage = " Type !help for a list of commands";
 
-bool Chat::m_ShowDeathStatusAfterName = false;
-bool Chat::m_ShowIdAfterName = true;
+bool Chat::ShowPlayerIdsAfterName = true;
+bool Chat::ShowDeathStateAfterName = false;
 
 void Chat::Init()
 {
+	std::cout << "[Chat] Init" << std::endl;
+
 	RegisterCommand((Command*)new CommandHelp());
 	RegisterCommand((Command*)new CommandAHelp());
-	RegisterCommand((Command*)new CommandWeapon());
-	RegisterCommand((Command*)new CommandPlayerInfo());
-	RegisterCommand((Command*)new CommandPerm());
 	RegisterCommand((Command*)new CommandTeleport());
-	RegisterCommand((Command*)new CommandAllCommands());
+	RegisterCommand((Command*)new CommandTest());
+	RegisterCommand((Command*)new CommandKill());
+	RegisterCommand((Command*)new CommandRestart());
+	RegisterCommand((Command*)new CommandTime());
+	RegisterCommand((Command*)new CommandWeapon());
+	RegisterCommand((Command*)new CommandHand());
+	RegisterCommand((Command*)new CommandRespawn());
+	RegisterCommand((Command*)new CommandMap());
+	RegisterCommand((Command*)new CommandPerm());
+	RegisterCommand((Command*)new CommandPlayerInfo());
+	//RegisterCommand((Command*)new CommandAllCommands());
 	RegisterCommand((Command*)new CommandMute());
 	RegisterCommand((Command*)new CommandKick());
 	RegisterCommand((Command*)new CommandBan());
-	RegisterCommand((Command*)new CommandRestart());
 	RegisterCommand((Command*)new CommandGod());
-	RegisterCommand((Command*)new CommandKill());
-	RegisterCommand((Command*)new CommandRespawn());
-	RegisterCommand((Command*)new CommandTime());
 	RegisterCommand((Command*)new CommandVanish());
-	RegisterCommand((Command*)new CommandAutoRespawn());
-	//RegisterCommand((Command*)new CommandToggleWeapon());
 	RegisterCommand((Command*)new CommandDownload());
 	RegisterCommand((Command*)new CommandWin());
-	RegisterCommand((Command*)new CommandHover());
 	RegisterCommand((Command*)new CommandStart());
 	RegisterCommand((Command*)new CommandBroadcast());
-	RegisterCommand((Command*)new CommandAutoStart());
 	RegisterCommand((Command*)new CommandJumpPunch());
 	RegisterCommand((Command*)new CommandSuperPunch());
 	RegisterCommand((Command*)new CommandForceField());
-	RegisterCommand((Command*)new CommandShowHelp());
-	RegisterCommand((Command*)new CommandPunchDamage());
-	RegisterCommand((Command*)new CommandMultiSnowball());
-	RegisterCommand((Command*)new CommandLobbyOnly());
-	RegisterCommand((Command*)new CommandConfig());
+	RegisterCommand((Command*)new CommandAutoStart());
 	RegisterCommand((Command*)new CommandFly());
-	//RegisterCommand((Command*)new CommandDeathMatch());
+	RegisterCommand((Command*)new CommandLobbyOnly());
+	RegisterCommand((Command*)new CommandDeathMatch());
+	RegisterCommand((Command*)new CommandHover());
 	RegisterCommand((Command*)new CommandVote());
 	RegisterCommand((Command*)new CommandVoteKick());
-	RegisterCommand((Command*)new CommandAutoDie());
 	RegisterCommand((Command*)new CommandSkip());
+	RegisterCommand((Command*)new CommandMultiSnowball());
 }
 
 void Chat::Update(float dt)
 {
-	for (auto pair : Server::m_Players)
-	{
-		auto player = pair.second;
-
-		if (player->m_MuteTime > 0) {
-			player->m_MuteTime -= dt;
-
-			if (player->m_MuteTime < 0) player->m_MuteTime = 0;
-		}
-	}
-
-	m_BroadCastHelpTime += dt;
-	if (m_BroadCastHelpTime >= 60.0f && m_ShowHelpMessage) {
-		m_BroadCastHelpTime = 0;
-		Chat::SendServerMessage(" Type !help for a list of commands");
-	}
-
-	SendAllMessagesInQuery();
-
+	ProcessMute(dt);
+	ProcessBroadcastHelp(dt);
 }
 
-void Chat::ProcessRawMessage(long long clientId, std::string text, bool dontSend)
+void Chat::ProcessMute(float dt)
 {
-	if (Server::m_UpdateRequired)
+	for (auto pair : Server::Players)
 	{
-		std::cout << "[Chat] Update is required" << std::endl;
- 		return;
+		auto player = pair.second;
+		if (player->MuteTime > 0)
+		{
+			player->MuteTime -= dt;
+			if (player->MuteTime < 0) player->MuteTime = 0;
+		}
 	}
+}
 
-	std::cout << "[Chat] * Message from " << clientId << ": '" << text << std::endl;
-	Message* message = new Message(clientId, text);
+void Chat::ProcessBroadcastHelp(float dt)
+{
+	if (!ShowHelpMessage) return;
 
-	if (Server::HasPlayer(clientId))
+	BroadcastHelpTimeLeft -= dt;
+	if (BroadcastHelpTimeLeft < 0)
 	{
-		message->m_Player = Server::GetPlayer(clientId);
-		if (message->m_Player->m_MuteTime > 0) {
-			return;
-		}
+		BroadcastHelpTimeLeft = BroadcastHelpInterval;
+		Chat::SendServerMessage(" Type !help for a list of commands");
 	}
+}
 
-	m_Messages.push_back(message);
+void Chat::RegisterCommand(Command* command)
+{
+	std::cout << "[Chat] RegisterCommand '" << command->Cmd << "'" << std::endl;
 
-	if (message->m_Player > 0) {
-		try
-		{
-			ProcessMessage(message);
-		}
-		catch (const std::runtime_error& re)
-		{
-			std::string errstr = re.what();
-			SendServerMessage("runtime Error: " + errstr);
-		}
-		catch (const std::exception& ex)
-		{
-			std::string errstr = ex.what();
-			SendServerMessage("error: " + errstr);
+	Commands.push_back(command);
+}
 
-		}
-		catch (...)
-		{
-			SendServerMessage("error");
-		}
-	}
+Message* Chat::AddMessage(Message* message)
+{
+	//std::cout << "[Chat] Add Message from (" << message->FromClientId << ") '" << message->Content << "'" << std::endl;
+	
+	Messages.push_back(message);
+	return message;
+}
 
-	//
-	if (message->m_Player != NULL) {
-		if (message->m_Player->m_HideMessages) {
-			std::cout << "hide messages" << std::endl;
+Message* Chat::AddMessageAndProcess(Message* message)
+{
+	AddMessage(message);
+	ProcessMessage(message);
+	return message;
+}
 
-			for (size_t i = 0; i < m_Messages.size(); i++)
-			{
-				Message* message = m_Messages[i];
-
-				if (message->m_SendType == MessageSendType::NORMAL) {
-					message->m_SendType = MessageSendType::FORCE_PRIVATE;
-				}
-			}
-		}
-	}
-	//
-
-	if (dontSend) RemoveMessage(message);
-
-	SendAllMessagesInQuery();
+void Chat::RemoveMessage(Message* message)
+{
+	auto it = std::find(Messages.begin(), Messages.end(), message);
+	if (it == Messages.end()) return;
+	Messages.erase(it);
+	delete message;
 }
 
 void Chat::ProcessMessage(Message* message)
 {
-	Player* player = message->m_Player;
-	std::string content = message->m_Content;
-	//std::cout << "[Chat] ProcessMessage " << player->m_Username << " (" << player->m_ClientId << "): " << content << "'" << std::endl;
+	std::cout << "[Chat] ProcessMessage from (" << (message->FromPlayer ? message->FromPlayer->GetDisplayNameExtra() : std::to_string(message->FromClientId)) << ") '" << message->Content << "'" << std::endl;
 
-	if (message->m_IsCommand) {
-		
-		if (ProcessWeaponCommand(message)) return;
+	bool isOwnerMessage = message->FromClientId == Server::GetLobbyOwner()->ClientId;
 
-		bool commandFound = false;
+	if (message->FromPlayer != NULL)
+	{
+		if (message->FromPlayer->MuteTime > 0)
+		{
+			std::cout << "[Chat] Message removed: Muted" << std::endl;
+			RemoveMessage(message);
+			return;
+		}
+	}
 
-		for (auto command : m_Commands) {
-			if (command->Check("*")) {
+	if (ProcessWeaponCommand(message))
+	{
+		message->IsCommand = false;
+	}
 
-				try
-				{
-					command->Execute(message);
-				}
-				catch (const std::runtime_error& re)
-				{
-					std::string errstr = re.what();
-					SendServerMessage("runtime Error: " + errstr);
-				}
-				catch (const std::exception& ex)
-				{
-					std::string errstr = ex.what();
-					SendServerMessage("error: " + errstr);
-
-				}
-				catch (...)
-				{
-					SendServerMessage("error");
-				}
-
-				continue;
-			}
-
-			if (!command->Check(message->m_Cmd)) continue;
-
-			commandFound = true;
-
-			if (!command->CheckPermissions(message->m_Player)) {
-				command->NoPermission();
-				continue;
-			}
-
-			if (command->m_LobbyOnly)
-			{
-				if (!Server::m_IsAtLobby)
-				{
-					if (!message->m_Player->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
-					{
-						SendServerMessage("you must be on lobby");
-						continue;
-					}
-				}
-
-			}
-
-			command->Execute(message);
+	if (message->FromPlayer != NULL)
+	{
+		if (message->IsCommand)
+		{
+			ProcessCommandMessage(message);
 		}
 
-		if (!commandFound) {
-			SendServerMessage("unknown command '" + message->m_Cmd + "'");
+		if (message->FromPlayer->HideMessages)
+		{
+			message->SendType = MessageSendType::FORCE_PRIVATE;
 		}
+	}
+
+
+	if (message->FromPlayer && !isOwnerMessage)
+	{
+		message->Content = message->FromPlayer->GetChatSuffix() + " " + message->Content;
+	}
+
+	switch (message->SendType)
+	{
+	case MessageSendType::FORCE_PRIVATE:
+		Mod::AppendLocalChatMessage(2, "[PRIVATE]", message->Content);
+		break;
+	case MessageSendType::FORCE_HIDE:
+		//Mod::AppendLocalChatMessage(2, "[HIDDEN]", message->Content);
+		break;
+	default:
+		Mod::SendChatMessage(message->FromClientId, message->Content);
+
+		if (isOwnerMessage)
+		{
+			Mod::AppendLocalChatMessage(2, message->FromPlayer->Username, message->FromPlayer->GetChatSuffix() + " " + message->Content);
+		}
+		break;
+	}
+
+	RemoveMessage(message);
+
+	//std::cout << "[Chat] Message sent (" << Messages.size() << " left)" << std::endl;
+}
+
+Command* Chat::FindCommand(std::string cmd)
+{
+	for (auto command : Commands)
+	{
+		if (command->Check(cmd)) return command;
+	}
+	return NULL;
+}
+
+/*
+Called every Template_ChatBox_Update 
+*/
+void Chat::ProcessAllMessages()
+{
+	while (Messages.size() > 0)
+	{
+		ProcessMessage(Messages[0]);
+	}
+}
+
+void Chat::ProcessCommandMessage(Message* message)
+{
+	Command* command = FindCommand(message->Cmd);
+
+	if (!command)
+	{
+		SendServerMessage("unknown command '" + message->Cmd + "'");
+		return;
+	}
+
+	if (!command->CheckPermissions(message->FromPlayer))
+	{
+		command->NoPermission();
+		return;
+	}
+
+	if (command->LobbyOnly && !Server::IsAtLobby())
+	{
+		if (!message->FromPlayer->GetPermissionGroup()->HasPermission("lobbyonly.bypass"))
+		{
+			SendServerMessage("you must be on lobby");
+			return;
+		}
+	}
+
+	try
+	{
+		command->Execute(message);
+	}
+	catch (const std::runtime_error& re)
+	{
+		std::string errstr = re.what();
+		SendServerMessage("runtime Error: " + errstr);
+	}
+	catch (const std::exception& ex)
+	{
+		std::string errstr = ex.what();
+		SendServerMessage("error: " + errstr);
+	}
+	catch (...)
+	{
+		SendServerMessage("error");
 	}
 }
 
 bool Chat::ProcessWeaponCommand(Message* message)
 {
-
-	for (auto weapon : Server::m_Weapons)
+	for (auto weapon : WeaponList)
 	{
-		if ((toLower(message->m_Cmd)).compare(toLower(weapon.name)) == 0)
+		if ((toLower(message->Cmd)).compare(toLower(weapon.name)) == 0)
 		{
-			ProcessRawMessage(message->m_Player->m_ClientId, "!w " + std::to_string(weapon.id), true);
+			Message* msg = new Message(message->FromPlayer, "!w " + std::to_string(weapon.id));
+			msg->SendType = MessageSendType::FORCE_HIDE;
+
+			AddMessage(msg);
+			ProcessMessage(msg);
+
 			return true;
 		}
 	}
@@ -230,11 +266,9 @@ bool Chat::ProcessWeaponCommand(Message* message)
 
 Message* Chat::SendServerMessage(std::string text)
 {
-	if (Mod::m_IsConsole) std::cout << "[Chat] SendServerMessage " << text << std::endl;
+	//std::cout << "[Chat] SendServerMessage: " << text << std::endl;
 
-	Message* message = new Message((long long)1, text);
-	m_Messages.push_back(message);
-	return message;
+	return AddMessage(new Message((long long)1, text));
 }
 
 void Chat::SendServerMessage(std::vector<std::string> lines)
@@ -242,6 +276,15 @@ void Chat::SendServerMessage(std::vector<std::string> lines)
 	for (auto message : lines)
 	{
 		SendServerMessage(message);
+	}
+}
+
+void Chat::OnTrySendChatMessage(long long clientId, std::string content)
+{
+	if (Server::HasPlayer(clientId))
+	{
+		auto message = new Message(Server::GetPlayer(clientId), content);
+		Chat::AddMessageAndProcess(message);
 	}
 }
 
@@ -271,53 +314,16 @@ void Chat::SendCommandsPage(std::vector<std::string> commands, int page)
 	Chat::SendServerMessage(buffer);
 }
 
-void Chat::SendAllMessagesInQuery()
+bool Chat::PrintCommanSyntaxes(std::string cmd)
 {
-	if (m_Messages.size() > 0)
+	for (auto command : Chat::Commands)
 	{
-		//std::cout << "sending " << m_Messages.size() << " messages" << std::endl;
+		if (!command->Check(cmd)) continue;
+
+		command->PrintSyntaxes();
+		//Chat::SendServerMessage("showing help for '" + command->m_Cmd + "'");
+
+		return true;
 	}
-
-	while (m_Messages.size() > 0)
-	{
-		Message* message = m_Messages[0];
-		std::string content = message->m_Content;
-
-		
-		if (message->m_Player != NULL) {
-			auto player = message->m_Player;
-			content = player->GetChatSuffix() + " " + content;
-		}
-		
-
-		//std::cout << "[Send Message : " << (int)message->m_SendType << "] from=" << message->m_FromClient << ", content='" << content << "'\n";
-
-		if (message->m_SendType == MessageSendType::FORCE_PRIVATE) Mod::AppendLocalChatMessage(2, "[PRIVATE]", content);
-		if (message->m_SendType == MessageSendType::NORMAL || message->m_SendType == MessageSendType::FORCE_SEND) Mod::SendChatMessage(message->m_FromClient, content);
-
-		RemoveMessage(message);
-	}
-}
-
-void Chat::RemoveMessage(Message* message)
-{
-	//std::cout << "Message removed " << message->m_Content << std::endl;
-
-	auto it = std::find(m_Messages.begin(), m_Messages.end(), message);
-	if (it == m_Messages.end()) return;
-	m_Messages.erase(it);
-	delete message;
-}
-
-void Chat::RemoveAllMessages()
-{
-	while (m_Messages.size() > 0) {
-		RemoveMessage(Chat::m_Messages[0]);
-	}
-}
-
-void Chat::RegisterCommand(Command* command)
-{
-	m_Commands.push_back(command);
-	std::cout << "[Chat] RegisterCommand '" << command->m_Cmd << "'" << std::endl;
+	return false;
 }

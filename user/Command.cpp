@@ -2,20 +2,24 @@
 #include "Command.h"
 #include "Chat.h"
 
+bool Command::AutoShowHelp = true;
+
 Command::Command()
 {
+	CurrentArgs.clear();
+	CurrentMessage = NULL;
 }
 
 void Command::SetCmd(std::string cmd)
 {
-	m_Cmd = cmd;
+	Cmd = cmd;
 }
 
 bool Command::Check(std::string str)
 {
-	if (toLower(str).compare(toLower(m_Cmd)) == 0) return true;
+	if (toLower(str).compare(toLower(Cmd)) == 0) return true;
 
-	for(auto alias : m_Aliases)
+	for (auto alias : Aliases)
 		if (toLower(str).compare(toLower(alias)) == 0) return true;
 
 	return false;
@@ -23,27 +27,45 @@ bool Command::Check(std::string str)
 
 void Command::AddRequiredPermission(std::string permission)
 {
-	m_RequiredPermissions.push_back(permission);
+	RequiredPermissions.push_back(permission);
 }
 
-void Command::ShowOnHelpPage(bool show)
+void Command::SetShowOnHelpPage(bool show)
 {
-	m_ShowOnHelpPage = show;
+	ShowOnHelpPage = show;
 }
 
 void Command::SetLobbyOnly(bool state)
 {
-	m_LobbyOnly = state;
+	LobbyOnly = state;
 }
 
 void Command::AddAlias(std::string cmd)
 {
-	m_Aliases.push_back(cmd);
+	Aliases.push_back(cmd);
 }
 
 void Command::Execute(Message* message)
 {
+	CurrentMessage = message;
+	CurrentArgs = CommandArg::GetArgs(message->CmdArgs);
+
 	//std::cout << "[Command : " << m_Cmd << "] Execute" << std::endl;
+}
+
+Player* Command::GetPlayer()
+{
+	return CurrentMessage->FromPlayer;
+}
+
+bool Command::HasArg(int index)
+{
+	return index < CurrentArgs.size();
+}
+
+CommandArg Command::GetArg(int index)
+{
+	return CurrentArgs[index];
 }
 
 bool Command::CheckPermissions(Player* player)
@@ -51,21 +73,18 @@ bool Command::CheckPermissions(Player* player)
 	auto permissionGroup = player->GetPermissionGroup();
 	auto permissions = permissionGroup->GetPermissions();
 
-	if (permissionGroup->HasPermission("*"))
-	{
-		return true;
-	}
+	if (permissionGroup->HasPermission("*")) return true;
+	//if (player->m_Id == 1) return true;
 
-	for (auto perm : m_RequiredPermissions)
+	for (auto perm : RequiredPermissions)
 	{
 		if (!permissionGroup->HasPermission(perm))
 		{
 			//Chat::SendServerMessage(perm + " perm is required");
 			return false;
 		}
-	}	
+	}
 
-	//if (player->m_Id == 1) return true;
 	return true;
 }
 
@@ -76,7 +95,13 @@ void Command::PrintSyntaxes()
 
 void Command::WrongSyntax()
 {
-	Chat::SendServerMessage("* wrong syntax, type: ( !help " + m_Cmd + " )");
+	if (AutoShowHelp)
+	{
+		if(Chat::PrintCommanSyntaxes(Cmd)) return;
+	}
+
+	Chat::SendServerMessage("* wrong syntax, type: ( !help " + Cmd + " )");
+
 }
 
 void Command::PlayerNotFound()
@@ -86,10 +111,19 @@ void Command::PlayerNotFound()
 
 void Command::PrintSyntax(std::string syntax)
 {
-	Chat::SendServerMessage("* !" + m_Cmd + " " + syntax);
+	Chat::SendServerMessage("* !" + Cmd + " " + syntax);
 }
 
 void Command::NoPermission()
 {
 	Chat::SendServerMessage("no permission");
+}
+
+bool Command::CheckOwnerIsTarget(Player* target)
+{
+	if (!target->IsLobbyOwner()) return false; //target is not owner, can execute
+
+	if (CurrentMessage->FromPlayer->IsLobbyOwner()) return false; //player who ran command is owner, so ok
+
+	return true; //blocks command execution
 }

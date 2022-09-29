@@ -1,18 +1,19 @@
 #include "pch-il2cpp.h"
 #include "Config.h"
 
-#include <fstream>
-#include <experimental/filesystem>
-
 #include "PermissionGroups.h"
 #include "Server.h"
+#include "Mod.h"
 #include "Chat.h"
+#include "INIRead.h"
 
-std::string Config::m_ServerDir = "server/";
-std::string Config::m_ConfigFile = "config.json";
-std::string Config::m_PermissionsFile = "permissions.json";
-std::string Config::m_UsersFile = "users.json";
-bool Config::m_FirstTimeConfig = false;
+std::string Config::PATH_SERVER_FOLDER = "/server/";
+std::string Config::PATH_PERMISSIONS_FOLDER = PATH_SERVER_FOLDER + "/permissions/";
+std::string Config::PATH_PERMISSION_GROUPS_FOLDER = PATH_PERMISSIONS_FOLDER + "/groups/";
+
+std::string Config::PATH_CONFIG_FILE = PATH_SERVER_FOLDER + "config.ini";
+std::string Config::PATH_PLAYERS_FILE = PATH_SERVER_FOLDER + "players.json";
+std::string Config::PATH_VERSION_FILE = PATH_SERVER_FOLDER + "version";
 
 bool Config::Exists(std::string path)
 {
@@ -24,6 +25,12 @@ void Config::CreatePath(std::string path)
 	if (!std::experimental::filesystem::v1::is_directory(path) || !std::experimental::filesystem::v1::exists(path)) {
 		std::experimental::filesystem::v1::create_directory(path);
 	}
+}
+
+std::string Config::GetPath(std::string path)
+{
+	std::experimental::filesystem::path cwd = std::experimental::filesystem::current_path() / path;
+	return cwd.string();
 }
 
 void Config::WriteToFile(std::string path, Json::Value value)
@@ -54,123 +61,137 @@ Json::Value Config::ReadFile(std::string path)
 	return value;
 }
 
-void Config::SaveJSON()
+void Config::Save()
 {
-	std::cout << "[Config] Saving config" << std::endl;
+	std::cout << "[Config] Save" << std::endl;
 
-	CreatePath("server");
+	CreatePath(GetPath(PATH_SERVER_FOLDER));
+	CreatePath(GetPath(PATH_PERMISSIONS_FOLDER));
+	CreatePath(GetPath(PATH_PERMISSION_GROUPS_FOLDER));
 
-	//
+	//version
+	std::ofstream versionFile(GetPath(PATH_VERSION_FILE));
+	versionFile << Mod::Version << std::endl;
+	versionFile.close();
 
-	Json::Value configValue;
-	configValue["show_death_status_after_name"] = Chat::m_ShowDeathStatusAfterName;
-	configValue["show_id_after_name"] = Chat::m_ShowIdAfterName;
-	configValue["show_help_message"] = Chat::m_ShowHelpMessage;
+	//config.ini
+	std::cout << "[Config] Saving " << PATH_CONFIG_FILE << std::endl;
 
-	WriteToFile(m_ServerDir + m_ConfigFile, configValue);
+	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
+	INIWrite::AddLine("[Server]");
+	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
+	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
+	INIWrite::AddBool("help_message_show", Chat::ShowHelpMessage);
+	INIWrite::AddString("help_message", Chat::HelpMessage);
+	INIWrite::AddFloat("help_message_interval", Chat::BroadcastHelpInterval);
+	INIWrite::AddBool("command_show_help_on_invalid_syntax", Command::AutoShowHelp);
+	INIWrite::AddFloat("auto_save_interval", Server::AutoSaveInterval);
 
-	//
+	INIWrite::CloseINIFile();
 
-	Json::Value permissionsValue;
+	//players.json
+	std::cout << "[Config] Saving " << PATH_PLAYERS_FILE << std::endl;
 
-	for (auto pair : PermissionGroups::m_Groups)
-	{
-		auto key = pair.first;
-		auto group = pair.second;
-
-		Json::Value groupValue;
-		groupValue["name"] = group->m_Name;
-		groupValue["inherits_from"] = group->m_InheritsFromGroup;
-
-		groupValue["permissions"] = Json::arrayValue;
-		for (auto perm : group->m_Permissions)
-		{
-			groupValue["permissions"].append(perm);
-		}
-
-		permissionsValue[key] = groupValue;
-	}
-
-	WriteToFile(m_ServerDir + m_PermissionsFile, permissionsValue);
-
-	//
-
-	Json::Value usersValue = Json::objectValue;
-
-	for (auto pair : Server::m_Players)
+	Json::Value playersValue = Json::objectValue;
+	for (auto pair : Server::Players)
 	{
 		auto key = pair.first;
 		auto player = pair.second;
 
 		Json::Value playerValue;
-		playerValue["username"] = player->m_Username;
-		playerValue["group"] = player->m_PermissionGroup;
+		playerValue["username"] = player->Username;
+		playerValue["group"] = player->PermissionGroupId;
 
-		usersValue[std::to_string(key)] = playerValue;
+		playersValue[std::to_string(key)] = playerValue;
 	}
 
-	WriteToFile(m_ServerDir + m_UsersFile, usersValue);
+	WriteToFile(GetPath(PATH_PLAYERS_FILE), playersValue);
+
+	//permissions
+	PermissionGroups::SaveConfig();
 }
 
-void Config::LoadJSON()
+void Config::Load()
 {
-	if (!Exists("server/"))
+	std::cout << "[Config] Load" << std::endl;
+
+	ProcessV2toV3ConfigLoad();
+
+	if (!Exists(GetPath(PATH_SERVER_FOLDER)))
 	{
 		std::cout << "[Config] Config not found" << std::endl;
 		return;
 	}
 
-	std::cout << "[Config] Loading config" << std::endl;
+	//version
+	std::string versionLine;
+	std::ifstream versionFile(GetPath(PATH_VERSION_FILE));
+	std::getline(versionFile, versionLine);
+	versionFile.close();
+	ProcessVersionChange(versionLine);
 
-	//
+	//config.ini
+	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
 
-	Json::Value configValue = ReadFile(m_ServerDir + m_ConfigFile);
-	Chat::m_ShowDeathStatusAfterName = configValue["show_death_status_after_name"].asBool();
-	Chat::m_ShowIdAfterName = configValue["show_id_after_name"].asBool();
-	Chat::m_ShowHelpMessage = configValue["show_help_message"].asBool();
+	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
+	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
+	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
+	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
+	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
+	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
+	Server::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
 
-	//
+	std::cout << "[Config] AutoSaveInterval= " << Server::AutoSaveInterval << std::endl;
 
-	Json::Value permissionsValue = ReadFile(m_ServerDir + m_PermissionsFile);
+	//users.json
+	std::cout << "[Config] Loading " << PATH_PLAYERS_FILE << std::endl;
 
-	for (auto key : permissionsValue.getMemberNames())
-	{
-		Json::Value groupValue = permissionsValue[key];
-
-		if (!PermissionGroups::HasGroup(key)) {
-			PermissionGroups::AddGroup(key);
-		}
-
-		auto group = PermissionGroups::GetGroup(key);
-
-		group->m_Name = groupValue["name"].asString();
-		group->m_InheritsFromGroup = groupValue["inherits_from"].asString();
-
-		group->m_Permissions.clear();
-		for (int i = 0; i < (int)groupValue["permissions"].size(); i++)
-		{
-			group->m_Permissions.push_back(groupValue["permissions"][i].asString());
-		}
-	}
-
-	//
-
-	Json::Value usersValue = ReadFile(m_ServerDir + m_UsersFile);
-
+	Json::Value usersValue = ReadFile(GetPath(PATH_PLAYERS_FILE));
 	for (auto key : usersValue.getMemberNames())
 	{
 		auto playerValue = usersValue[key];
 		auto clientId = std::stoll(key);
-
-		if (!Server::HasPlayer(clientId))
-		{
-			auto player = new Player(clientId);
-			Server::AddPlayer(player);
-		}
-
 		auto player = Server::GetPlayer(clientId);
-		
-		player->m_Username = playerValue["username"].asString();
-		player->m_PermissionGroup = playerValue["group"].asString();
+
+		if (!player) player = new Player(clientId);
+
+		player->Username = playerValue["username"].asString();
+		player->PermissionGroupId = playerValue["group"].asString();
+
+		if (!Server::HasPlayer(clientId)) Server::AddPlayer(player);
+	}
+
+	//permissions
+	PermissionGroups::LoadConfig();
+}
+
+void Config::ProcessV2toV3ConfigLoad()
+{
+	if (Exists(GetPath(PATH_SERVER_FOLDER)) && !Exists(GetPath(PATH_VERSION_FILE)))
+	{
+		std::string msg = "The server folder (v1/v2) is incompatible with this new version (v3)\n\n> You need to DELETE the '/server/' folder to continue\n(Don't forget to backup)\n\nServer folder at:\n> " + GetPath(PATH_SERVER_FOLDER) + "";
+		MessageBoxA(NULL, msg.c_str(), "Incompatible config", MB_OK | MB_ICONERROR);
+
+		exit(0);
 	}
 }
+
+void Config::ProcessVersionChange(std::string oldVersion)
+{
+	std::cout << "[Config] Updating from " << oldVersion << " to " << Mod::Version << std::endl;
+
+	/*
+	* EXAMPLE PATCH
+	* 
+	if (oldVersion == "3.0")
+	{
+		std::cout << "Applying test patch 3.1" << std::endl;
+		oldVersion = "3.1";
+	}
+	*/
+}
+
+/*
+Version history
+3.0
+*/

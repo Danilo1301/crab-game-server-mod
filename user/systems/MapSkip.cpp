@@ -113,9 +113,9 @@ void MapSkip::SkipMap()
 	for (auto playerId : players)
 	{
 		auto player = Server::GetPlayer(playerId);
-		player->m_IsAlive = true;
+		player->IsAlive = true;
 
-		Mod::RespawnPlayer(player->m_ClientId, player->m_RespawnPosition);
+		Server::RespawnActivePlayerAtPos(player->ClientId, player->Position);
 	}
 
 	ServerSend_FreezePlayers(true, NULL);

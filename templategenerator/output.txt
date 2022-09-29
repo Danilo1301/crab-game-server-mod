@@ -1,703 +1,1148 @@
-auto HF_GameServer_CooldownChat = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::CooldownChat");
-IEnumerator* Template_GameServer_CooldownChat(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+#pragma once
+
+#include "pch.h"
+#include "Injector.h"
+
+/*
+INPUT
+
+DO_APP_FUNC(0x00E2D9D0, IEnumerator *, GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E30CD0, void, GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2A990, void, GameManager_SyncObject, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2B0F0, void, GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2AA40, void, GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2BD60, void, GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, (GameManager * __this, uint64_t u1099u109Du10A2u10A3u10A6u10A2u10A6u109Bu1099u10A7u109C, uint64_t u10A0u109Du109Du10A1u10A6u10A7u10A1u10A0u10A5u109Au1099, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E299E0, void, GameManager_PunchPlayer, (GameManager * __this, uint64_t u109Du10A5u10A6u10A0u10A6u109Du109Bu10A8u10A7u10A0u10A6, uint64_t u10A6u109Du10A8u109Du109Au109Au10A0u109Au10A7u109Cu109D, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E33750, void, GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E302E0, void, GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2EE00, void, GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2AF40, void, GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33BA0, void, GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2BC60, void, GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2E920, void, GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2D1D0, void, GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2A370, void, GameManager_SpawnPlayer, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2AE70, void, GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2F430, void, GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E33DE0, int32_t, GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E29C20, void, GameManager_RemovePlayer, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2A270, void, GameManager_SetPlayerRotation, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2B040, void, GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33D50, IEnumerator *, GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E30080, void, GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2DF00, void, GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2B730, void, GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2FCB0, void, GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, Vector3 u10A2u109Fu109Au109Du10A4u10A8u10A6u10A4u10A2u10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2FFB0, void, GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2F580, void, GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2B730, void, GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2EA20, void, GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E2A7C0, void, GameManager_Start, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2FAE0, void, GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2F7E0, void, GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, Vector3 u10A2u109Fu109Au109Du10A4u10A8u10A6u10A4u10A2u10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E316D0, void, GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2EC10, void, GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E33940, void, GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2AB40, void, GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E34250, void, GameManager__ctor, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E33100, IEnumerator *, GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2A5D0, void, GameManager_SpawnSpectator, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E30DD0, void, GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_Update, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E304B0, void, GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E29D70, void, GameManager_RespawnPlayer, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, Vector3 u10A2u109Fu109Au109Du10A4u10A8u10A6u10A4u10A2u10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2DCB0, void, GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E289C0, int32_t, GameManager_GetPlayersAlive, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E33280, void, GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2C9F0, void, GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2BBD0, IEnumerator *, GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2F150, int32_t, GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2B4F0, void, GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6, (GameManager * __this, uint64_t u109Du10A5u10A6u10A0u10A6u109Du109Bu10A8u10A7u10A0u10A6, uint64_t u10A6u109Du10A8u109Du109Au109Au10A0u109Au10A7u109Cu109D, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2E000, void, GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E32500, void, GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1, (GameManager * __this, uint64_t u1099u109Du10A2u10A3u10A6u10A2u10A6u109Bu1099u10A7u109C, uint64_t u10A0u109Du109Du10A1u10A6u10A7u10A1u10A0u10A5u109Au1099, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2D880, void, GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E340E0, int32_t, GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2C4A0, void, GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2DD80, void, GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2A070, void, GameManager_SetPlayerAnimation, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2B270, void, GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E2AC10, void, GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2D140, IEnumerator *, GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2B8D0, void, GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, Vector3 u10A2u109Fu109Au109Du10A4u10A8u10A6u10A4u10A2u10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2E870, void, GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33F60, int32_t, GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E30BD0, void, GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2C770, void, GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E317D0, void, GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E319A0, void, GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2A170, void, GameManager_SetPlayerPosition, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E2B730, void, GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A, (GameManager * __this, uint64_t u10A7u10A4u109Bu109Fu109Bu10A2u109Eu109Cu10A2u109Cu109E, MethodInfo * method));
+DO_APP_FUNC(0x00E29340, void, GameManager_PlayerTookDamage, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E32D40, void, GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E28840, void, GameManager_Awake, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E30710, void, GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E31030, void, GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E28B40, void, GameManager_PhysicsObjectSnapshot, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E32C40, void, GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33C50, void, GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E32F10, void, GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, MethodInfo * method));
+DO_APP_FUNC(0x00E30970, void, GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E28C10, void, GameManager_PlayerDied, (GameManager * __this, uint64_t u1099u109Du10A2u10A3u10A6u10A2u10A6u109Bu1099u10A7u109C, uint64_t u10A0u109Du109Du10A1u10A6u10A7u10A1u10A0u10A5u109Au1099, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2E100, void, GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6, (GameManager * __this, uint64_t u1099u109Du10A2u10A3u10A6u10A2u10A6u109Bu1099u10A7u109C, uint64_t u10A0u109Du109Du10A1u10A6u10A7u10A1u10A0u10A5u109Au1099, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2C8F0, void, GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33180, void, GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2DA50, void, GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E31B20, void, GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3, (GameManager * __this, uint64_t u10A2u10A6u10A1u10A0u109Fu10A2u1099u1099u109Eu10A6u10A8, Vector3 u10A4u10A6u109Cu10A7u10A8u10A1u109Du109Au1099u10A0u1099, int32_t u10A1u109Cu109Fu10A5u10A6u109Cu109Au10A2u10A6u109Eu109D, bool u10A6u10A5u10A3u109Bu10A2u10A2u10A3u10A3u109Cu10A0u10A4, Byte__Array * u109Au109Au10A1u109Au109Bu10A2u10A6u10A2u1099u109Bu10A7, int32_t u10A1u10A6u1099u1099u109Cu10A6u109Au10A6u1099u10A5u10A6, MethodInfo * method));
+DO_APP_FUNC(0x00E2B460, IEnumerator *, GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2EF80, void, GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E31D80, void, GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A, (GameManager * __this, uint64_t u1099u109Du10A2u10A3u10A6u10A2u10A6u109Bu1099u10A7u109C, uint64_t u10A0u109Du109Du10A1u10A6u10A7u10A1u10A0u10A5u109Au1099, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2CAA0, void, GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33480, void, GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5, (GameManager * __this, uint64_t u109Du10A5u10A6u10A0u10A6u109Du109Bu10A8u10A7u10A0u10A6, uint64_t u10A6u109Du10A8u109Du109Au109Au10A0u109Au10A7u109Cu109D, Vector3 u109Eu10A4u10A5u10A0u10A3u10A2u10A0u10A6u109Du1099u10A5, MethodInfo * method));
+DO_APP_FUNC(0x00E2B760, int32_t, GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x00E336C0, IEnumerator *, GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8, (GameManager * __this, PlayerManager * u109Eu10A1u109Eu10A3u10A4u10A8u109Fu10A5u10A5u10A0u109A, float u109Fu10A1u109Fu10A8u109Eu10A3u109Bu10A7u109Au10A5u109E, MethodInfo * method));
+DO_APP_FUNC(0x00E2C670, void, GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E33380, void, GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A, (GameManager * __this, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D * u109Du10A3u10A2u109Au10A7u109Au10A7u109Du109Cu109Cu10A2, MethodInfo * method));
+DO_APP_FUNC(0x00E2F2C0, int32_t, GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8, (GameManager * __this, MethodInfo * method));
+DO_APP_FUNC(0x0028FA90, void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, int32_t __1__state, MethodInfo * method));
+DO_APP_FUNC(0x002257B0, void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, MethodInfo * method));
+DO_APP_FUNC(0x00F78EB0, bool, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, MethodInfo * method));
+DO_APP_FUNC(0x00268C40, Object *, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, MethodInfo * method));
+DO_APP_FUNC(0x00F78FF0, void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, MethodInfo * method));
+DO_APP_FUNC(0x00268C40, Object *, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current, (GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C * __this, MethodInfo * method));
+*/
+
+static auto HF_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2 = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2");
+static IEnumerator* Template_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
 {
-	std::cout << "GameServer::CooldownChat" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	auto ret = HF_GameServer_CooldownChat->original(a, b, c, method);
+	auto ret = HF_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_Awake = new HookFunction<void, GameServer*, MethodInfo*>("GameServer::Awake");
-void Template_GameServer_Awake(GameServer* a, MethodInfo* method)
+static auto HF_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E");
+static void Template_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::Awake" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_Awake->original(a, method);
+	HF_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E->original(a, b, method);
 }
 	
-auto HF_GameServer_CooldownClientChat = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::CooldownClientChat");
-void Template_GameServer_CooldownClientChat(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_SyncObject = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::SyncObject");
+static void Template_GameManager_SyncObject(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::CooldownClientChat" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::SyncObject" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_CooldownClientChat->original(a, b, c, method);
+	HF_GameManager_SyncObject->original(a, b, method);
 }
 	
-auto HF_GameServer_ForceRemoveItemItemId = new HookFunction<void, uint64_t, int32_t, MethodInfo*>("GameServer::ForceRemoveItemItemId");
-void Template_GameServer_ForceRemoveItemItemId(uint64_t a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4");
+static void Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::ForceRemoveItemItemId" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_ForceRemoveItemItemId->original(a, b, method);
+	HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4->original(a, method);
 }
 	
-auto HF_GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6 = new HookFunction<void, uint64_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameServer::u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6");
-void Template_GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6(uint64_t a, bool b, Byte__Array* c, int32_t d, MethodInfo* method)
+static auto HF_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A");
+static void Template_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	std::cout << "GameManager::u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6->original(a, b, c, d, method);
+	HF_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A->original(a, b, method);
 }
 	
-auto HF_GameServer_ForceGiveWeapon = new HookFunction<void, uint64_t, int32_t, int32_t, MethodInfo*>("GameServer::ForceGiveWeapon");
-void Template_GameServer_ForceGiveWeapon(uint64_t a, int32_t b, int32_t c, MethodInfo* method)
+static auto HF_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099 = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099");
+static void Template_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
 {
-	std::cout << "GameServer::ForceGiveWeapon" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameServer_ForceGiveWeapon->original(a, b, c, method);
+	HF_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099->original(a, b, c, d, method);
 }
 	
-auto HF_GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F");
-void Template_GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_PunchPlayer = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::PunchPlayer");
+static void Template_GameManager_PunchPlayer(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::PunchPlayer" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F->original(a, b, c, method);
+	HF_GameManager_PunchPlayer->original(a, b, c, d, method);
 }
 	
-auto HF_GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D = new HookFunction<void, uint64_t, int32_t, MethodInfo*>("GameServer::u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D");
-void Template_GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D(uint64_t a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4");
+static void Template_GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4(GameManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D->original(a, b, method);
+	HF_GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4->original(a, b, method);
 }
 	
-auto HF_GameServer_SnowballHit = new HookFunction<void, uint64_t, uint64_t, int32_t, Vector3, int32_t, int32_t, MethodInfo*>("GameServer::SnowballHit");
-void Template_GameServer_SnowballHit(uint64_t a, uint64_t b, int32_t c, Vector3 d, int32_t e, int32_t f, MethodInfo* method)
+static auto HF_GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099");
+static void Template_GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::SnowballHit" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", " << std::endl;
+	std::cout << "GameManager::u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_SnowballHit->original(a, b, c, d, e, f, method);
+	HF_GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099->original(a, method);
 }
 	
-auto HF_GameServer_CooldownPunch = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::CooldownPunch");
-IEnumerator* Template_GameServer_CooldownPunch(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3");
+static void Template_GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::CooldownPunch" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_CooldownPunch->original(a, b, c, method);
+	HF_GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3->original(a, method);
+}
+	
+static auto HF_GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8");
+static void Template_GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7");
+static void Template_GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B");
+static void Template_GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B->original(a, method);
+}
+	
+static auto HF_GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1");
+static void Template_GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3");
+static void Template_GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3->original(a, b, method);
+}
+	
+static auto HF_GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0");
+static void Template_GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0->original(a, b, method);
+}
+	
+static auto HF_GameManager_SpawnPlayer = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::SpawnPlayer");
+static void Template_GameManager_SpawnPlayer(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::SpawnPlayer" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_SpawnPlayer->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0");
+static void Template_GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4");
+static void Template_GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6 = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6");
+static int32_t Template_GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2 = new HookFunction<void, uint64_t, int32_t, int32_t, MethodInfo*>("GameServer::u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2");
-void Template_GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2(uint64_t a, int32_t b, int32_t c, MethodInfo* method)
+static auto HF_GameManager_RemovePlayer = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::RemovePlayer");
+static void Template_GameManager_RemovePlayer(GameManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::RemovePlayer" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2->original(a, b, c, method);
+	HF_GameManager_RemovePlayer->original(a, b, method);
 }
 	
-auto HF_GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5 = new HookFunction<void, uint64_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameServer::u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5");
-void Template_GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5(uint64_t a, bool b, Byte__Array* c, int32_t d, MethodInfo* method)
+static auto HF_GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4");
+static void Template_GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	std::cout << "GameManager::u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5->original(a, b, c, d, method);
+	HF_GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4->original(a, method);
 }
 	
-auto HF_GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6 = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6");
-void Template_GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_SetPlayerRotation = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::SetPlayerRotation");
+static void Template_GameManager_SetPlayerRotation(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::SetPlayerRotation" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6->original(a, b, c, method);
+	HF_GameManager_SetPlayerRotation->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2 = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2");
-void Template_GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C");
+static void Template_GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2->original(a, b, c, method);
+	HF_GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A = new HookFunction<void, uint64_t, uint64_t, int32_t, Vector3, int32_t, int32_t, MethodInfo*>("GameServer::u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A");
-void Template_GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A(uint64_t a, uint64_t b, int32_t c, Vector3 d, int32_t e, int32_t f, MethodInfo* method)
+static auto HF_GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E");
+static IEnumerator* Template_GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", " << std::endl;
+	std::cout << "GameManager::u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A->original(a, b, c, d, e, f, method);
-}
-	
-auto HF_GameServer_ForceRemoveItem = new HookFunction<void, uint64_t, int32_t, MethodInfo*>("GameServer::ForceRemoveItem");
-void Template_GameServer_ForceRemoveItem(uint64_t a, int32_t b, MethodInfo* method)
-{
-	std::cout << "GameServer::ForceRemoveItem" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
-	
-	HF_GameServer_ForceRemoveItem->original(a, b, method);
-}
-	
-auto HF_GameServer_CheckHit = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::CheckHit");
-void Template_GameServer_CheckHit(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
-{
-	std::cout << "GameServer::CheckHit" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_CheckHit->original(a, b, c, method);
-}
-	
-auto HF_GameServer_PlayerDied = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::PlayerDied");
-void Template_GameServer_PlayerDied(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
-{
-	std::cout << "GameServer::PlayerDied" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_PlayerDied->original(a, b, c, method);
-}
-	
-auto HF_GameServer_ChatCooldown = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::ChatCooldown");
-void Template_GameServer_ChatCooldown(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::ChatCooldown" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_ChatCooldown->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6 = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6");
-void Template_GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B");
-void Template_GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8 = new HookFunction<void, GameServer*, MethodInfo*>("GameServer::u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8");
-void Template_GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8(GameServer* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8->original(a, method);
-}
-	
-auto HF_GameServer__ctor = new HookFunction<void, GameServer*, MethodInfo*>("GameServer::_ctor");
-void Template_GameServer__ctor(GameServer* a, MethodInfo* method)
-{
-	std::cout << "GameServer::_ctor" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameServer__ctor->original(a, method);
-}
-	
-auto HF_GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5 = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5");
-void Template_GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4 = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4");
-void Template_GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7 = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7");
-void Template_GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E = new HookFunction<void, uint64_t, uint64_t, int32_t, Vector3, int32_t, int32_t, MethodInfo*>("GameServer::u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E");
-void Template_GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E(uint64_t a, uint64_t b, int32_t c, Vector3 d, int32_t e, int32_t f, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", " << std::endl;
-	
-	HF_GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E->original(a, b, c, d, e, f, method);
-}
-	
-auto HF_GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2 = new HookFunction<void, uint64_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameServer::u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2");
-void Template_GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2(uint64_t a, bool b, Byte__Array* c, int32_t d, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
-	
-	HF_GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2->original(a, b, c, d, method);
-}
-	
-auto HF_GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2 = new HookFunction<void, uint64_t, uint64_t, int32_t, Vector3, int32_t, int32_t, MethodInfo*>("GameServer::u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2");
-void Template_GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2(uint64_t a, uint64_t b, int32_t c, Vector3 d, int32_t e, int32_t f, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", " << std::endl;
-	
-	HF_GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2->original(a, b, c, d, e, f, method);
-}
-	
-auto HF_GameServer_PunchCooldown = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::PunchCooldown");
-void Template_GameServer_PunchCooldown(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::PunchCooldown" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_PunchCooldown->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5 = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5");
-IEnumerator* Template_GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	auto ret = HF_GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5->original(a, b, c, method);
+	auto ret = HF_GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6 = new HookFunction<void, GameServer*, MethodInfo*>("GameServer::u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6");
-void Template_GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6(GameServer* a, MethodInfo* method)
+static auto HF_GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B");
+static void Template_GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
 	
-	HF_GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6->original(a, method);
+	HF_GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B->original(a, b, c, d, e, f, g, method);
 }
 	
-auto HF_GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C = new HookFunction<void, uint64_t, int32_t, MethodInfo*>("GameServer::u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C");
-void Template_GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C(uint64_t a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099");
+static void Template_GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C->original(a, b, method);
+	HF_GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D");
-IEnumerator* Template_GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E");
+static void Template_GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E(GameManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D->original(a, b, c, method);
+	HF_GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E->original(a, b, method);
+}
+	
+static auto HF_GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0");
+static void Template_GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0->original(a, method);
+}
+	
+static auto HF_GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2 = new HookFunction<void, GameManager*, uint64_t, Vector3, MethodInfo*>("GameManager::u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2");
+static void Template_GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2(GameManager* a, uint64_t b, Vector3 c, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	HF_GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2->original(a, b, c, method);
+}
+	
+static auto HF_GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099");
+static void Template_GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7");
+static void Template_GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3");
+static void Template_GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8");
+static void Template_GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8->original(a, b, method);
+}
+	
+static auto HF_GameManager_Start = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::Start");
+static void Template_GameManager_Start(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::Start" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_Start->original(a, method);
+}
+	
+static auto HF_GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5");
+static void Template_GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5->original(a, method);
+}
+	
+static auto HF_GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6 = new HookFunction<void, GameManager*, uint64_t, Vector3, MethodInfo*>("GameManager::u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6");
+static void Template_GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6(GameManager* a, uint64_t b, Vector3 c, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	HF_GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6->original(a, b, c, method);
+}
+	
+static auto HF_GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B");
+static void Template_GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D");
+static void Template_GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099");
+static void Template_GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2");
+static void Template_GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2->original(a, b, method);
+}
+	
+static auto HF_GameManager__ctor = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::_ctor");
+static void Template_GameManager__ctor(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::_ctor" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager__ctor->original(a, method);
+}
+	
+static auto HF_GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099 = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099");
+static IEnumerator* Template_GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099 = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099");
-void Template_GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
+static auto HF_GameManager_SpawnSpectator = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::SpawnSpectator");
+static void Template_GameManager_SpawnSpectator(GameManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::SpawnSpectator" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099->original(a, b, c, method);
+	HF_GameManager_SpawnSpectator->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B");
-void Template_GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
+static auto HF_GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6");
+static void Template_GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
 	
-	HF_GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B->original(a, b, c, method);
+	HF_GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6->original(a, b, c, d, e, f, g, method);
 }
 	
-auto HF_GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4 = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4");
-IEnumerator* Template_GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_Update = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::Update");
+static void Template_GameManager_Update(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::Update" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4->original(a, b, c, method);
+	HF_GameManager_Update->original(a, method);
+}
+	
+static auto HF_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7");
+static void Template_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_RespawnPlayer = new HookFunction<void, GameManager*, uint64_t, Vector3, MethodInfo*>("GameManager::RespawnPlayer");
+static void Template_GameManager_RespawnPlayer(GameManager* a, uint64_t b, Vector3 c, MethodInfo* method)
+{
+	std::cout << "GameManager::RespawnPlayer" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	HF_GameManager_RespawnPlayer->original(a, b, c, method);
+}
+	
+static auto HF_GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4");
+static void Template_GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4->original(a, b, method);
+}
+	
+static auto HF_GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E");
+static void Template_GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E->original(a, method);
+}
+	
+static auto HF_GameManager_GetPlayersAlive = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::GetPlayersAlive");
+static int32_t Template_GameManager_GetPlayersAlive(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::GetPlayersAlive" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_GetPlayersAlive->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099 = new HookFunction<void, GameServer*, uint64_t, float, MethodInfo*>("GameServer::u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099");
-void Template_GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099(GameServer* a, uint64_t b, float c, MethodInfo* method)
+static auto HF_GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2");
+static void Template_GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099->original(a, b, c, method);
+	HF_GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2->original(a, b, method);
 }
 	
-auto HF_GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2 = new HookFunction<void, uint64_t, uint64_t, Vector3, MethodInfo*>("GameServer::u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2");
-void Template_GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2(uint64_t a, uint64_t b, Vector3 c, MethodInfo* method)
+static auto HF_GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6");
+static void Template_GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2->original(a, b, c, method);
+	HF_GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6->original(a, b, method);
 }
 	
-auto HF_GameServer_CheckPush = new HookFunction<void, PlayerManager*, PlayerManager*, MethodInfo*>("GameServer::CheckPush");
-void Template_GameServer_CheckPush(PlayerManager* a, PlayerManager* b, MethodInfo* method)
+static auto HF_GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A");
+static IEnumerator* Template_GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
 {
-	std::cout << "GameServer::CheckPush" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameServer_CheckPush->original(a, b, method);
-}
-	
-auto HF_GameServer_ForceRemoveAllWeapons = new HookFunction<void, MethodInfo*>("GameServer::ForceRemoveAllWeapons");
-void Template_GameServer_ForceRemoveAllWeapons(MethodInfo* method)
-{
-	std::cout << "GameServer::ForceRemoveAllWeapons" <<  << std::endl;
-	
-	HF_GameServer_ForceRemoveAllWeapons->original(method);
-}
-	
-auto HF_GameServer_QueueRespawn = new HookFunction<void, GameServer*, uint64_t, float, MethodInfo*>("GameServer::QueueRespawn");
-void Template_GameServer_QueueRespawn(GameServer* a, uint64_t b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::QueueRespawn" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_QueueRespawn->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1 = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1");
-void Template_GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1->original(a, b, c, method);
-}
-	
-auto HF_GameServer_ForceGiveAllWeapon = new HookFunction<void, int32_t, MethodInfo*>("GameServer::ForceGiveAllWeapon");
-void Template_GameServer_ForceGiveAllWeapon(int32_t a, MethodInfo* method)
-{
-	std::cout << "GameServer::ForceGiveAllWeapon" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameServer_ForceGiveAllWeapon->original(a, method);
-}
-	
-auto HF_GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F = new HookFunction<void, GameServer*, uint64_t, float, MethodInfo*>("GameServer::u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F");
-void Template_GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F(GameServer* a, uint64_t b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A");
-void Template_GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4 = new HookFunction<void, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4");
-void Template_GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	HF_GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4->original(a, b, c, method);
-}
-	
-auto HF_GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E");
-IEnumerator* Template_GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
-{
-	std::cout << "GameServer::u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
-	
-	auto ret = HF_GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E->original(a, b, c, method);
+	auto ret = HF_GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A");
-IEnumerator* Template_GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8 = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8");
+static int32_t Template_GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A->original(a, b, c, method);
+	auto ret = HF_GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3 = new HookFunction<void, int32_t, MethodInfo*>("GameServer::u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3");
-void Template_GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3(int32_t a, MethodInfo* method)
+static auto HF_GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6 = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6");
+static void Template_GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	HF_GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3->original(a, method);
+	HF_GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6->original(a, b, c, d, method);
 }
 	
-auto HF_GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099 = new HookFunction<IEnumerator*, GameServer*, uint64_t, float, MethodInfo*>("GameServer::u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099");
-IEnumerator* Template_GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099(GameServer* a, uint64_t b, float c, MethodInfo* method)
+static auto HF_GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1");
+static void Template_GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099->original(a, b, c, method);
+	HF_GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1 = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1");
+static void Template_GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	
+	HF_GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1->original(a, b, c, d, method);
+}
+	
+static auto HF_GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1");
+static void Template_GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A");
+static int32_t Template_GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D = new HookFunction<void, uint64_t, int32_t, int32_t, MethodInfo*>("GameServer::u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D");
-void Template_GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D(uint64_t a, int32_t b, int32_t c, MethodInfo* method)
+static auto HF_GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0");
+static void Template_GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D->original(a, b, c, method);
+	HF_GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0->original(a, method);
 }
 	
-auto HF_GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E");
-void Template_GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
+static auto HF_GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6");
+static void Template_GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E->original(a, b, c, method);
+	HF_GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6->original(a, method);
 }
 	
-auto HF_GameServer_PlayerSpawnRequest = new HookFunction<void, uint64_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameServer::PlayerSpawnRequest");
-void Template_GameServer_PlayerSpawnRequest(uint64_t a, bool b, Byte__Array* c, int32_t d, MethodInfo* method)
+static auto HF_GameManager_SetPlayerAnimation = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::SetPlayerAnimation");
+static void Template_GameManager_SetPlayerAnimation(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::PlayerSpawnRequest" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	std::cout << "GameManager::SetPlayerAnimation" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_PlayerSpawnRequest->original(a, b, c, d, method);
+	HF_GameManager_SetPlayerAnimation->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3 = new HookFunction<void, uint64_t, uint64_t, int32_t, MethodInfo*>("GameServer::u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3");
-void Template_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3(uint64_t a, uint64_t b, int32_t c, MethodInfo* method)
+static auto HF_GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3 = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3");
+static void Template_GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3(GameManager* a, uint64_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3->original(a, b, c, method);
+	HF_GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3->original(a, b, method);
 }
 	
-auto HF_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D = new HookFunction<IEnumerator*, GameServer*, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4*, float, MethodInfo*>("GameServer::u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D");
-IEnumerator* Template_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D(GameServer* a, u1099u10A6u109Fu10A8u109Cu10A6u10A8u10A7u109Bu1099u10A4* b, float c, MethodInfo* method)
+static auto HF_GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6");
+static void Template_GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	std::cout << "GameManager::u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D->original(a, b, c, method);
+	HF_GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099 = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099");
+static IEnumerator* Template_GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor = new HookFunction<void, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, int32_t, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor");
-void Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D = new HookFunction<void, GameManager*, uint64_t, Vector3, MethodInfo*>("GameManager::u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D");
+static void Template_GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D(GameManager* a, uint64_t b, Vector3 c, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor->original(a, b, method);
+	HF_GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D->original(a, b, c, method);
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose = new HookFunction<void, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose");
-void Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, MethodInfo* method)
+static auto HF_GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3");
+static void Template_GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose->original(a, method);
+	HF_GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3->original(a, b, method);
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext = new HookFunction<bool, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext");
-bool Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, MethodInfo* method)
+static auto HF_GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6 = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6");
+static int32_t Template_GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext->original(a, method);
+	auto ret = HF_GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current = new HookFunction<Object*, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current");
-Object* Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, MethodInfo* method)
+static auto HF_GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5");
+static void Template_GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current->original(a, method);
+	HF_GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5->original(a, b, method);
+}
+	
+static auto HF_GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099");
+static void Template_GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099->original(a, method);
+}
+	
+static auto HF_GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E");
+static void Template_GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E->original(a, method);
+}
+	
+static auto HF_GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D");
+static void Template_GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D->original(a, method);
+}
+	
+static auto HF_GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7");
+static void Template_GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7->original(a, method);
+}
+	
+static auto HF_GameManager_SetPlayerPosition = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::SetPlayerPosition");
+static void Template_GameManager_SetPlayerPosition(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::SetPlayerPosition" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_SetPlayerPosition->original(a, b, method);
+}
+	
+static auto HF_GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D");
+static void Template_GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D->original(a, method);
+}
+	
+static auto HF_GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A");
+static void Template_GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A->original(a, b, method);
+}
+	
+static auto HF_GameManager_PlayerTookDamage = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::PlayerTookDamage");
+static void Template_GameManager_PlayerTookDamage(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::PlayerTookDamage" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_PlayerTookDamage->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099");
+static void Template_GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099->original(a, method);
+}
+	
+static auto HF_GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4 = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4");
+static void Template_GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4->original(a, method);
+}
+	
+static auto HF_GameManager_Awake = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::Awake");
+static void Template_GameManager_Awake(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::Awake" <<  " a=" << a << ", " << std::endl;
+	
+	HF_GameManager_Awake->original(a, method);
+}
+	
+static auto HF_GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B");
+static void Template_GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7");
+static void Template_GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7->original(a, b, method);
+}
+	
+static auto HF_GameManager_PhysicsObjectSnapshot = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::PhysicsObjectSnapshot");
+static void Template_GameManager_PhysicsObjectSnapshot(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::PhysicsObjectSnapshot" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_PhysicsObjectSnapshot->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8");
+static void Template_GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1");
+static void Template_GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B = new HookFunction<void, GameManager*, uint64_t, MethodInfo*>("GameManager::u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B");
+static void Template_GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B(GameManager* a, uint64_t b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5");
+static void Template_GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_PlayerDied = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::PlayerDied");
+static void Template_GameManager_PlayerDied(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
+{
+	std::cout << "GameManager::PlayerDied" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	
+	HF_GameManager_PlayerDied->original(a, b, c, d, method);
+}
+	
+static auto HF_GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6 = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6");
+static void Template_GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	
+	HF_GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6->original(a, b, c, d, method);
+}
+	
+static auto HF_GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E");
+static void Template_GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4");
+static void Template_GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4->original(a, b, method);
+}
+	
+static auto HF_GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2");
+static void Template_GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3 = new HookFunction<void, GameManager*, uint64_t, Vector3, int32_t, bool, Byte__Array*, int32_t, MethodInfo*>("GameManager::u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3");
+static void Template_GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3(GameManager* a, uint64_t b, Vector3 c, int32_t d, bool e, Byte__Array* f, int32_t g, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", "<< " e=" << e << ", "<< " f=" << f << ", "<< " g=" << g << ", " << std::endl;
+	
+	HF_GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3->original(a, b, c, d, e, f, g, method);
+}
+	
+static auto HF_GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A");
+static IEnumerator* Template_GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset = new HookFunction<void, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset");
-void Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, MethodInfo* method)
+static auto HF_GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B = new HookFunction<void, GameManager*, MethodInfo*>("GameManager::u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B");
+static void Template_GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B(GameManager* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset->original(a, method);
+	HF_GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B->original(a, method);
 }
 	
-auto HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current = new HookFunction<Object*, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E*, MethodInfo*>("GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current");
-Object* Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current(GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E* a, MethodInfo* method)
+static auto HF_GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A");
+static void Template_GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
 {
-	std::cout << "GameServer::u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current->original(a, method);
+	HF_GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A->original(a, b, c, d, method);
+}
+	
+static auto HF_GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C");
+static void Template_GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5 = new HookFunction<void, GameManager*, uint64_t, uint64_t, Vector3, MethodInfo*>("GameManager::u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5");
+static void Template_GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5(GameManager* a, uint64_t b, uint64_t c, Vector3 d, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", "<< " d=" << d << ", " << std::endl;
+	
+	HF_GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5->original(a, b, c, d, method);
+}
+	
+static auto HF_GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4 = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4");
+static int32_t Template_GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor = new HookFunction<void, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, int32_t, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor");
-void Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8 = new HookFunction<IEnumerator*, GameManager*, PlayerManager*, float, MethodInfo*>("GameManager::u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8");
+static IEnumerator* Template_GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8(GameManager* a, PlayerManager* b, float c, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8" <<  " a=" << a << ", "<< " b=" << b << ", "<< " c=" << c << ", " << std::endl;
 	
-	HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor->original(a, b, method);
-}
-	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose = new HookFunction<void, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose");
-void Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose->original(a, method);
-}
-	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext = new HookFunction<bool, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext");
-bool Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext->original(a, method);
+	auto ret = HF_GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8->original(a, b, c, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current = new HookFunction<Object*, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current");
-Object* Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, MethodInfo* method)
+static auto HF_GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8 = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8");
+static void Template_GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current->original(a, method);
+	HF_GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A = new HookFunction<void, GameManager*, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D*, MethodInfo*>("GameManager::u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A");
+static void Template_GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A(GameManager* a, u10A5u109Cu10A4u1099u10A0u10A3u109Bu109Du10A4u10A6u109D* b, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	
+	HF_GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A->original(a, b, method);
+}
+	
+static auto HF_GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8 = new HookFunction<int32_t, GameManager*, MethodInfo*>("GameManager::u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8");
+static int32_t Template_GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8(GameManager* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset = new HookFunction<void, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset");
-void Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor = new HookFunction<void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, int32_t, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor");
+static void Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, int32_t b, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
 	
-	HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset->original(a, method);
+	HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor->original(a, b, method);
 }
 	
-auto HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current = new HookFunction<Object*, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099*, MethodInfo*>("GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current");
-Object* Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current(GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099* a, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose = new HookFunction<void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose");
+static void Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current->original(a, method);
+	HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose->original(a, method);
+}
+	
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext = new HookFunction<bool, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext");
+static bool Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, MethodInfo* method)
+{
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext" <<  " a=" << a << ", " << std::endl;
+	
+	auto ret = HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor = new HookFunction<void, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, int32_t, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor");
-void Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, int32_t b, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current = new HookFunction<Object*, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current");
+static Object* Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor" <<  " a=" << a << ", "<< " b=" << b << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor->original(a, b, method);
-}
-	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose = new HookFunction<void, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose");
-void Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose" <<  " a=" << a << ", " << std::endl;
-	
-	HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose->original(a, method);
-}
-	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext = new HookFunction<bool, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext");
-bool Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext->original(a, method);
+	auto ret = HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current->original(a, method);
 
 	return ret;
 }
 	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current = new HookFunction<Object*, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current");
-Object* Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset = new HookFunction<void, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset");
+static void Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset" <<  " a=" << a << ", " << std::endl;
 	
-	auto ret = HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current->original(a, method);
-
-	return ret;
+	HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset->original(a, method);
 }
 	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset = new HookFunction<void, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset");
-void Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, MethodInfo* method)
+static auto HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current = new HookFunction<Object*, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C*, MethodInfo*>("GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current");
+static Object* Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current(GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C* a, MethodInfo* method)
 {
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset" <<  " a=" << a << ", " << std::endl;
+	std::cout << "GameManager::u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current" <<  " a=" << a << ", " << std::endl;
 	
-	HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset->original(a, method);
-}
-	
-auto HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current = new HookFunction<Object*, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3*, MethodInfo*>("GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current");
-Object* Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current(GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3* a, MethodInfo* method)
-{
-	std::cout << "GameServer::u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current" <<  " a=" << a << ", " << std::endl;
-	
-	auto ret = HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current->original(a, method);
+	auto ret = HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current->original(a, method);
 
 	return ret;
 }
 	
 
-Injector::Inject(HF_GameServer_CooldownChat, GameServer_CooldownChat, &Template_GameServer_CooldownChat);
-Injector::Inject(HF_GameServer_Awake, GameServer_Awake, &Template_GameServer_Awake);
-Injector::Inject(HF_GameServer_CooldownClientChat, GameServer_CooldownClientChat, &Template_GameServer_CooldownClientChat);
-Injector::Inject(HF_GameServer_ForceRemoveItemItemId, GameServer_ForceRemoveItemItemId, &Template_GameServer_ForceRemoveItemItemId);
-Injector::Inject(HF_GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6, GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6, &Template_GameServer_u10A5u10A3u10A6u109Eu10A0u109Cu109Bu10A0u109Au10A4u10A6);
-Injector::Inject(HF_GameServer_ForceGiveWeapon, GameServer_ForceGiveWeapon, &Template_GameServer_ForceGiveWeapon);
-Injector::Inject(HF_GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F, GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F, &Template_GameServer_u10A0u10A0u10A3u109Du109Du10A5u10A5u10A6u109Au10A4u109F);
-Injector::Inject(HF_GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D, GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D, &Template_GameServer_u109Fu10A6u109Du109Bu10A3u109Au109Bu109Au1099u10A2u109D);
-Injector::Inject(HF_GameServer_SnowballHit, GameServer_SnowballHit, &Template_GameServer_SnowballHit);
-Injector::Inject(HF_GameServer_CooldownPunch, GameServer_CooldownPunch, &Template_GameServer_CooldownPunch);
-Injector::Inject(HF_GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2, GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2, &Template_GameServer_u10A5u109Eu109Cu109Cu109Eu109Au10A5u10A7u10A0u109Eu10A2);
-Injector::Inject(HF_GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5, GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5, &Template_GameServer_u109Eu109Bu10A5u10A1u109Bu10A3u109Fu109Fu109Du10A0u10A5);
-Injector::Inject(HF_GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6, GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6, &Template_GameServer_u109Fu109Bu1099u1099u109Bu10A0u109Cu10A0u10A2u10A8u10A6);
-Injector::Inject(HF_GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2, GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2, &Template_GameServer_u10A4u109Bu109Au10A2u10A3u109Fu1099u10A4u10A1u10A8u10A2);
-Injector::Inject(HF_GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A, GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A, &Template_GameServer_u10A1u109Cu109Fu109Fu10A8u10A5u10A7u109Cu10A6u10A2u109A);
-Injector::Inject(HF_GameServer_ForceRemoveItem, GameServer_ForceRemoveItem, &Template_GameServer_ForceRemoveItem);
-Injector::Inject(HF_GameServer_CheckHit, GameServer_CheckHit, &Template_GameServer_CheckHit);
-Injector::Inject(HF_GameServer_PlayerDied, GameServer_PlayerDied, &Template_GameServer_PlayerDied);
-Injector::Inject(HF_GameServer_ChatCooldown, GameServer_ChatCooldown, &Template_GameServer_ChatCooldown);
-Injector::Inject(HF_GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6, GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6, &Template_GameServer_u109Fu1099u109Eu109Eu109Au1099u10A8u109Bu109Du10A7u10A6);
-Injector::Inject(HF_GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B, GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B, &Template_GameServer_u10A4u10A4u109Fu109Bu109Fu1099u10A1u10A2u109Cu10A7u109B);
-Injector::Inject(HF_GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8, GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8, &Template_GameServer_u109Fu109Fu109Du109Cu109Fu1099u10A5u109Fu10A4u10A6u10A8);
-Injector::Inject(HF_GameServer__ctor, GameServer__ctor, &Template_GameServer__ctor);
-Injector::Inject(HF_GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5, GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5, &Template_GameServer_u10A8u10A7u109Eu109Au1099u109Au10A0u10A5u109Eu109Au10A5);
-Injector::Inject(HF_GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4, GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4, &Template_GameServer_u10A2u109Cu10A2u10A5u1099u109Fu109Cu109Du109Bu109Fu10A4);
-Injector::Inject(HF_GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7, GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7, &Template_GameServer_u10A6u10A7u10A3u10A6u109Cu10A2u109Cu10A7u10A5u1099u10A7);
-Injector::Inject(HF_GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E, GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E, &Template_GameServer_u109Fu109Au109Eu10A1u109Du10A7u10A4u109Bu10A7u109Eu109E);
-Injector::Inject(HF_GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2, GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2, &Template_GameServer_u10A3u10A6u10A7u10A3u1099u109Au109Au109Bu10A4u10A1u10A2);
-Injector::Inject(HF_GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2, GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2, &Template_GameServer_u109Du109Cu10A5u10A1u1099u10A6u10A3u1099u10A4u10A0u10A2);
-Injector::Inject(HF_GameServer_PunchCooldown, GameServer_PunchCooldown, &Template_GameServer_PunchCooldown);
-Injector::Inject(HF_GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5, GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5, &Template_GameServer_u10A5u10A0u10A2u10A3u109Au10A0u10A2u10A3u10A7u10A3u10A5);
-Injector::Inject(HF_GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6, GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6, &Template_GameServer_u109Au10A8u10A1u1099u10A3u10A3u109Cu10A7u109Du10A8u10A6);
-Injector::Inject(HF_GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C, GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C, &Template_GameServer_u109Au10A1u10A2u10A1u109Au109Fu10A2u10A0u109Du109Cu109C);
-Injector::Inject(HF_GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D, GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D, &Template_GameServer_u10A1u10A8u10A8u10A6u109Fu109Au10A5u109Du109Du109Cu109D);
-Injector::Inject(HF_GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, &Template_GameServer_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099);
-Injector::Inject(HF_GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B, GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B, &Template_GameServer_u10A6u1099u109Cu1099u109Eu10A8u109Du1099u10A5u10A3u109B);
-Injector::Inject(HF_GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4, GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4, &Template_GameServer_u1099u109Eu109Bu10A2u10A0u10A0u109Eu10A4u10A1u1099u10A4);
-Injector::Inject(HF_GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099, GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099, &Template_GameServer_u10A6u109Eu10A7u1099u1099u10A1u109Bu109Au109Du109Bu1099);
-Injector::Inject(HF_GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2, GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2, &Template_GameServer_u109Fu10A1u10A1u10A5u10A7u1099u109Eu109Cu10A7u109Bu10A2);
-Injector::Inject(HF_GameServer_CheckPush, GameServer_CheckPush, &Template_GameServer_CheckPush);
-Injector::Inject(HF_GameServer_ForceRemoveAllWeapons, GameServer_ForceRemoveAllWeapons, &Template_GameServer_ForceRemoveAllWeapons);
-Injector::Inject(HF_GameServer_QueueRespawn, GameServer_QueueRespawn, &Template_GameServer_QueueRespawn);
-Injector::Inject(HF_GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1, GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1, &Template_GameServer_u10A3u10A7u109Eu109Eu109Du10A2u1099u10A0u10A1u10A7u10A1);
-Injector::Inject(HF_GameServer_ForceGiveAllWeapon, GameServer_ForceGiveAllWeapon, &Template_GameServer_ForceGiveAllWeapon);
-Injector::Inject(HF_GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F, GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F, &Template_GameServer_u109Fu10A7u10A8u10A2u109Cu10A4u10A8u109Du10A4u10A6u109F);
-Injector::Inject(HF_GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A, GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A, &Template_GameServer_u10A7u109Du1099u10A8u1099u109Cu10A7u10A3u109Au10A1u109A);
-Injector::Inject(HF_GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4, GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4, &Template_GameServer_u10A8u109Cu109Du109Bu10A1u109Du1099u1099u10A7u109Cu10A4);
-Injector::Inject(HF_GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E, GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E, &Template_GameServer_u109Eu10A1u109Au1099u109Fu10A7u10A5u109Au109Du10A2u109E);
-Injector::Inject(HF_GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A, GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A, &Template_GameServer_u109Fu10A2u10A0u10A5u10A0u109Cu109Au10A4u10A3u10A6u109A);
-Injector::Inject(HF_GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3, GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3, &Template_GameServer_u10A0u10A0u10A0u109Cu109Bu10A8u10A6u10A6u109Eu10A5u10A3);
-Injector::Inject(HF_GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099, GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099, &Template_GameServer_u10A4u10A7u10A8u10A1u10A6u1099u10A6u10A1u109Fu109Fu1099);
-Injector::Inject(HF_GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D, GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D, &Template_GameServer_u10A8u109Cu109Bu109Au10A5u10A7u10A2u10A6u10A5u10A3u109D);
-Injector::Inject(HF_GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E, GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E, &Template_GameServer_u10A2u10A6u10A1u109Au10A1u10A1u10A8u10A0u10A3u10A6u109E);
-Injector::Inject(HF_GameServer_PlayerSpawnRequest, GameServer_PlayerSpawnRequest, &Template_GameServer_PlayerSpawnRequest);
-Injector::Inject(HF_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3, GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3, &Template_GameServer_u10A0u109Fu109Bu10A8u10A6u10A8u109Bu10A7u10A0u109Au10A3);
-Injector::Inject(HF_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D, GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D, &Template_GameServer_u109Fu10A1u10A5u10A1u10A5u10A3u10A6u1099u10A4u10A4u109D);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E__ctor);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_IDisposable_Dispose);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_MoveNext);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_Generic_IEnumerator_System_Object__get_Current);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_Reset);
-Injector::Inject(HF_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current, GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current, &Template_GameServer_u109Fu109Au10A6u109Cu10A7u10A5u109Fu109Cu109Eu10A6u109E_System_Collections_IEnumerator_get_Current);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099__ctor);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_IDisposable_Dispose);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_MoveNext);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_Generic_IEnumerator_System_Object__get_Current);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_Reset);
-Injector::Inject(HF_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current, GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current, &Template_GameServer_u10A1u10A4u109Fu10A2u109Fu109Cu109Du109Au109Cu10A7u1099_System_Collections_IEnumerator_get_Current);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3__ctor);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_IDisposable_Dispose);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_MoveNext);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_Generic_IEnumerator_System_Object__get_Current);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_Reset);
-Injector::Inject(HF_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current, GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current, &Template_GameServer_u10A4u10A7u1099u109Bu1099u109Cu109Eu109Au109Du10A2u10A3_System_Collections_IEnumerator_get_Current);
+static void Inject_Templates()
+{
+	Injector::Inject(HF_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2, GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2, &Template_GameManager_u109Fu1099u10A7u10A0u10A4u10A2u10A6u10A6u109Au10A6u10A2);
+	Injector::Inject(HF_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E, GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E, &Template_GameManager_u10A4u10A6u109Eu10A1u109Du109Fu109Du10A4u10A1u109Du109E);
+	Injector::Inject(HF_GameManager_SyncObject, GameManager_SyncObject, &Template_GameManager_SyncObject);
+	Injector::Inject(HF_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4, &Template_GameManager_u109Au109Bu109Au10A0u109Fu10A1u10A6u1099u10A5u109Cu10A4);
+	Injector::Inject(HF_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A, GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A, &Template_GameManager_u1099u1099u109Cu10A8u10A1u10A7u10A3u10A1u10A6u10A7u109A);
+	Injector::Inject(HF_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099, &Template_GameManager_u109Du1099u10A3u10A7u109Au109Eu10A3u10A6u10A1u10A4u1099);
+	Injector::Inject(HF_GameManager_PunchPlayer, GameManager_PunchPlayer, &Template_GameManager_PunchPlayer);
+	Injector::Inject(HF_GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4, GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4, &Template_GameManager_u10A7u10A2u109Au10A2u10A0u109Fu10A1u109Fu109Fu10A6u10A4);
+	Injector::Inject(HF_GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099, GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099, &Template_GameManager_u10A4u109Cu10A0u10A3u10A2u109Eu109Au10A0u109Eu10A0u1099);
+	Injector::Inject(HF_GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3, GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3, &Template_GameManager_u10A1u10A7u10A6u109Bu10A3u109Au1099u109Du10A3u10A6u10A3);
+	Injector::Inject(HF_GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8, GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8, &Template_GameManager_u1099u10A7u109Du109Eu10A3u1099u109Cu10A6u10A7u10A6u10A8);
+	Injector::Inject(HF_GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7, GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7, &Template_GameManager_u10A7u10A7u10A2u10A2u10A7u109Du1099u109Bu109Du109Bu10A7);
+	Injector::Inject(HF_GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B, GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B, &Template_GameManager_u10A6u109Fu10A4u109Du10A0u109Eu1099u10A4u10A8u109Fu109B);
+	Injector::Inject(HF_GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1, GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1, &Template_GameManager_u109Cu10A8u10A7u1099u10A0u10A5u10A4u10A5u109Bu10A8u10A1);
+	Injector::Inject(HF_GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3, GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3, &Template_GameManager_u10A1u1099u10A8u1099u10A5u10A5u10A1u109Cu109Fu1099u10A3);
+	Injector::Inject(HF_GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0, GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0, &Template_GameManager_u109Eu10A2u109Bu109Fu10A8u10A0u10A2u10A8u109Eu109Au10A0);
+	Injector::Inject(HF_GameManager_SpawnPlayer, GameManager_SpawnPlayer, &Template_GameManager_SpawnPlayer);
+	Injector::Inject(HF_GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0, GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0, &Template_GameManager_u1099u10A2u109Du109Cu10A1u109Eu109Du109Cu109Fu109Au10A0);
+	Injector::Inject(HF_GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4, GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4, &Template_GameManager_u10A2u10A8u10A5u10A8u109Eu109Fu109Cu10A4u10A6u10A8u10A4);
+	Injector::Inject(HF_GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6, GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6, &Template_GameManager_u10A8u109Cu10A8u1099u109Cu109Bu10A7u10A5u10A5u10A5u10A6);
+	Injector::Inject(HF_GameManager_RemovePlayer, GameManager_RemovePlayer, &Template_GameManager_RemovePlayer);
+	Injector::Inject(HF_GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4, GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4, &Template_GameManager_u10A2u10A6u109Du109Du10A4u109Du109Cu109Bu10A7u10A4u10A4);
+	Injector::Inject(HF_GameManager_SetPlayerRotation, GameManager_SetPlayerRotation, &Template_GameManager_SetPlayerRotation);
+	Injector::Inject(HF_GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C, GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C, &Template_GameManager_u109Au1099u109Cu10A8u109Bu1099u109Au109Eu10A5u10A7u109C);
+	Injector::Inject(HF_GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E, GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E, &Template_GameManager_u10A8u109Cu10A1u10A4u1099u10A5u10A1u109Bu109Cu10A5u109E);
+	Injector::Inject(HF_GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B, GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B, &Template_GameManager_u10A3u10A7u109Bu10A5u10A2u10A1u10A6u1099u10A7u109Cu109B);
+	Injector::Inject(HF_GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099, GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099, &Template_GameManager_u10A0u109Bu10A2u10A6u10A3u109Du10A5u109Cu10A2u10A5u1099);
+	Injector::Inject(HF_GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E, GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E, &Template_GameManager_u10A1u109Fu109Fu10A8u109Cu10A1u109Eu10A1u109Fu10A1u109E);
+	Injector::Inject(HF_GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0, GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0, &Template_GameManager_u109Cu10A2u109Cu10A4u1099u109Cu10A6u109Fu109Cu10A4u10A0);
+	Injector::Inject(HF_GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2, GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2, &Template_GameManager_u10A3u109Fu10A7u109Du109Cu10A6u10A2u10A7u10A7u10A5u10A2);
+	Injector::Inject(HF_GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099, GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099, &Template_GameManager_u10A3u10A3u10A0u10A7u10A1u10A3u109Au10A2u1099u10A2u1099);
+	Injector::Inject(HF_GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7, GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7, &Template_GameManager_u10A3u1099u10A1u10A3u10A1u10A0u109Au1099u109Du109Cu10A7);
+	Injector::Inject(HF_GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3, GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3, &Template_GameManager_u109Cu109Bu109Du10A3u109Eu10A4u10A7u10A3u10A8u10A1u10A3);
+	Injector::Inject(HF_GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8, GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8, &Template_GameManager_u10A1u109Fu109Eu109Au109Cu1099u109Fu10A2u109Bu1099u10A8);
+	Injector::Inject(HF_GameManager_Start, GameManager_Start, &Template_GameManager_Start);
+	Injector::Inject(HF_GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5, GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5, &Template_GameManager_u10A3u109Cu109Du1099u10A7u109Du10A0u10A5u10A6u109Cu10A5);
+	Injector::Inject(HF_GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6, GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6, &Template_GameManager_u10A3u109Bu10A2u10A7u109Eu109Eu10A1u10A7u109Du109Fu10A6);
+	Injector::Inject(HF_GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B, GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B, &Template_GameManager_u10A5u109Au1099u109Eu109Cu109Fu10A5u10A5u10A8u10A2u109B);
+	Injector::Inject(HF_GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D, GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D, &Template_GameManager_u10A1u10A6u10A6u109Bu10A8u10A7u1099u109Du10A6u109Cu109D);
+	Injector::Inject(HF_GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099, GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099, &Template_GameManager_u10A7u10A6u109Cu10A3u10A5u10A4u109Fu109Fu10A6u109Du1099);
+	Injector::Inject(HF_GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2, GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2, &Template_GameManager_u1099u109Au10A0u10A1u10A4u10A5u109Eu109Cu109Cu10A3u10A2);
+	Injector::Inject(HF_GameManager__ctor, GameManager__ctor, &Template_GameManager__ctor);
+	Injector::Inject(HF_GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099, GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099, &Template_GameManager_u10A6u10A1u10A6u109Cu109Du10A2u10A5u10A1u109Au10A3u1099);
+	Injector::Inject(HF_GameManager_SpawnSpectator, GameManager_SpawnSpectator, &Template_GameManager_SpawnSpectator);
+	Injector::Inject(HF_GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6, GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6, &Template_GameManager_u10A4u10A8u1099u10A8u10A3u109Eu10A7u10A2u10A3u10A5u10A6);
+	Injector::Inject(HF_GameManager_Update, GameManager_Update, &Template_GameManager_Update);
+	Injector::Inject(HF_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7, GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7, &Template_GameManager_u10A4u109Fu109Au10A0u10A8u10A6u10A1u109Bu10A6u109Au10A7);
+	Injector::Inject(HF_GameManager_RespawnPlayer, GameManager_RespawnPlayer, &Template_GameManager_RespawnPlayer);
+	Injector::Inject(HF_GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4, GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4, &Template_GameManager_u109Fu10A0u10A4u109Eu10A0u109Au10A2u10A3u10A8u109Bu10A4);
+	Injector::Inject(HF_GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E, GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E, &Template_GameManager_u109Fu10A8u10A6u10A3u10A7u109Au109Fu10A3u10A3u109Au109E);
+	Injector::Inject(HF_GameManager_GetPlayersAlive, GameManager_GetPlayersAlive, &Template_GameManager_GetPlayersAlive);
+	Injector::Inject(HF_GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2, GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2, &Template_GameManager_u10A6u10A3u109Eu109Fu10A7u109Fu109Au10A5u10A2u10A2u10A2);
+	Injector::Inject(HF_GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6, GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6, &Template_GameManager_u109Eu1099u10A6u10A6u10A7u1099u10A1u10A3u10A7u10A2u10A6);
+	Injector::Inject(HF_GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A, GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A, &Template_GameManager_u109Cu10A7u10A6u109Cu10A3u1099u10A7u1099u10A3u10A0u109A);
+	Injector::Inject(HF_GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8, GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8, &Template_GameManager_u10A2u109Au10A5u1099u10A0u10A3u109Eu109Fu109Bu109Cu10A8);
+	Injector::Inject(HF_GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6, GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6, &Template_GameManager_u109Cu109Au10A7u109Au109Bu10A0u109Du10A0u109Cu10A4u10A6);
+	Injector::Inject(HF_GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1, GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1, &Template_GameManager_u10A0u10A0u109Bu10A2u10A5u10A6u109Au10A2u109Bu10A5u10A1);
+	Injector::Inject(HF_GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1, GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1, &Template_GameManager_u10A6u109Au10A5u109Bu10A6u10A7u109Du109Fu109Du10A6u10A1);
+	Injector::Inject(HF_GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1, GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1, &Template_GameManager_u109Eu10A2u10A8u109Bu109Du10A7u10A0u10A5u109Eu109Fu10A1);
+	Injector::Inject(HF_GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A, GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A, &Template_GameManager_u10A8u10A0u10A1u109Eu109Du10A1u10A7u10A5u10A5u109Bu109A);
+	Injector::Inject(HF_GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0, GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0, &Template_GameManager_u109Du109Cu10A5u109Cu109Bu10A3u10A4u109Au109Du10A7u10A0);
+	Injector::Inject(HF_GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6, GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6, &Template_GameManager_u109Fu10A8u10A3u10A3u109Cu109Fu10A7u10A0u10A8u10A8u10A6);
+	Injector::Inject(HF_GameManager_SetPlayerAnimation, GameManager_SetPlayerAnimation, &Template_GameManager_SetPlayerAnimation);
+	Injector::Inject(HF_GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3, GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3, &Template_GameManager_u109Bu10A2u109Au10A7u10A2u10A1u10A2u10A0u10A6u10A2u10A3);
+	Injector::Inject(HF_GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6, GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6, &Template_GameManager_u1099u109Fu109Eu10A6u109Du10A1u109Fu109Eu10A1u10A8u10A6);
+	Injector::Inject(HF_GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099, GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099, &Template_GameManager_u109Eu109Fu109Fu109Cu109Eu10A5u10A6u109Fu10A5u109Cu1099);
+	Injector::Inject(HF_GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D, GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D, &Template_GameManager_u109Cu10A3u109Fu10A5u10A6u109Eu1099u10A3u109Eu10A6u109D);
+	Injector::Inject(HF_GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3, GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3, &Template_GameManager_u10A0u10A7u10A0u10A6u109Eu109Au10A5u10A7u10A5u10A0u10A3);
+	Injector::Inject(HF_GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6, GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6, &Template_GameManager_u10A8u109Fu109Cu10A6u1099u109Bu109Bu10A4u109Du10A3u10A6);
+	Injector::Inject(HF_GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5, GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5, &Template_GameManager_u10A4u10A5u10A8u10A4u10A2u109Fu109Fu10A7u109Du10A1u10A5);
+	Injector::Inject(HF_GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099, GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099, &Template_GameManager_u109Du10A5u10A8u109Du10A4u109Fu109Au109Eu10A5u10A6u1099);
+	Injector::Inject(HF_GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E, GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E, &Template_GameManager_u10A4u10A5u10A2u10A7u10A2u109Bu10A8u109Eu10A3u10A4u109E);
+	Injector::Inject(HF_GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D, GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D, &Template_GameManager_u10A5u109Cu10A1u109Au10A6u109Du10A6u10A1u10A7u10A3u109D);
+	Injector::Inject(HF_GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7, GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7, &Template_GameManager_u10A5u10A0u10A8u109Fu10A7u109Eu10A7u10A5u1099u109Du10A7);
+	Injector::Inject(HF_GameManager_SetPlayerPosition, GameManager_SetPlayerPosition, &Template_GameManager_SetPlayerPosition);
+	Injector::Inject(HF_GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D, GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D, &Template_GameManager_u1099u10A5u10A5u10A1u10A1u10A5u10A1u10A7u10A0u109Eu109D);
+	Injector::Inject(HF_GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A, GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A, &Template_GameManager_u10A5u109Eu1099u109Eu10A7u1099u109Au109Du10A7u109Au109A);
+	Injector::Inject(HF_GameManager_PlayerTookDamage, GameManager_PlayerTookDamage, &Template_GameManager_PlayerTookDamage);
+	Injector::Inject(HF_GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099, GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099, &Template_GameManager_u10A6u109Du109Fu109Du10A4u10A5u10A1u109Au1099u109Au1099);
+	Injector::Inject(HF_GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4, GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4, &Template_GameManager_u10A2u10A3u10A1u10A8u109Fu109Cu10A8u1099u109Du109Du10A4);
+	Injector::Inject(HF_GameManager_Awake, GameManager_Awake, &Template_GameManager_Awake);
+	Injector::Inject(HF_GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B, GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B, &Template_GameManager_u10A4u10A1u1099u10A6u10A2u10A2u10A1u109Cu109Bu109Fu109B);
+	Injector::Inject(HF_GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7, GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7, &Template_GameManager_u10A4u10A8u10A0u10A6u10A6u109Bu10A2u10A8u10A5u10A8u10A7);
+	Injector::Inject(HF_GameManager_PhysicsObjectSnapshot, GameManager_PhysicsObjectSnapshot, &Template_GameManager_PhysicsObjectSnapshot);
+	Injector::Inject(HF_GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8, GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8, &Template_GameManager_u10A6u109Bu109Eu10A1u10A8u10A3u10A4u10A5u1099u10A3u10A8);
+	Injector::Inject(HF_GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1, GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1, &Template_GameManager_u10A8u109Bu10A8u109Cu10A7u10A2u10A7u10A4u10A8u10A3u10A1);
+	Injector::Inject(HF_GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B, GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B, &Template_GameManager_u10A6u10A1u109Au109Fu10A4u109Du10A5u10A4u109Du10A4u109B);
+	Injector::Inject(HF_GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5, GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5, &Template_GameManager_u10A4u10A2u10A8u10A5u10A4u10A3u109Du109Cu10A8u109Eu10A5);
+	Injector::Inject(HF_GameManager_PlayerDied, GameManager_PlayerDied, &Template_GameManager_PlayerDied);
+	Injector::Inject(HF_GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6, GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6, &Template_GameManager_u10A0u10A7u109Cu109Eu10A1u10A3u10A4u109Cu109Du109Fu10A6);
+	Injector::Inject(HF_GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E, GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E, &Template_GameManager_u109Eu1099u10A0u109Au10A3u10A4u10A5u109Fu10A8u10A1u109E);
+	Injector::Inject(HF_GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4, GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4, &Template_GameManager_u10A6u10A2u109Eu10A4u109Bu10A7u10A8u109Du109Cu10A5u10A4);
+	Injector::Inject(HF_GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2, GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2, &Template_GameManager_u109Fu10A0u10A1u10A7u109Cu10A4u10A3u109Du10A1u10A1u10A2);
+	Injector::Inject(HF_GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3, GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3, &Template_GameManager_u10A5u10A1u1099u109Du109Eu109Du10A5u10A0u10A2u10A1u10A3);
+	Injector::Inject(HF_GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A, GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A, &Template_GameManager_u109Bu10A2u10A0u109Du109Du10A6u10A5u10A3u109Cu10A2u109A);
+	Injector::Inject(HF_GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B, GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B, &Template_GameManager_u10A1u10A8u10A6u10A6u10A5u10A6u109Au10A8u109Au10A4u109B);
+	Injector::Inject(HF_GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A, GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A, &Template_GameManager_u10A5u10A5u1099u109Cu109Au10A0u10A6u109Fu10A6u109Au109A);
+	Injector::Inject(HF_GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C, GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C, &Template_GameManager_u109Eu109Cu10A7u10A0u10A8u10A8u109Cu109Cu109Fu109Au109C);
+	Injector::Inject(HF_GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5, GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5, &Template_GameManager_u10A7u109Cu10A8u10A1u109Bu10A0u109Fu10A1u10A6u10A3u10A5);
+	Injector::Inject(HF_GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4, GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4, &Template_GameManager_u109Cu109Eu109Du10A5u10A4u109Cu109Du10A4u109Au10A0u10A4);
+	Injector::Inject(HF_GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8, GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8, &Template_GameManager_u10A7u109Fu10A1u10A0u109Bu109Du109Au10A7u10A2u1099u10A8);
+	Injector::Inject(HF_GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8, GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8, &Template_GameManager_u109Du10A5u10A2u109Au1099u109Fu109Eu10A3u10A2u109Cu10A8);
+	Injector::Inject(HF_GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A, GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A, &Template_GameManager_u10A6u10A7u10A4u109Eu109Bu10A7u10A2u10A4u10A5u1099u109A);
+	Injector::Inject(HF_GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8, GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8, &Template_GameManager_u10A2u10A4u109Au109Au10A0u10A2u109Au109Eu10A2u1099u10A8);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C__ctor);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_IDisposable_Dispose);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_MoveNext);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_Generic_IEnumerator_System_Object__get_Current);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_Reset);
+	Injector::Inject(HF_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current, GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current, &Template_GameManager_u109Au109Bu10A2u10A0u109Au10A5u109Fu10A3u10A8u109Eu109C_System_Collections_IEnumerator_get_Current);
+}

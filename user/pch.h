@@ -21,10 +21,13 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <fstream>
 
 #include "MinHook.h"
 #include "sio_client.h"
 #include "json/json.h"
+
+#include <experimental/filesystem>
 
 #pragma comment(lib, "libMinHook.x64.lib")
 #pragma comment(lib, "sioclient.lib")
@@ -77,23 +80,12 @@ static std::vector<std::string> split_1(const std::string& s, char delim) { //, 
 	return parts;
 }
 
-
-static std::string formatVector3(app::Vector3 vector) {
-	char str[256];
-	sprintf_s(str, "%.3f, %.3f, %.3f", vector.x, vector.y, vector.z);
-	return std::string(str);
-}
-
-static std::string formatVector3_full(app::Vector3 vector) {
-	return std::to_string(vector.x) + ", " + std::to_string(vector.y) + ", " + std::to_string(vector.z);
-}
-
-static std::string formatStringVector(std::vector<std::string> vector) {
+static std::string formatStringVector(std::vector<std::string> vector, std::string separator) {
 	std::string result = "";
 	for (size_t i = 0; i < vector.size(); i++)
 	{
 		auto s = vector[i];
-		result += s + ";";
+		result += s + separator;
 	}
 
 	return result;
@@ -121,10 +113,12 @@ static std::vector<std::string> formatStringVector_1(std::vector<std::string> ve
 	return lines;
 }
 
+/*
 static monoString* createMonoString(const char* str) {
 	monoString* (*String_CreateString)(void* _this, const char* str) = (monoString * (*)(void*, const char*))(m_AssemblyBase + 8780720);
 	return String_CreateString(NULL, str);
 }
+*/
 
 static std::string toUpper(std::string data) {
 	std::for_each(data.begin(), data.end(), [](char& c) {
@@ -154,4 +148,12 @@ static bool is_number(const std::string& s)
 	std::string::const_iterator it = s.begin();
 	while (it != s.end() && std::isdigit(*it)) ++it;
 	return !s.empty() && it == s.end();
+}
+
+
+static InteropHelp_UTF8StringHandle* stringToUTF8StringHandle(std::string str)
+{
+	auto h = new InteropHelp_UTF8StringHandle();
+	InteropHelp_UTF8StringHandle__ctor(h, (String*)il2cpp_string_new(str.c_str()), NULL);
+	return h;
 }

@@ -52,6 +52,8 @@ public:
 
 	static void Init()
 	{
+		std::cout << "[Injector] Init" << std::endl;
+
 		if (MH_Initialize() != MH_OK) {
 			std::cout << "[Injector] MinHook failed initialize" << std::endl;
 			return;

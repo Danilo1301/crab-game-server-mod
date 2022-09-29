@@ -1,7 +1,6 @@
 #pragma once
 
 #include "pch.h"
-
 #include "Player.h"
 
 enum class MessageSendType {
@@ -13,20 +12,18 @@ enum class MessageSendType {
 
 class Message {
 public:
-	long long m_FromClient;
-	std::string m_Content;
-	MessageSendType m_SendType = MessageSendType::NORMAL;
-	Player* m_Player = NULL;
+	long long FromClientId;
+	std::string Content;
+	MessageSendType SendType = MessageSendType::NORMAL;
+	Player* FromPlayer = NULL;
 
-
-	//
-	bool m_IsCommand = false;
-	std::string m_Cmd;
-	std::string m_CmdArgs;
-	//std::vector<std::string> m_TextParts;
+	bool IsCommand = false;
+	std::string Cmd;
+	std::string CmdArgs;
 
 	Message(long long fromClient, std::string content);
 	Message(Player* player, std::string content);
 
+private:
 	void Init();
 };

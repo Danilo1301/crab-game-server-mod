@@ -6,62 +6,63 @@
 
 class Player {
 public:
-	long long m_ClientId;
-	int m_Id = -1;
-	std::string m_Username = "";
-	bool m_IsOnline = false;
+	long long ClientId;
+	int Id = -1;
+	std::string Username;
+	bool IsOnline = false;
+	bool IsAlive = false;
+	bool SpawnedThisRound = false;
+	bool SpawnCallbackRequest = false;
+	bool DiedThisRound = false;
 
-	std::string m_PermissionGroup = "default";
+	bool FirstEverSpawn = false;
 
-	Vector3 m_Position = Vector3({ 0, 0, 0 });
+	bool Godmode = false;
 
-	bool m_Godmode = false;
+	bool JumpPunchEnabled = false;
 
-	bool m_IsAlive = false;
-	bool m_Spectating = false;
+	bool SuperPunchEnabled = false;
 
-	bool m_AutoDieEnabled = false;
+	bool ForceFieldEnabled = false;
 
-	bool m_FirstRoundSpawn = false;
+	bool MultiSnowballEnabled = false;
 
-	//bool m_DiedInThisRound = false;
+	bool HideMessages = false;
 
-	bool m_HideMessages = false;
-	float m_MuteTime = 0.0f;
+	float MuteTime = 0.0f;
 
-	bool m_AutoRespawnEnabled = false;
-	float m_RespawnTime = 0;
-	Vector3 m_RespawnPosition = Vector3({ 0, 0, 0 });
+	float RespawnTime = 0.0f;
 
-	long long m_HoveringPlayer = -1;
-	float m_HoveringAngle = -1;
-	float m_HoveringRadius = 0;
+	Vector3 LookDir = Vector3(0, 0, 1);
+	Vector3 Position = Vector3(0, 0, 0);
 
-	bool m_JumpPunchEnabled = false;
-	bool m_SuperPunchEnabled = false;
-	bool m_ForceFieldEnabled = false;
-	bool m_MultiSnowballEnabled = false;
+	bool FlyEnabled = false;
+	float FlyVelocity = 0;
+	float FlySpeed = 15.0f;
 
-	Vector3 m_LookDir = Vector3(0, 0, 1);
+	Player* HoveringPlayer = NULL;
+	float HoveringRadius = 0;
+	float HoveringAngle = -1;
 
-	bool m_FlyEnabled = false;
-	float m_FlyVelocity = 0;
-	float m_FlySpeed = 15.0f;
+	std::string PermissionGroupId = "default";
 
-	PlayerManager* m_PlayerManager = NULL;
-	Byte__Array* m_ByteArray = NULL;
-	int m_SpawnNumberId = 0;
-
-	//bool m_ParticleEnabled = true;
-	//float m_ParticleTime = 0;
+	PlayerManager* PlayerManager;
+	Client* Client;
 
 	Player(long long clientId);
 
-	bool IsLobbyOwner();
-	std::string GetDisplayNameExtra();
-	std::string GetDisplayName();
 	std::string GetChatSuffix();
+	std::string GetDisplayName();
+	std::string GetDisplayNameExtra();
+
+private:
+	bool TryUpdateID();
+	bool TryUpdateClient();
+	bool TryUpdatePlayerManager();
+public:
+	void UpdateInfo();
+
 	PermissionGroup* GetPermissionGroup();
 
-	void OnSpawn(Vector3 spawnPos);
+	bool IsLobbyOwner();
 };

@@ -7,30 +7,42 @@
 
 class Chat {
 public:
-	static std::vector<Message*> m_Messages;
-	static std::vector<Command*> m_Commands;
+	static std::vector<Message*> Messages;
+	static std::vector<Command*> Commands;
 
-	static bool m_ShowHelpMessage;
-	static float m_BroadCastHelpTime;
+	static float BroadcastHelpInterval;
+	static float BroadcastHelpTimeLeft;
+	static bool ShowHelpMessage;
+	static std::string HelpMessage;
 
-	static bool m_ShowDeathStatusAfterName;
-	static bool m_ShowIdAfterName;
+	static bool ShowPlayerIdsAfterName;
+	static bool ShowDeathStateAfterName;
 
 	static void Init();
 	static void Update(float dt);
 
-	static void ProcessRawMessage(long long clientId, std::string text, bool dontSend);
-	static void ProcessMessage(Message* message);
-	static bool ProcessWeaponCommand(Message* message);
+	static void ProcessMute(float dt);
+	static void ProcessBroadcastHelp(float dt);
 
+	static void RegisterCommand(Command* command);
+
+	static Message* AddMessage(Message* message);
+	static Message* AddMessageAndProcess(Message* message);
+	static void RemoveMessage(Message* message);
+	static void ProcessMessage(Message* message);
+	static Command* FindCommand(std::string cmd);
+
+	static void ProcessAllMessages();
+private:
+	static void ProcessCommandMessage(Message* message);
+	static bool ProcessWeaponCommand(Message* message);
+public:
 	static Message* SendServerMessage(std::string text);
 	static void SendServerMessage(std::vector<std::string> lines);
 
-	static void SendCommandsPage(std::vector<std::string> commands, int page);
+	//From Template_ServerSend_SendChatMessage
+	static void OnTrySendChatMessage(long long clientId, std::string content);
 
-	static void SendAllMessagesInQuery();
-	static void RemoveMessage(Message* message);
-	static void RemoveAllMessages();
-	
-	static void RegisterCommand(Command* command);
+	static void SendCommandsPage(std::vector<std::string> commands, int page);
+	static bool PrintCommanSyntaxes(std::string cmd);
 };

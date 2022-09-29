@@ -24,7 +24,7 @@ void VoteSystem::Update(float dt)
 	{
 		m_TimeLeft -= dt;
 
-		//std::cout << "[VoteSystem] time left " << m_TimeLeft << std::endl;
+		//std::cout << "[Vote] time left " << m_TimeLeft << std::endl;
 
 		if (m_TimeLeft <= 0)
 		{
@@ -35,7 +35,7 @@ void VoteSystem::Update(float dt)
 
 void VoteSystem::StartVote(std::string title, float seconds, std::function<void(void)> onSuccess, std::function<void(void)> onFail)
 {
-	std::cout << "[VoteSystem] start vote " << title << std::endl;
+	std::cout << "[Vote] start vote " << title << std::endl;
 
 	m_Title = title;
 	m_TimeLeft = seconds;
@@ -86,13 +86,13 @@ void VoteSystem::PrintVotationStatus()
 void VoteSystem::EndVote()
 {
 	m_TimeLeft = 0;
-	//std::cout << "[VoteSystem] vote ended" << std::endl;
+	//std::cout << "[Vote] vote ended" << std::endl;
 
 	int votesYes = (int)m_VotesYes.size();
 	int votesNo = (int)m_VotesNo.size();
 	bool pass = GetVotePass(votesYes, votesNo);
 
-	//std::cout << "[VoteSystem] " << (percent * 100) << "%" << std::endl;
+	//std::cout << "[Vote] " << (percent * 100) << "%" << std::endl;
 
 	if (pass) m_FnOnPass();
 	else m_FnOnFail();
@@ -114,8 +114,9 @@ void VoteSystem::SendVoteMessage(std::string message1, std::string message2)
 	Chat::SendServerMessage("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --");
 	Chat::SendServerMessage("Voting: ( " + m_Title + " )");
 	Chat::SendServerMessage(message1);
-	if(message2.length() > 0) Chat::SendServerMessage(message2);
+	if (message2.length() > 0) Chat::SendServerMessage(message2);
 	Chat::SendServerMessage("---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- --");
+	Chat::ProcessAllMessages();
 }
 
 void VoteSystem::SendEndVoteMessage()

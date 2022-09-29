@@ -38,6 +38,11 @@ public:
 		return std::stoll(str);
 	}
 
+	std::string AsString()
+	{
+		return str;
+	}
+
 	std::vector<std::string> SplitStr()
 	{
 		if (!canSplit)

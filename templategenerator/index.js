@@ -78,8 +78,8 @@ function convertInputText(input)
     console.log("\ncoutStr:\n" + coutStr);
 
     let output = "";
-    output += `auto HF_${className}_${methotName} = new HookFunction<${returnType}, ${defArgsStr}>("${className}::${methotName}");\n`;
-    output += `${returnType} Template_${className}_${methotName}(${fnArgsStr})\n`;
+    output += `static auto HF_${className}_${methotName} = new HookFunction<${returnType}, ${defArgsStr}>("${className}::${methotName}");\n`;
+    output += `static ${returnType} Template_${className}_${methotName}(${fnArgsStr})\n`;
     output += `{\n`;
     output += `	std::cout << "${className}::${methotName}" << ${coutStr} << std::endl;\n`;
     output += `	\n`;
@@ -100,6 +100,20 @@ function convertInputText(input)
 
 let outputFile = '';
 
+
+outputFile += `#pragma once\n`
+outputFile += `\n`
+outputFile += `#include "pch.h"\n`
+outputFile += `#include "Injector.h"\n`
+outputFile += `\n`
+outputFile += `/*\n`
+outputFile += `INPUT\n`
+outputFile += `\n`
+outputFile += inputFile
+outputFile += `\n`
+outputFile += `*/\n`
+outputFile += `\n`
+
 console.log(inputFile)
 
 const parts = inputFile.split("\n");
@@ -109,9 +123,13 @@ for (const p of parts) {
 }
 
 outputFile += `\n`;
+outputFile += `static void Inject_Templates()\n`;
+outputFile += `{\n`;
 
 for (const p of parts) {
-    outputFile += convertInputText(p)[1];
+    outputFile += `	` + convertInputText(p)[1];
 }
+
+outputFile += `}\n`;
 
 fs.writeFileSync("output.txt", outputFile);

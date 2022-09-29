@@ -19,9 +19,6 @@
     <ClCompile Include="user\Mod.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\Injector.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
     <ClCompile Include="user\pch.cpp">
       <Filter>user</Filter>
     </ClCompile>
@@ -37,10 +34,10 @@
     <ClCompile Include="user\Server.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\Player.cpp">
+    <ClCompile Include="user\Chat.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\Chat.cpp">
+    <ClCompile Include="user\Player.cpp">
       <Filter>user</Filter>
     </ClCompile>
     <ClCompile Include="user\Message.cpp">
@@ -49,23 +46,42 @@
     <ClCompile Include="user\Command.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\Config.cpp">
-      <Filter>user</Filter>
-    </ClCompile>
-    <ClCompile Include="user\SocketServer.cpp">
+    <ClCompile Include="user\PermissionGroups.cpp">
       <Filter>user</Filter>
     </ClCompile>
     <ClCompile Include="user\PermissionGroup.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\PermissionGroups.cpp">
+    <ClCompile Include="user\INIRead.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\VoteSystem.cpp">
+    <ClCompile Include="user\Config.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\MapSkip.cpp">
-      <Filter>user</Filter>
+    <ClCompile Include="user\SocketServer.cpp" />
+    <ClCompile Include="user\systems\AutoStart.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\UpdateCheck.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\EquipItem.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\Fly.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\ModeDeathMatch.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\Hover.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\VoteSystem.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\systems\MapSkip.cpp">
+      <Filter>user\systems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,59 +127,93 @@
     <ClInclude Include="user\pch.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates.h">
-      <Filter>user</Filter>
-    </ClInclude>
     <ClInclude Include="include\json_tool.h">
       <Filter>json</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates.h">
+      <Filter>user\templates</Filter>
     </ClInclude>
     <ClInclude Include="user\Server.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\Player.h">
+    <ClInclude Include="user\Event.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Weapon.h">
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\Chat.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="user\Player.h">
+      <Filter>user</Filter>
+    </ClInclude>
     <ClInclude Include="user\Message.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\Test.h">
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\Command.h">
       <Filter>user</Filter>
     </ClInclude>
+    <ClInclude Include="user\CommandArgs.h">
+      <Filter>user</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_GameServer.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_LobbyManager.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
+    <ClInclude Include="user\templates\templates_ServerSend.h">
+      <Filter>user\templates</Filter>
+    </ClInclude>
     <ClInclude Include="user\commands\commands.h">
       <Filter>user\commands</Filter>
     </ClInclude>
-    <ClInclude Include="user\Config.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\templates\templates_GameManager.h">
+      <Filter>user\templates</Filter>
     </ClInclude>
-    <ClInclude Include="user\SocketServer.h">
+    <ClInclude Include="user\PermissionGroups.h">
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\PermissionGroup.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\PermissionGroups.h">
+    <ClInclude Include="user\Weapons.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\CommandArgs.h">
+    <ClInclude Include="user\INIRead.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_test.h">
+    <ClInclude Include="user\Config.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_GameManager.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\SocketServer.h" />
+    <ClInclude Include="user\systems\AutoStart.h">
+      <Filter>user\systems</Filter>
     </ClInclude>
-    <ClInclude Include="user\templates_GameServer.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\systems\UpdateCheck.h">
+      <Filter>user\systems</Filter>
     </ClInclude>
-    <ClInclude Include="user\VoteSystem.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\systems\EquipItem.h">
+      <Filter>user\systems</Filter>
     </ClInclude>
-    <ClInclude Include="user\MapSkip.h">
-      <Filter>user</Filter>
+    <ClInclude Include="user\systems\Fly.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\ModeDeathMatch.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\Hover.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\VoteSystem.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\MapSkip.h">
+      <Filter>user\systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -179,13 +229,22 @@
     <Filter Include="json">
       <UniqueIdentifier>{db25e3df-de74-4d11-abf8-221c2a2b4570}</UniqueIdentifier>
     </Filter>
+    <Filter Include="user\templates">
+      <UniqueIdentifier>{e890379a-708a-4395-9e9e-af1d2e2ba5cd}</UniqueIdentifier>
+    </Filter>
     <Filter Include="user\commands">
-      <UniqueIdentifier>{3be61f82-2391-47a1-bee6-0621d6331a59}</UniqueIdentifier>
+      <UniqueIdentifier>{5237e95c-d90e-4251-b072-639821cb27f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="user\systems">
+      <UniqueIdentifier>{3eaa328c-6a3f-4516-90ff-e22321c5ccd6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl">
       <Filter>json</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="notes.txt" />
   </ItemGroup>
 </Project>

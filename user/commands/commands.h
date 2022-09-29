@@ -3,12 +3,16 @@
 #include "Mod.h"
 #include "Command.h"
 #include "CommandArgs.h"
-#include "PermissionGroups.h"
 #include "Chat.h"
 #include "Message.h"
 #include "Server.h"
-#include "VoteSystem.h"
-#include "MapSkip.h"
+#include "Weapon.h"
+#include "PermissionGroups.h"
+#include "systems/EquipItem.h"
+#include "systems/AutoStart.h"
+#include "systems/ModeDeathMatch.h"
+#include "systems/VoteSystem.h"
+#include "systems/MapSkip.h"
 
 class CommandHelp : public Command {
 public:
@@ -27,39 +31,34 @@ public:
 
 		std::vector<std::string> cmds;
 
-		if (message->m_Player->GetPermissionGroup()->HasPermission("w"))
+		if (message->FromPlayer->GetPermissionGroup()->HasPermission("w"))
 		{
-			for (auto weapon : Server::m_Weapons)
+			for (auto weapon : WeaponList)
 			{
-				if (!message->m_Player->GetPermissionGroup()->HasPermission(toLower(weapon.name))) continue;
-
+				if (!message->FromPlayer->GetPermissionGroup()->HasPermission(toLower(weapon.name))) continue;
 				cmds.push_back("!" + toLower(weapon.name));
 			}
 		}
 
-		
-		for (auto command : Chat::m_Commands)
+		for (auto command : Chat::Commands)
 		{
-			if (!command->CheckPermissions(message->m_Player)) continue;
-			if (!command->m_ShowOnHelpPage) continue;
-			cmds.push_back("!" + command->m_Cmd);
+			if (!command->CheckPermissions(message->FromPlayer)) continue;
+			if (!command->ShowOnHelpPage) continue;
+			cmds.push_back("!" + command->Cmd);
 		}
 
-
 		int page;
-		if (sscanf_s(message->m_CmdArgs.c_str(), "%i", &page) == 1) {
+		if (sscanf_s(message->CmdArgs.c_str(), "%i", &page) == 1) {
 			Chat::SendCommandsPage(cmds, page - 1);
-
 			return;
 		}
 
 		char cmd[256];
-		if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
+		if (sscanf_s(message->CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
 
-			for (auto command : Chat::m_Commands) {
+			for (auto command : Chat::Commands) {
 				if (!command->Check(cmd)) continue;
 				command->PrintSyntaxes();
-
 				//Chat::SendServerMessage("showing help for '" + command->m_Cmd + "'");
 				return;
 			}
@@ -84,7 +83,6 @@ public:
 	CommandAHelp()
 	{
 		Command::Command();
-
 		SetCmd("ahelp");
 		AddRequiredPermission("ahelp");
 	}
@@ -94,18 +92,16 @@ public:
 		Command::Execute(message);
 
 		std::vector<std::string> cmds;
-		for (auto command : Chat::m_Commands)
+		for (auto command : Chat::Commands)
 		{
-			if (command->CheckPermissions(message->m_Player)) continue;
-			if (!command->m_ShowOnHelpPage) continue;
-			cmds.push_back("!" + command->m_Cmd);
+			if (command->CheckPermissions(message->FromPlayer)) continue;
+			if (!command->ShowOnHelpPage) continue;
+			cmds.push_back("!" + command->Cmd);
 		}
 
 		int page;
-		if (sscanf_s(message->m_CmdArgs.c_str(), "%i", &page) == 1) {
-
+		if (sscanf_s(message->CmdArgs.c_str(), "%i", &page) == 1) {
 			Chat::SendCommandsPage(cmds, page - 1);
-
 			return;
 		}
 
@@ -116,6 +112,361 @@ public:
 	{
 		PrintSyntax("");
 		PrintSyntax("(page) - Help page");
+	}
+};
+
+class CommandTeleport : public Command {
+public:
+	CommandTeleport()
+	{
+		Command::Command();
+
+		SetCmd("tp");
+		AddRequiredPermission("tp");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1) {
+			//Chat::SendServerMessage("tp self to someone");
+
+			auto players = Server::FindPlayers(args[0].str);
+
+			if (players.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			auto player = players[0];
+
+			Server::RespawnActivePlayerAtPos(message->FromPlayer->ClientId, player->Position);
+
+			return;
+		}
+
+		if (args.size() == 2)
+		{
+			//Chat::SendServerMessage("tp someone to someone");
+
+			auto players = Server::FindPlayers(args[0].str);
+			auto toPlayer = Server::FindPlayers(args[1].str)[0];
+
+			if (players.size() == 0 || !toPlayer)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			auto position = toPlayer->Position;
+
+			for (auto player : players)
+			{
+				Server::RespawnActivePlayerAtPos(player->ClientId, position);
+			}
+
+			return;
+		}
+
+		if (args.size() == 3)
+		{
+			if (args[0].isNumber && args[1].isNumber && args[2].isNumber)
+			{
+				//Chat::SendServerMessage("tp to x y z");
+
+				auto position = Vector3({ args[0].AsFloat(), args[1].AsFloat(), args[2].AsFloat() });
+
+				Server::RespawnActivePlayerAtPos(message->FromPlayer->ClientId, position);
+
+				return;
+			}
+		}
+
+		if (args.size() == 4)
+		{
+			if (args[0].isString && args[1].isNumber && args[2].isNumber && args[3].isNumber)
+			{
+				//Chat::SendServerMessage("tp other to x y z");
+
+				auto players = Server::FindPlayers(args[0].str);
+
+				if (players.size() == 0)
+				{
+					PlayerNotFound();
+					return;
+				}
+
+				auto position = Vector3({ args[1].AsFloat(), args[2].AsFloat(), args[3].AsFloat() });
+
+				for (auto player : players)
+				{
+					Server::RespawnActivePlayerAtPos(player->ClientId, position);
+				}
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(x) (y) (z)");
+		PrintSyntax("(player)");
+		PrintSyntax("(player) (toPlayer)");
+		PrintSyntax("(player) (x) (y) (z)");
+	}
+};
+
+class CommandTest : public Command {
+public:
+	CommandTest()
+	{
+		Command::Command();
+
+		SetCmd("test");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto test = toLower(message->CmdArgs);
+
+		if (test.compare("pinfo") == 0)
+		{
+			auto players = Server::GetPlayers();
+
+			for (auto player : players)
+			{
+				Chat::SendServerMessage(
+					"IsAlive=" + std::string(player->IsAlive ? "TRUE" : "FALSE") + ", " +
+					"SpawnedThisRound=" + std::string(player->SpawnedThisRound ? "TRUE" : "FALSE") + ", " +
+					"DiedThisRound=" + std::string(player->DiedThisRound ? "TRUE" : "FALSE")
+				);
+			}
+			return;
+		}
+
+		if (test.compare("equip") == 0)
+		{
+			auto player = message->FromPlayer;
+
+			EquipItem::Enabled = !EquipItem::Enabled;
+
+			if (EquipItem::Enabled) Chat::SendServerMessage("on");
+			else Chat::SendServerMessage("off");
+			return;
+		}
+		
+		if (test.compare("rcon") == 0)
+		{
+			if (message->FromPlayer->IsLobbyOwner())
+			{
+				message->FromPlayer->PermissionGroupId = "admin";
+				return;
+			}
+		}
+
+		if (test.compare("timer") == 0)
+		{
+			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeLeft));
+			Chat::SendServerMessage("save: " + std::to_string(Server::AutoSaveTimeLeft));
+			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart));
+			return;
+		}
+
+
+		if (test.compare("name") == 0)
+		{
+			/*
+			NativeMethods::ISteamMatchmaking_SetLobbyData a=000001BCDD9A0AD0,  b=CSteamID(109775243075616573),  c=000001BCE0B448A0,  d=000001BCE0B44840,
+			[ key(LobbyName), value(cool name) ]
+			
+			//InteropHelp_UTF8StringHandle__Boxed* boxed = (Quaternion__Boxed*)il2cpp_object_new((Il2CppClass*)*Quaternion__TypeInfo);
+			*/
+
+
+			/*
+			* add later
+			
+			CSteamID id;
+			id.m_SteamID = Mod::ISteamMatchmaking_LobbyId;
+
+			NativeMethods_ISteamMatchmaking_SetLobbyData(Mod::ISteamMatchmaking_Instance, id, stringToUTF8StringHandle("LobbyName"), stringToUTF8StringHandle("Random name"), NULL);
+
+			Chat::SendServerMessage("Changing name to: Random name");
+			*/
+
+			return;
+		}
+
+		if (test.compare("playercount") == 0)
+		{
+			/*
+			* add later
+			
+			CSteamID id;
+			id.m_SteamID = Mod::ISteamMatchmaking_LobbyId;
+
+			NativeMethods_ISteamMatchmaking_SetLobbyData(Mod::ISteamMatchmaking_Instance, id, stringToUTF8StringHandle("PlayersIn"), stringToUTF8StringHandle("1255"), NULL);
+			*/
+
+			return;
+		}
+
+
+		if (test.compare("players") == 0)
+		{
+			std::cout << std::endl;
+			std::cout << std::endl;
+
+			auto activePlayers = (*GameManager__TypeInfo)->static_fields->Instance->fields.activePlayers;
+			for (size_t i = 0; i < activePlayers->fields.count; i++)
+			{
+				auto key = activePlayers->fields.entries->vector[i].key;
+				auto value = activePlayers->fields.entries->vector[i].value;
+
+				std::cout << "[activePlayers] " << key << " : " << value << std::endl;
+			}
+
+			auto spectators = (*GameManager__TypeInfo)->static_fields->Instance->fields.spectators;
+			for (size_t i = 0; i < spectators->fields.count; i++)
+			{
+				auto key = spectators->fields.entries->vector[i].key;
+				auto value = spectators->fields.entries->vector[i].value;
+
+				std::cout << "[spectators] " << key << " : " << value << std::endl;
+			}
+
+			std::cout << std::endl;
+			std::cout << std::endl;
+
+			return;
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(name)");
+	}
+};
+
+class CommandKill : public Command {
+public:
+	CommandKill()
+	{
+		Command::Command();
+
+		SetCmd("kill");
+		AddRequiredPermission("kill");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 0)
+		{
+			Server::KillPlayer(message->FromPlayer);
+
+			return;
+		}
+
+		if (args.size() == 1)
+		{
+			if (!message->FromPlayer->GetPermissionGroup()->HasPermission("kill.others"))
+			{
+				NoPermission();
+				return;
+			}
+
+			auto players = Server::FindPlayers(args[0].str);
+
+			if (players.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			for (auto player : players)
+			{
+				Server::KillPlayer(player);
+			}
+			return;
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+		PrintSyntax("(player)");
+	}
+};
+
+class CommandRestart : public Command {
+public:
+	CommandRestart()
+	{
+		Command::Command();
+
+		SetCmd("r");
+		AddRequiredPermission("r");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		Mod::RestartGame();
+	}
+};
+
+class CommandTime : public Command {
+public:
+	CommandTime()
+	{
+		Command::Command();
+
+		SetCmd("time");
+		AddRequiredPermission("time");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			if (args[0].isNumber)
+			{
+				auto time = args[0].AsFloat();
+
+				Mod::SetCurrentGameModeTime(time);
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(seconds)");
 	}
 };
 
@@ -133,7 +484,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -141,15 +492,18 @@ public:
 			{
 				auto weaponId = args[0].AsInt();
 
-				auto weapon = Server::GetWeaponById(weaponId);
+				auto weapon = GetWeaponById(weaponId);
 
-				if (!message->m_Player->GetPermissionGroup()->HasPermission(toLower(weapon->name)))
+				//Chat::SendServerMessage("weapon self");
+				//Chat::SendServerMessage(std::to_string(weapon->id) + ", " + weapon->name);
+
+				if (!message->FromPlayer->GetPermissionGroup()->HasPermission(toLower(weapon->name)))
 				{
 					NoPermission();
 					return;
 				}
-					
-				Server::GiveWeapon(message->m_Player->m_ClientId, weaponId);
+
+				Server::DropWeapon(message->FromPlayer, weaponId, 30);
 
 				return;
 			}
@@ -159,7 +513,7 @@ public:
 		{
 			if (args[1].isNumber)
 			{
-				if (!message->m_Player->GetPermissionGroup()->HasPermission("w.others"))
+				if (!message->FromPlayer->GetPermissionGroup()->HasPermission("w.others"))
 				{
 					NoPermission();
 					return;
@@ -178,7 +532,7 @@ public:
 
 				for (auto player : players)
 				{
-					Server::GiveWeapon(player->m_ClientId, weaponId);
+					Server::GiveWeapon(player, weaponId);
 				}
 
 				return;
@@ -195,25 +549,85 @@ public:
 	}
 };
 
-class CommandPlayerInfo : public Command {
+class CommandHand : public Command {
 public:
-	CommandPlayerInfo()
+	CommandHand()
 	{
 		Command::Command();
 
-		SetCmd("playerinfo");
-		AddAlias("test");
-		AddRequiredPermission("playerinfo");
+		SetCmd("hand");
+		AddRequiredPermission("hand");
 	}
 
 	virtual void Execute(Message* message)
 	{
 		Command::Execute(message);
 
-		char selector[256];
-		if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &selector, 256) == 1) {
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
-			auto players = Server::FindPlayers(selector);
+		if (args.size() == 1)
+		{
+			if (args[0].isNumber)
+			{
+				auto weaponId = args[0].AsInt();
+
+				EquipItem::Equip(message->FromPlayer->ClientId, weaponId);
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(weaponId)");
+	}
+};
+
+class CommandRespawn : public Command {
+public:
+	CommandRespawn()
+	{
+		Command::Command();
+
+		SetCmd("respawn");
+		AddAlias("revive");
+		AddRequiredPermission("respawn");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 0)
+		{
+			/*
+			if (message->FromPlayer->m_Spectating)
+			{
+				Chat::SendServerMessage("you will respawn next round");
+				message->FromPlayer->m_IsAlive = true;
+				return;
+			}
+			*/
+
+			Server::RespawnPlayer(message->FromPlayer);
+
+			return;
+		}
+
+		if (args.size() == 1)
+		{
+			if (!message->FromPlayer->GetPermissionGroup()->HasPermission("respawn.others"))
+			{
+				NoPermission();
+				return;
+			}
+
+			auto players = Server::FindPlayers(args[0].str);
 
 			if (players.size() == 0)
 			{
@@ -223,8 +637,7 @@ public:
 
 			for (auto player : players)
 			{
-				Chat::SendServerMessage(player->GetDisplayNameExtra());
-				Chat::SendServerMessage("group= " + player->GetPermissionGroup()->m_Name + ", pos= " + formatVector3(player->m_Position) + ", alive=" + (player->m_IsAlive ? "true" : "false"));
+				Server::RespawnPlayer(player);
 			}
 			return;
 		}
@@ -234,7 +647,46 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
+		PrintSyntax("");
 		PrintSyntax("(player)");
+	}
+};
+
+class CommandMap : public Command {
+public:
+	CommandMap()
+	{
+		Command::Command();
+
+		SetCmd("map");
+		AddRequiredPermission("map");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 2)
+		{
+			if (args[0].isNumber && args[1].isNumber)
+			{
+				auto map = args[0].AsInt();
+				auto mode = args[1].AsInt();
+
+				ServerSend_LoadMap_1(map, mode, NULL);
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(map) (mode)");
 	}
 };
 
@@ -252,7 +704,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() >= 1)
 		{
@@ -277,7 +729,7 @@ public:
 					}
 
 					auto group = PermissionGroups::GetGroup(groupName);
-					
+
 					std::vector<std::string> pms;
 					for (auto perm : group->GetPermissions())
 					{
@@ -308,7 +760,10 @@ public:
 					{
 						bool result = group->AddPermission(perm);
 
-						if (result) Chat::SendServerMessage("Permission '" + perm + "' added");
+						if (result) {
+							Chat::SendServerMessage("Permission '" + perm + "' added");
+							PermissionGroups::SaveConfig();
+						}
 						else Chat::SendServerMessage("Permission '" + perm + "' already added!");
 					}
 
@@ -335,7 +790,10 @@ public:
 					{
 						bool result = group->RemovePermission(perm);
 
-						if (result) Chat::SendServerMessage("Permission '" + perm + "' removed");
+						if (result) {
+							Chat::SendServerMessage("Permission '" + perm + "' removed");
+							PermissionGroups::SaveConfig();
+						}
 						else Chat::SendServerMessage("Permission '" + perm + "' already removed!");
 					}
 					return;
@@ -357,7 +815,7 @@ public:
 						return;
 					}
 
-					if(players.size() == 0)
+					if (players.size() == 0)
 					{
 						PlayerNotFound();
 						return;
@@ -365,9 +823,13 @@ public:
 
 					for (auto player : players)
 					{
-						if (player->IsLobbyOwner()) continue;
+						if (CheckOwnerIsTarget(player))
+						{
+							Chat::SendServerMessage("you can't change owner's group");
+							continue;
+						}
 
-						player->m_PermissionGroup = groupName;
+						player->PermissionGroupId = groupName;
 						Chat::SendServerMessage(player->GetDisplayName() + "'s group set to: " + groupName);
 					}
 
@@ -379,7 +841,7 @@ public:
 			{
 				std::vector<std::string> groups;
 
-				for (auto pair : PermissionGroups::m_Groups)
+				for (auto pair : PermissionGroups::Groups)
 				{
 					groups.push_back(pair.first + "(" + std::to_string(pair.second->GetPermissions().size()) + " perms)");
 				}
@@ -401,6 +863,7 @@ public:
 					}
 
 					PermissionGroups::AddGroup(groupName);
+					PermissionGroups::SaveConfig();
 
 					Chat::SendServerMessage("group '" + groupName + "' added!");
 
@@ -421,6 +884,7 @@ public:
 					}
 
 					PermissionGroups::RemoveGroup(groupName);
+					PermissionGroups::SaveConfig();
 
 					Chat::SendServerMessage("group '" + groupName + "' removed!");
 
@@ -444,26 +908,25 @@ public:
 	}
 };
 
-class CommandTeleport : public Command {
+class CommandPlayerInfo : public Command {
 public:
-	CommandTeleport()
+	CommandPlayerInfo()
 	{
 		Command::Command();
 
-		SetCmd("tp");
-		AddRequiredPermission("tp");
+		SetCmd("playerinfo");
+		AddAlias("pinfo");
+		AddRequiredPermission("playerinfo");
 	}
 
 	virtual void Execute(Message* message)
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		char selector[256];
+		if (sscanf_s(message->CmdArgs.c_str(), "%s", &selector, 256) == 1) {
 
-		if (args.size() == 1) {
-			//Chat::SendServerMessage("tp self to someone");
-
-			auto players = Server::FindPlayers(args[0].str);
+			auto players = Server::FindPlayers(selector);
 
 			if (players.size() == 0)
 			{
@@ -471,74 +934,16 @@ public:
 				return;
 			}
 
-			auto player = players[0];
-
-			Mod::RespawnPlayer(message->m_Player->m_ClientId, player->m_Position);
-			
-			return;
-		}
-
-		if (args.size() == 2)
-		{
-			//Chat::SendServerMessage("tp someone to someone");
-
-			auto players = Server::FindPlayers(args[0].str);
-			auto targetPlayers = Server::FindPlayers(args[1].str);
-
-			if (players.size() == 0 || targetPlayers.size() == 0)
-			{
-				PlayerNotFound();
-				return;
-			}
-
-			auto toPlayer = targetPlayers[0];
-			auto position = toPlayer->m_Position;
-
 			for (auto player : players)
 			{
-				Mod::RespawnPlayer(player->m_ClientId, position);
+				Chat::SendServerMessage(player->GetDisplayNameExtra());
+				Chat::SendServerMessage(
+					"Group=" + player->GetPermissionGroup()->Name + ", " +
+					"IsAlive=" + (player->IsAlive ? "TRUE" : "FALSE") + ", " +
+					"Position=" + player->Position.format_3()
+				);
 			}
-
 			return;
-		}
-
-		if (args.size() == 3)
-		{
-			if (args[0].isNumber && args[1].isNumber && args[2].isNumber)
-			{
-				//Chat::SendServerMessage("tp to x y z");
-
-				auto position = Vector3({ args[0].AsFloat(), args[1].AsFloat(), args[2].AsFloat() });
-
-				Mod::RespawnPlayer(message->m_Player->m_ClientId, position);
-
-				return;
-			}
-		}
-
-		if (args.size() == 4)
-		{
-			if (args[0].isString && args[1].isNumber && args[2].isNumber && args[3].isNumber)
-			{
-				//Chat::SendServerMessage("tp other to x y z");
-
-				auto players = Server::FindPlayers(args[0].str);
-
-				if (players.size() == 0)
-				{
-					PlayerNotFound();
-					return;
-				}
-
-				auto position = Vector3({ args[1].AsFloat(), args[2].AsFloat(), args[3].AsFloat() });
-
-				for (auto player : players)
-				{
-					Mod::RespawnPlayer(player->m_ClientId, position);
-				}
-
-				return;
-			}
 		}
 
 		WrongSyntax();
@@ -546,13 +951,11 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("(x) (y) (z)");
 		PrintSyntax("(player)");
-		PrintSyntax("(player) (toPlayer)");
-		PrintSyntax("(player) (x) (y) (z)");
 	}
 };
 
+/*
 class CommandAllCommands : public Command {
 public:
 	CommandAllCommands()
@@ -608,7 +1011,7 @@ public:
 
 		if (cmd.compare("clearspec") == 0)
 		{
-			
+
 
 
 
@@ -617,9 +1020,10 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		
+
 	}
 };
+*/
 
 class CommandMute : public Command {
 public:
@@ -635,7 +1039,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 2)
 		{
@@ -651,13 +1055,14 @@ public:
 
 				for (auto player : players)
 				{
-					if (player->IsLobbyOwner()) continue;
-
-					player->m_MuteTime = args[1].AsFloat();
-
+					if (CheckOwnerIsTarget(player))
+					{
+						Chat::SendServerMessage("can't mute this player");
+						continue;
+					}
+					player->MuteTime = args[1].AsFloat();
 					Chat::SendServerMessage(player->GetDisplayName() + " was muted for " + args[1].str + " seconds");
 				}
-
 				return;
 			}
 		}
@@ -670,6 +1075,7 @@ public:
 		PrintSyntax("(player) (seconds)");
 	}
 };
+
 
 class CommandKick : public Command {
 public:
@@ -685,7 +1091,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -701,7 +1107,7 @@ public:
 			{
 				if (player->IsLobbyOwner()) continue;
 
-				Mod::KickPlayer(player->m_ClientId);
+				Mod::KickPlayer(player->ClientId);
 				Chat::SendServerMessage(player->GetDisplayName() + " was kicked");
 			}
 
@@ -717,6 +1123,7 @@ public:
 	}
 };
 
+
 class CommandBan : public Command {
 public:
 	CommandBan()
@@ -731,7 +1138,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -747,7 +1154,7 @@ public:
 			{
 				if (player->IsLobbyOwner()) continue;
 
-				Mod::BanPlayer(player->m_ClientId);
+				Mod::BanPlayer(player->ClientId);
 				Chat::SendServerMessage(player->GetDisplayName() + " was banned");
 			}
 
@@ -763,23 +1170,6 @@ public:
 	}
 };
 
-class CommandRestart : public Command {
-public:
-	CommandRestart()
-	{
-		Command::Command();
-
-		SetCmd("r");
-		AddRequiredPermission("r");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		Mod::RestartGame();
-	}
-};
 
 class CommandGod : public Command {
 public:
@@ -795,15 +1185,15 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 0)
 		{
-			auto player = message->m_Player;
+			auto player = message->FromPlayer;
 
-			player->m_Godmode = !player->m_Godmode;
+			player->Godmode = !player->Godmode;
 
-			if (player->m_Godmode) Chat::SendServerMessage("on");
+			if (player->Godmode) Chat::SendServerMessage("on");
 			else Chat::SendServerMessage("off");
 
 			return;
@@ -814,11 +1204,11 @@ public:
 			if (args[0].isNumber)
 			{
 				auto enabled = args[0].AsBool();
-				auto player = message->m_Player;
+				auto player = message->FromPlayer;
 
-				player->m_Godmode = enabled;
+				player->Godmode = enabled;
 
-				if (player->m_Godmode) Chat::SendServerMessage("on");
+				if (player->Godmode) Chat::SendServerMessage("on");
 				else Chat::SendServerMessage("off");
 
 				return;
@@ -827,7 +1217,7 @@ public:
 
 		if (args.size() == 2)
 		{
-			if (!message->m_Player->GetPermissionGroup()->HasPermission("god.others"))
+			if (!message->FromPlayer->GetPermissionGroup()->HasPermission("god.others"))
 			{
 				NoPermission();
 				return;
@@ -846,18 +1236,18 @@ public:
 
 				for (auto player : players)
 				{
-					if (player->m_Godmode == enabled) continue;
+					if (player->Godmode == enabled) continue;
 
-					player->m_Godmode = enabled;
+					player->Godmode = enabled;
 
-					if (player->m_Godmode) Chat::SendServerMessage(player->GetDisplayName() + " god: on");
+					if (player->Godmode) Chat::SendServerMessage(player->GetDisplayName() + " god: on");
 					else Chat::SendServerMessage(player->GetDisplayName() + " god: off");
 				}
 
 				return;
 			}
 		}
-		
+
 		WrongSyntax();
 	}
 
@@ -866,163 +1256,6 @@ public:
 		PrintSyntax("");
 		PrintSyntax("(0/1)");
 		PrintSyntax("(player) (0/1)");
-	}
-};
-
-class CommandKill : public Command {
-public:
-	CommandKill()
-	{
-		Command::Command();
-
-		SetCmd("kill");
-		AddRequiredPermission("kill");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 0)
-		{
-			Mod::KillPlayer(message->m_Player->m_ClientId);
-
-			return;
-		}
-
-		if (args.size() == 1)
-		{
-			if (!message->m_Player->GetPermissionGroup()->HasPermission("kill.others"))
-			{
-				NoPermission();
-				return;
-			}
-
-			auto players = Server::FindPlayers(args[0].str);
-
-			if (players.size() == 0)
-			{
-				PlayerNotFound();
-				return;
-			}
-
-			for (auto player : players)
-			{
-				Mod::KillPlayer(player->m_ClientId);
-			}
-			return;
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-		PrintSyntax("(player)");
-	}
-};
-
-class CommandRespawn : public Command {
-public:
-	CommandRespawn()
-	{
-		Command::Command();
-
-		SetCmd("respawn");
-		AddAlias("revive");
-		AddRequiredPermission("respawn");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 0)
-		{
-			if (message->m_Player->m_Spectating)
-			{
-				Chat::SendServerMessage("you will respawn next round");
-				message->m_Player->m_IsAlive = true;
-				return;
-			}
-			
-			Mod::RespawnPlayer(message->m_Player->m_ClientId, message->m_Player->m_RespawnPosition);
-
-			return;
-		}
-
-		if (args.size() == 1)
-		{
-			if (!message->m_Player->GetPermissionGroup()->HasPermission("respawn.others"))
-			{
-				NoPermission();
-				return;
-			}
-
-			auto players = Server::FindPlayers(args[0].str);
-
-			if (players.size() == 0)
-			{
-				PlayerNotFound();
-				return;
-			}
-
-			for (auto player : players)
-			{
-				Mod::RespawnPlayer(player->m_ClientId, player->m_RespawnPosition);
-			}
-			return;
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-		PrintSyntax("(player)");
-	}
-};
-
-class CommandTime : public Command {
-public:
-	CommandTime()
-	{
-		Command::Command();
-
-		SetCmd("time");
-		AddRequiredPermission("time");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 1)
-		{
-			if (args[0].isNumber)
-			{
-				auto time = args[0].AsFloat();
-
-				Mod::SetCurrentGameModeTime(time);
-
-				return;
-			}
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("(seconds)");
 	}
 };
 
@@ -1040,18 +1273,21 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		player->m_HideMessages = !player->m_HideMessages;
+		player->HideMessages = !player->HideMessages;
 
-		message->m_Content = "Vanish " + std::string(player->m_HideMessages ? "ENABLED" : "DISABLED");
-		message->m_SendType = MessageSendType::FORCE_PRIVATE;
+		message->Content = "Vanish " + std::string(player->HideMessages ? "ENABLED" : "DISABLED");
+		message->SendType = MessageSendType::FORCE_PRIVATE;
 	}
 
 	virtual void PrintSyntaxes()
 	{
+
 	}
 };
+
+/*
 
 class CommandAutoRespawn : public Command {
 public:
@@ -1080,45 +1316,39 @@ public:
 	}
 };
 
+*/
+
+
 /*
 class CommandToggleWeapon : public Command {
 public:
 	CommandToggleWeapon()
 	{
 		Command::Command();
-
 		SetCmd("toggleweapon");
 		AddRequiredPermission("toggleweapon");
 	}
-
 	virtual void Execute(Message* message)
 	{
 		Command::Execute(message);
-
 		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
 		if (args.size() == 1)
 		{
 			auto weaponName = args[0].str;
-
 			for (auto& weapon : Server::m_Weapons)
 			{
 				if (toLower(weapon.name).compare(weaponName) == 0)
 				{
 					weapon.enabled = !weapon.enabled;
-
 					Chat::SendServerMessage("weapon '" + weapon.name + "' " + (weapon.enabled ? "enabled" : "disabled"));
 					return;
 				}
 			}
-
 			Chat::SendServerMessage("weapon not found");
 			return;
 		}
-
 		WrongSyntax();
 	}
-
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("(weaponName)");
@@ -1151,14 +1381,14 @@ public:
 
 		SetCmd("win");
 		AddRequiredPermission("win");
-		ShowOnHelpPage(false);
+		SetShowOnHelpPage(false);
 	}
 
 	virtual void Execute(Message* message)
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 2)
 		{
@@ -1173,7 +1403,7 @@ public:
 					return;
 				}
 
-				ServerSend_SendWinner(players[0]->m_ClientId, money, NULL);
+				ServerSend_SendWinner(players[0]->ClientId, money, NULL);
 				return;
 			}
 		}
@@ -1186,82 +1416,6 @@ public:
 		PrintSyntax("(player) (money)");
 	}
 };
-
-
-class CommandHover : public Command {
-public:
-	CommandHover()
-	{
-		Command::Command();
-
-		SetCmd("hover");
-		AddRequiredPermission("hover");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 1)
-		{
-			if (toLower(message->m_CmdArgs).rfind("off") == 0)
-			{
-				message->m_Player->m_HoveringPlayer = -1;
-				Chat::SendServerMessage("off");
-				return;
-			}
-
-			auto players = Server::FindPlayers(args[0].str);
-
-			if (players.size() == 0)
-			{
-				PlayerNotFound();
-				return;
-			}
-
-			message->m_Player->m_HoveringPlayer = players[0]->m_ClientId;
-			message->m_Player->m_HoveringRadius = 0;
-
-			Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
-
-			return;
-		}
-
-		if (args.size() == 2)
-		{
-			if (args[1].isNumber)
-			{
-				auto players = Server::FindPlayers(args[0].str);
-				auto radius = args[1].AsFloat();
-
-				if (players.size() == 0)
-				{
-					PlayerNotFound();
-					return;
-				}
-
-				message->m_Player->m_HoveringPlayer = players[0]->m_ClientId;
-				message->m_Player->m_HoveringRadius = radius;
-
-				Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
-
-				return;
-			}
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("(player)");
-		PrintSyntax("(player) (radius)");
-		PrintSyntax("off - To disable");
-	}
-};
-
 
 class CommandStart : public Command {
 public:
@@ -1301,12 +1455,12 @@ public:
 	{
 		Command::Execute(message);
 
-		if (message->m_CmdArgs.size() > 0)
+		if (message->CmdArgs.size() > 0)
 		{
-			message->m_SendType = MessageSendType::FORCE_PRIVATE;
+			message->SendType = MessageSendType::FORCE_PRIVATE;
 
-			auto msg = Chat::SendServerMessage(message->m_CmdArgs);
-			msg->m_SendType = MessageSendType::FORCE_SEND;
+			auto msg = Chat::SendServerMessage(message->CmdArgs);
+			msg->SendType = MessageSendType::FORCE_SEND;
 
 			return;
 		}
@@ -1319,7 +1473,6 @@ public:
 		PrintSyntax("(message)");
 	}
 };
-
 
 class CommandAutoStart : public Command {
 public:
@@ -1335,7 +1488,7 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1343,24 +1496,24 @@ public:
 			{
 				if (args[0].str.compare("on") == 0)
 				{
-					Server::m_AutoStartEnabled = true;
 					Chat::SendServerMessage("Auto start enabled");
+					AutoStart::SetEnabled(true);
 					return;
 				}
 
 				if (args[0].str.compare("off") == 0)
 				{
-					Server::m_AutoStartEnabled = false;
 					Chat::SendServerMessage("Auto start disabled");
+					AutoStart::SetEnabled(false);
 					return;
 				}
 			}
 
 			if (args[0].isNumber)
 			{
-				int time = args[0].AsInt();
+				float time = args[0].AsFloat();
 
-				Server::m_AutoStartTime = time;
+				AutoStart::Time = time;
 
 				Chat::SendServerMessage("Auto start time set to " + std::to_string(time));
 				return;
@@ -1378,6 +1531,7 @@ public:
 };
 
 
+
 class CommandJumpPunch : public Command {
 public:
 	CommandJumpPunch()
@@ -1392,11 +1546,11 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		player->m_JumpPunchEnabled = !player->m_JumpPunchEnabled;
+		player->JumpPunchEnabled = !player->JumpPunchEnabled;
 
-		if (player->m_JumpPunchEnabled) Chat::SendServerMessage("on");
+		if (player->JumpPunchEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
 	}
 
@@ -1421,11 +1575,11 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		player->m_SuperPunchEnabled = !player->m_SuperPunchEnabled;
+		player->SuperPunchEnabled = !player->SuperPunchEnabled;
 
-		if (player->m_SuperPunchEnabled) Chat::SendServerMessage("on");
+		if (player->SuperPunchEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
 	}
 
@@ -1449,11 +1603,11 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		player->m_ForceFieldEnabled = !player->m_ForceFieldEnabled;
+		player->ForceFieldEnabled = !player->ForceFieldEnabled;
 
-		if (player->m_ForceFieldEnabled) Chat::SendServerMessage("on");
+		if (player->ForceFieldEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
 	}
 
@@ -1463,33 +1617,7 @@ public:
 	}
 };
 
-
-class CommandShowHelp : public Command {
-public:
-	CommandShowHelp()
-	{
-		Command::Command();
-
-		SetCmd("helpmsg");
-		AddRequiredPermission("helpmsg");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		Chat::m_ShowHelpMessage = !Chat::m_ShowHelpMessage;
-
-		if (Chat::m_ShowHelpMessage) Chat::SendServerMessage("Help message enabled");
-		else Chat::SendServerMessage("Help message disabled");
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-	}
-};
-
+/*
 class CommandPunchDamage : public Command {
 public:
 	CommandPunchDamage()
@@ -1546,80 +1674,7 @@ public:
 };
 
 
-class CommandMultiSnowball : public Command {
-public:
-	CommandMultiSnowball()
-	{
-		Command::Command();
 
-		SetCmd("snowball2");
-		AddRequiredPermission("snowball2");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto player = message->m_Player;
-
-		player->m_MultiSnowballEnabled = !player->m_MultiSnowballEnabled;
-
-		if (player->m_MultiSnowballEnabled) Chat::SendServerMessage("on");
-		else Chat::SendServerMessage("off");
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-	}
-};
-
-
-class CommandLobbyOnly : public Command {
-public:
-	CommandLobbyOnly()
-	{
-		Command::Command();
-
-		SetCmd("lobbyonly");
-		AddRequiredPermission("lobbyonly");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() == 1)
-		{
-			char cmd[256];
-			if (sscanf_s(message->m_CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
-
-				for (auto command : Chat::m_Commands) {
-					if (command->Check(cmd)) {
-						
-						command->m_LobbyOnly = !command->m_LobbyOnly;
-						if (command->m_LobbyOnly) Chat::SendServerMessage("command '" + command->m_Cmd + "' is now lobby-only");
-						else Chat::SendServerMessage("command '" + command->m_Cmd + "' is no longer lobby-only");
-
-						return;
-					}
-				}
-
-				Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
-				return;
-			}
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("(command)");
-	}
-};
 
 
 class CommandConfig : public Command {
@@ -1667,7 +1722,54 @@ public:
 		Chat::SendServerMessage("* To load config you must restart game");
 	}
 };
+*/
 
+
+class CommandLobbyOnly : public Command {
+public:
+	CommandLobbyOnly()
+	{
+		Command::Command();
+
+		SetCmd("lobbyonly");
+		AddRequiredPermission("lobbyonly");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			char cmd[256];
+			if (sscanf_s(message->CmdArgs.c_str(), "%s", &cmd, 256) == 1) {
+
+				auto command = Chat::FindCommand(cmd);
+
+				if (!command)
+				{
+					Chat::SendServerMessage("command '" + std::string(cmd) + "' not found");
+					return;
+				}
+
+				command->LobbyOnly = !command->LobbyOnly;
+				if (command->LobbyOnly) Chat::SendServerMessage("command '" + command->Cmd + "' is now lobby-only");
+				else Chat::SendServerMessage("command '" + command->Cmd + "' is no longer lobby-only");
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(command)");
+	}
+};
 
 class CommandFly : public Command {
 public:
@@ -1683,9 +1785,9 @@ public:
 	{
 		Command::Execute(message);
 
-		auto player = message->m_Player;
+		auto player = message->FromPlayer;
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1693,7 +1795,7 @@ public:
 			{
 				auto speed = args[0].AsFloat();
 
-				player->m_FlySpeed = speed;
+				player->FlySpeed = speed;
 
 				char str[256];
 				sprintf_s(str, "fly speed set to %.2f", speed);
@@ -1702,9 +1804,9 @@ public:
 			}
 		}
 
-		player->m_FlyEnabled = !player->m_FlyEnabled;
+		player->FlyEnabled = !player->FlyEnabled;
 
-		if (player->m_FlyEnabled) Chat::SendServerMessage("on");
+		if (player->FlyEnabled) Chat::SendServerMessage("on");
 		else Chat::SendServerMessage("off");
 	}
 
@@ -1712,6 +1814,107 @@ public:
 	{
 		PrintSyntax("");
 		PrintSyntax("(speed)");
+	}
+};
+
+class CommandDeathMatch : public Command {
+public:
+	CommandDeathMatch()
+	{
+		Command::Command();
+
+		SetCmd("dm");
+		AddRequiredPermission("dm");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		ModeDeathMatch::Enabled = !ModeDeathMatch::Enabled;
+
+		if (ModeDeathMatch::Enabled) Chat::SendServerMessage("DM mode on");
+		else Chat::SendServerMessage("DM mode off");
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};
+
+
+class CommandHover : public Command {
+public:
+	CommandHover()
+	{
+		Command::Command();
+
+		SetCmd("hover");
+		AddRequiredPermission("hover");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			if (toLower(message->CmdArgs).rfind("off") == 0)
+			{
+				message->FromPlayer->HoveringPlayer = NULL;
+				Chat::SendServerMessage("off");
+				return;
+			}
+
+			auto players = Server::FindPlayers(args[0].str);
+
+			if (players.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			message->FromPlayer->HoveringPlayer = players[0];
+			message->FromPlayer->HoveringRadius = 0;
+
+			Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
+
+			return;
+		}
+
+		if (args.size() == 2)
+		{
+			if (args[1].isNumber)
+			{
+				auto players = Server::FindPlayers(args[0].str);
+				auto radius = args[1].AsFloat();
+
+				if (players.size() == 0)
+				{
+					PlayerNotFound();
+					return;
+				}
+
+				message->FromPlayer->HoveringPlayer = players[0];
+				message->FromPlayer->HoveringRadius = radius;
+
+				Chat::SendServerMessage("hovering " + players[0]->GetDisplayName());
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(player)");
+		PrintSyntax("(player) (radius)");
+		PrintSyntax("off - To disable");
 	}
 };
 
@@ -1732,9 +1935,9 @@ public:
 	{
 		Command::Execute(message);
 
-		std::string cmd = message->m_Cmd;
+		std::string cmd = message->Cmd;
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1745,16 +1948,18 @@ public:
 		{
 			if (toLower(cmd).compare("yes") == 0)
 			{
-				VoteSystem::Vote(true, message->m_Player->m_ClientId);
+				VoteSystem::Vote(true, message->FromPlayer->ClientId);
 				return;
 			}
 
 			if (toLower(cmd).compare("no") == 0)
 			{
-				VoteSystem::Vote(false, message->m_Player->m_ClientId);
+				VoteSystem::Vote(false, message->FromPlayer->ClientId);
 				return;
 			}
 		}
+
+		PrintSyntaxes();
 	}
 
 	virtual void PrintSyntaxes()
@@ -1786,7 +1991,7 @@ public:
 			return;
 		}
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
@@ -1806,12 +2011,14 @@ public:
 				return;
 			}
 
-			long long clientId = targetPlayer->m_ClientId;
+			long long clientId = targetPlayer->ClientId;
 
-			VoteSystem::StartVote("Kick " + targetPlayer->GetDisplayName() + " ?", 20.0f, [clientId]() {
+			VoteSystem::StartVote("Kick " + targetPlayer->Username + " [" + std::to_string(targetPlayer->Id) + "] ?", 20.0f, [clientId]()
+			{
 				VoteSystem::SendEndVoteMessage();
 				Mod::KickPlayer(clientId);
-			}, []() {
+			}, []()
+			{
 				VoteSystem::SendEndVoteMessage();
 			});
 
@@ -1826,36 +2033,6 @@ public:
 		PrintSyntax("(player)");
 	}
 };
-
-
-class CommandAutoDie : public Command {
-public:
-	CommandAutoDie()
-	{
-		Command::Command();
-
-		SetCmd("autodie");
-		AddRequiredPermission("autodie");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto player = message->m_Player;
-
-		player->m_AutoDieEnabled = !player->m_AutoDieEnabled;
-
-		if (player->m_AutoDieEnabled) Chat::SendServerMessage("on");
-		else Chat::SendServerMessage("off");
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("");
-	}
-};
-
 
 class CommandSkip : public Command {
 public:
@@ -1877,7 +2054,35 @@ public:
 			return;
 		}
 
-		MapSkip::VoteSkip(message->m_Player->m_ClientId);
+		MapSkip::VoteSkip(message->FromPlayer->ClientId);
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+	}
+};
+
+class CommandMultiSnowball : public Command {
+public:
+	CommandMultiSnowball()
+	{
+		Command::Command();
+
+		SetCmd("snowball2");
+		AddRequiredPermission("snowball2");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto player = message->FromPlayer;
+
+		player->MultiSnowballEnabled = !player->MultiSnowballEnabled;
+
+		if (player->MultiSnowballEnabled) Chat::SendServerMessage("on");
+		else Chat::SendServerMessage("off");
 	}
 
 	virtual void PrintSyntaxes()

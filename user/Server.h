@@ -4,60 +4,85 @@
 
 #include "Player.h"
 
-using namespace app;
-
-struct Weapon {
-	std::string name;
-	int id;
-};
-
 class Server {
 public:
-	static std::map<long long, Player*> m_Players;
-	static long long m_LobbyId;
-	static bool m_HasCheckedUpdates;
-	static Player* m_LobbyOwner;
-	static int m_UniqueObjectId;
+	static std::map<long long, Player*> Players;
+	static int MapId;
+	static int MapModeId;
+	static long long LobbyId;
 
-	static std::vector<Weapon> m_Weapons;
-
-	static int m_PunchDamageId;
-	static bool m_CanUseItem;
-
-	static bool m_IsAtLobby;
-	static bool m_RedLightState;
-
-	static bool m_AutoStartEnabled;
-	static int m_AutoStartTime;
-	static float m_TimeUntilAutoStart;
-
-	static bool m_UpdateRequired;
-
-	static float m_SaveConfigTime;
+	static float AutoSaveTimeLeft;
+	static float AutoSaveInterval;
 
 	static void Init();
-	static void Update(float dt); //dt ~ 0.016
-	static void LoadConfig();
-	static void SaveConfig();
+
+	//From Template_GameManager_Update  or  Template_ChatBox_Update
+	static void Update(float dt); 
 
 	static void UpdatePlayersPosition();
-	static bool ProcessUpdateCheck();
+	static void ProcessAutoSave(float dt); 
 
 	static bool HasPlayer(long long clientId);
+	static Player* GetPlayer(long long clientId);
 	static Player* AddPlayer(Player* player);
 	static void RemovePlayer(Player* player);
-	static Player* GetPlayer(long long clientId);
-	static void TryAddPlayer(long long clientId, int playerId, PlayerManager* playerManager);
-	static void RemoveAllPlayers();
+	static std::vector<Player*> GetPlayers();
+	static std::vector<Player*> GetOnlinePlayers();
 
-	static void OnCreateLobby();
+	//From Template_LobbyManager_AddPlayerToLobby
+	static void OnAddPlayerToLobby(long long clientId);
 
+	//From Template_LobbyManager_RemovePlayerFromLobby
+	static void OnRemovePlayerFromLobby(long long clientId);
+
+	static void OnPlayerFirstJoin(Player* player);
 	static void OnPlayerJoin(Player* player);
 	static void OnPlayerLeave(Player* player);
-	static bool OnPlayerDied(long long deadClient, long long damageDoerId, Vector3 damageDir);
 
-	static void GiveWeapon(long long toClient, int weaponId);
-	static Weapon* GetWeaponById(int weaponId);
+
+	//From Template_ServerSend_GameSpawnPlayer
+	static void OnGameSpawnPlayer(Player* player, Vector3 position);
+
+	//From Template_ServerSend_SpectatorSpawn
+	static bool OnPlayerTryToSpawnSpectator(Player* player);
+
+	static void OnPlayerSpawn(Player* player, Vector3 position);
+
+
+	//From Template_ServerSend_PlayerDied
+	static bool OnPlayerDied(Player* deadPlayer, Player* killerPlayer, Vector3 damageDir);
+
+	static void KillPlayer(Player* player);
+	static void RespawnPlayer(Player* player);
+	static void RespawnActivePlayerAtPos(long long clientId, Vector3 position);
 
 	static std::vector<Player*> FindPlayers(std::string selector);
+
+	static void GiveWeapon(Player* player, int weaponId);
+	static void DropWeapon(Player* player, int weaponId, int ammo);
+
+	//From Template_ServerSend_LoadMap_1
+	static void OnMapLoad(int map, int mode);
+
+	static void OnMapStart();
+
+	//From Template_LobbyManager_StartNewLobby
+	static void OnLobbyStart(long long lobbyId);
+
+private:
+	static void RespawnSpectator(Player* player);
+
+public:
+	static void RestartGame();
+
+	//From Template_ServerSend_PunchPlayer (only works inside template function wtf)
+	static void OnPunchPlayer(uint64_t playerId, uint64_t punchedPlayerId, Vector3 dir, MethodInfo* method);
+
+	static bool IsAtLobby();
+
+	static Player* GetLobbyOwner();
+
+	//From Template_ServerSend_UseItemAll
+	static bool OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int objectId, MethodInfo* method);
+
 };
