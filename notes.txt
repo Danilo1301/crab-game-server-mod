@@ -1,14 +1,3 @@
----------------- REWRITE
-
-esta é uma copia da v2.5
-tentando passar para a v3.0
-
-adicionar notas antigas (ok)
-apagar tudo daqui, copiar source de user - Cópia
-criar eventos HookFunctionEvent
-alterar templategenerator
-fazer as funcoes static
-
 ---------------- TESTS / CHANGES
 
 [3.0]
@@ -32,18 +21,22 @@ fazer as funcoes static
 [X] adicionar !w com drop OK
 [X] tirar mensagem spec e de DEATH OK
 [X] change ShowPlayerIds to ShowPlayerIdsAfterName OK
-[ ] change DeathStatus too
-[ ] TRY LATER: in "TESTHERE", test if !player->IsAlive, then try respawn 
 [X] test fly OK
-[ ] ISSUE: autostart message not showing
 [X] multisnowball
 [X] vote
 [X] votekick
-[ ] autodie
 [X] skip
-[ ] add auto start time to config
 [~] heroku server dying
+[~] HookFunctionEvent
+
+[ ] custom language support
 [ ] fix skip during TAG, BOMB mode / also set timer to 1 to skip faster
+[ ] autodie
+[ ] add auto start time to config
+[ ] ISSUE: autostart message not showing
+[ ] TRY LATER: in "TESTHERE", test if !player->IsAlive, then try respawn 
+[ ] change DeathStatus too
+[ ] check console mode
 
 ---------------- RELEASE
 
