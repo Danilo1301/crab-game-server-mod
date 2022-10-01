@@ -76,6 +76,7 @@
     <ClCompile Include="user\systems\ModeDeathMatch.cpp" />
     <ClCompile Include="user\systems\UpdateCheck.cpp" />
     <ClCompile Include="user\systems\VoteSystem.cpp" />
+    <ClCompile Include="user\systems\Whitelist.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="appdata\il2cpp-api-functions.h" />
@@ -114,6 +115,7 @@
     <ClInclude Include="user\systems\ModeDeathMatch.h" />
     <ClInclude Include="user\systems\UpdateCheck.h" />
     <ClInclude Include="user\systems\VoteSystem.h" />
+    <ClInclude Include="user\systems\Whitelist.h" />
     <ClInclude Include="user\templates\templates.h" />
     <ClInclude Include="user\templates\templates_GameManager.h" />
     <ClInclude Include="user\templates\templates_GameServer.h" />

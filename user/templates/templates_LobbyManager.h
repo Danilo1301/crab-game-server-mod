@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "Injector.h"
 #include "Server.h"
+#include "systems/Whitelist.h"
 
 /*
 INPUT
@@ -395,6 +396,15 @@ static void Template_LobbyManager_OnPlayerJoinLeaveUpdate(LobbyManager* a, CStea
 	std::cout << "LobbyManager::OnPlayerJoinLeaveUpdate" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
 
 	HF_LobbyManager_OnPlayerJoinLeaveUpdate->original(a, b, c, method);
+
+	if (!c) return;
+
+	long long clientId = b.m_SteamID;
+
+	if (!Whitelist::CanIdJoin(clientId))
+	{
+		Mod::KickPlayer(clientId);
+	}
 }
 
 static auto HF_LobbyManager_NewLobbySettings = new HookFunction<void, LobbyManager*, MethodInfo*>("LobbyManager::NewLobbySettings");
@@ -1208,6 +1218,8 @@ static void Inject_Templates_LobbyManager()
 		Injector::Inject(HF_LobbyManager_RemovePlayerFromLobby, LobbyManager_RemovePlayerFromLobby, &Template_LobbyManager_RemovePlayerFromLobby);
 		Injector::Inject(HF_LobbyManager_BanPlayer, LobbyManager_BanPlayer, &Template_LobbyManager_BanPlayer);
 		Injector::Inject(HF_LobbyManager_StartNewLobby, LobbyManager_StartNewLobby, &Template_LobbyManager_StartNewLobby);
+		Injector::Inject(HF_LobbyManager_OnPlayerJoinLeaveUpdate, LobbyManager_OnPlayerJoinLeaveUpdate, &Template_LobbyManager_OnPlayerJoinLeaveUpdate);
+
 		return;
 	}
 

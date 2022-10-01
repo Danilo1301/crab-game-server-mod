@@ -83,6 +83,9 @@
     <ClCompile Include="user\systems\MapSkip.cpp">
       <Filter>user\systems</Filter>
     </ClCompile>
+    <ClCompile Include="user\systems\Whitelist.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user\main.h">
@@ -213,6 +216,9 @@
       <Filter>user\systems</Filter>
     </ClInclude>
     <ClInclude Include="user\systems\MapSkip.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\Whitelist.h">
       <Filter>user\systems</Filter>
     </ClInclude>
   </ItemGroup>

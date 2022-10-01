@@ -11,7 +11,7 @@ public:
 	static int MapModeId;
 	static long long LobbyId;
 
-	static float AutoSaveTimeLeft;
+	static float AutoSaveTimeElapsed;
 	static float AutoSaveInterval;
 
 	static void Init();

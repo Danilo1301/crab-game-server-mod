@@ -11,7 +11,7 @@ public:
 	static std::vector<Command*> Commands;
 
 	static float BroadcastHelpInterval;
-	static float BroadcastHelpTimeLeft;
+	static float BroadcastHelpTimeElapsed;
 	static bool ShowHelpMessage;
 	static std::string HelpMessage;
 

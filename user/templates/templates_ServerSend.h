@@ -390,7 +390,7 @@ static void Template_ServerSend__cctor(MethodInfo* method)
 static auto HF_ServerSend_UseItemAll = new HookFunction<void, uint64_t, int32_t, Vector3, int32_t, MethodInfo*>("ServerSend::UseItemAll");
 static void Template_ServerSend_UseItemAll(uint64_t a, int32_t b, Vector3 c, int32_t d, MethodInfo* method)
 {
-	std::cout << "ServerSend::UseItemAll" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
+	//std::cout << "ServerSend::UseItemAll" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << " d=" << d << ", " << std::endl;
 
 	if (!Server::OnTryUseUseItemAll(Server::GetPlayer(a), b, c, d, method))
 		return;

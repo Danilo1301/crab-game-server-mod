@@ -29,6 +29,20 @@
 [~] heroku server dying
 [~] HookFunctionEvent
 
+[3.1]
+[X] ISSUE: id not showing to other players in chat
+[X] whitelist
+[X] config command
+[X] config reload
+[ ] ISSUE: interval bug when reloading
+[X] ISSUE: bug in custom help message
+
+[ ] save whitelist in ini file
+
+[ ] rework the way config loads (its a mess)
+[ ] freeze command
+[ ] auto spec
+
 [ ] custom language support
 [ ] fix skip during TAG, BOMB mode / also set timer to 1 to skip faster
 [ ] autodie

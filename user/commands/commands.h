@@ -7,12 +7,15 @@
 #include "Message.h"
 #include "Server.h"
 #include "Weapon.h"
+#include "Config.h"
 #include "PermissionGroups.h"
 #include "systems/EquipItem.h"
 #include "systems/AutoStart.h"
 #include "systems/ModeDeathMatch.h"
 #include "systems/VoteSystem.h"
 #include "systems/MapSkip.h"
+#include "systems/Whitelist.h"
+
 
 class CommandHelp : public Command {
 public:
@@ -275,8 +278,8 @@ public:
 
 		if (test.compare("timer") == 0)
 		{
-			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeLeft));
-			Chat::SendServerMessage("save: " + std::to_string(Server::AutoSaveTimeLeft));
+			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeElapsed));
+			Chat::SendServerMessage("save: " + std::to_string(Server::AutoSaveTimeElapsed));
 			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart));
 			return;
 		}
@@ -1673,55 +1676,6 @@ public:
 	}
 };
 
-
-
-
-
-class CommandConfig : public Command {
-public:
-	CommandConfig()
-	{
-		Command::Command();
-
-		SetCmd("config");
-		AddRequiredPermission("config");
-	}
-
-	virtual void Execute(Message* message)
-	{
-		Command::Execute(message);
-
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
-
-		if (args.size() >= 1)
-		{
-			auto cmd = args[0].str;
-
-			if (cmd.compare("save") == 0)
-			{
-				Server::SaveConfig();
-				Chat::SendServerMessage("config saved");
-				return;
-			}
-
-			if (cmd.compare("path") == 0)
-			{
-				Chat::SendServerMessage("Crab Game folder: C:\\Program Files (x86)\\Steam\\steamapps\\common\\Crab Game");
-				return;
-			}
-		}
-
-		WrongSyntax();
-	}
-
-	virtual void PrintSyntaxes()
-	{
-		PrintSyntax("path");
-		PrintSyntax("save");
-		Chat::SendServerMessage("* Saves every 40 seconds");
-		Chat::SendServerMessage("* To load config you must restart game");
-	}
-};
 */
 
 
@@ -2088,5 +2042,151 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("");
+	}
+};
+
+
+
+class CommandWhitelist : public Command {
+public:
+	CommandWhitelist()
+	{
+		Command::Command();
+
+		SetCmd("whitelist");
+		AddRequiredPermission("whitelist");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() >= 1)
+		{
+			auto cmd = args[0].str;
+
+			if (cmd.compare("on") == 0)
+			{
+				Chat::SendServerMessage("whitelist on");
+				Whitelist::Enabled = true;
+				return;
+			}
+
+			if (cmd.compare("off") == 0)
+			{
+				Chat::SendServerMessage("whitelist off");
+				Whitelist::Enabled = false;
+				return;
+			}
+
+			if (cmd.compare("add") == 0)
+			{
+				if (args[1].isNumber)
+				{
+					auto id = args[1].AsULong();
+
+					std::string userName = std::to_string(id);
+					auto targetPlayers = Server::FindPlayers(userName);
+					if (targetPlayers.size() > 0)
+					{
+						auto targetPlayer = targetPlayers[0];
+						userName = targetPlayer->Username + " (" + userName + ")";
+					}
+
+					if (Whitelist::HasId(id))
+					{
+						Chat::SendServerMessage(userName + " already added to whitelist");
+						return;
+					}
+
+					Whitelist::AddId(id);
+					Chat::SendServerMessage(userName + " added to whitelist");
+
+					return;
+				}
+			}
+
+			if (cmd.compare("remove") == 0)
+			{
+				if (args[1].isNumber)
+				{
+					auto id = args[1].AsULong();
+
+					std::string userName = std::to_string(id);
+					auto targetPlayers = Server::FindPlayers(userName);
+					if (targetPlayers.size() > 0)
+					{
+						auto targetPlayer = targetPlayers[0];
+						userName = targetPlayer->Username + "(" + userName + ")";
+					}
+
+					if (!Whitelist::HasId(id))
+					{
+						Chat::SendServerMessage(userName + " is not on whitelist");
+						return;
+					}
+
+					Whitelist::RemoveId(id);
+					Chat::SendServerMessage(userName + " removed from whitelist");
+
+					return;
+				}
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("on/off");
+		PrintSyntax("add/remove (steamid)");
+	}
+};
+
+
+class CommandConfig : public Command {
+public:
+	CommandConfig()
+	{
+		Command::Command();
+
+		SetCmd("config");
+		AddRequiredPermission("config");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() >= 1)
+		{
+			auto cmd = args[0].str;
+
+			if (cmd.compare("reload") == 0)
+			{
+				Chat::SendServerMessage("reloading config...");
+
+				Config::LoadConfigFile();
+
+				Chat::SendServerMessage("reloading permissions...");
+
+				PermissionGroups::ReloadConfig();
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("reload");
+		Chat::SendServerMessage("* Auto saves every " + std::to_string((int)Server::AutoSaveInterval) + " seconds");
 	}
 };

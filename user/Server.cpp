@@ -14,6 +14,7 @@
 #include "systems/VoteSystem.h"
 #include "systems/Hover.h"
 #include "systems/MapSkip.h"
+#include "systems/Whitelist.h"
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
@@ -22,7 +23,7 @@ int Server::MapId = -1;
 int Server::MapModeId = -1;
 long long Server::LobbyId = 0;
 
-float Server::AutoSaveTimeLeft = 0.0f;
+float Server::AutoSaveTimeElapsed = 0.0f;
 float Server::AutoSaveInterval = 20.0f;
 
 void Server::Init()
@@ -234,10 +235,10 @@ void Server::ProcessAutoSave(float dt)
 {
 	//std::cout << "[Server] autosave " << AutoSaveTimeLeft << std::endl;
 
-	AutoSaveTimeLeft -= dt;
-	if (AutoSaveTimeLeft < 0)
+	AutoSaveTimeElapsed += dt;
+	if (AutoSaveTimeElapsed >= AutoSaveInterval)
 	{
-		AutoSaveTimeLeft = AutoSaveInterval;
+		AutoSaveTimeElapsed = 0;
 		Config::Save();
 	}
 }

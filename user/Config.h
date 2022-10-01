@@ -21,6 +21,7 @@ public:
 
 	static void Save();
 	static void Load();
+	static void LoadConfigFile();
 
 private:
 	static void ProcessV2toV3ConfigLoad();

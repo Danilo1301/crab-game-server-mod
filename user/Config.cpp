@@ -131,17 +131,7 @@ void Config::Load()
 	ProcessVersionChange(versionLine);
 
 	//config.ini
-	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
-
-	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
-	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
-	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
-	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
-	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
-	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
-	Server::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
-
-	std::cout << "[Config] AutoSaveInterval= " << Server::AutoSaveInterval << std::endl;
+	LoadConfigFile();
 
 	//users.json
 	std::cout << "[Config] Loading " << PATH_PLAYERS_FILE << std::endl;
@@ -163,6 +153,21 @@ void Config::Load()
 
 	//permissions
 	PermissionGroups::LoadConfig();
+}
+
+void Config::LoadConfigFile()
+{
+	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
+
+	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
+	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
+	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
+	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
+	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
+	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
+	Server::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
+
+	std::cout << "[Config] AutoSaveInterval= " << Server::AutoSaveInterval << std::endl;
 }
 
 void Config::ProcessV2toV3ConfigLoad()

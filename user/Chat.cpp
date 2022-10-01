@@ -8,7 +8,7 @@ std::vector<Message*> Chat::Messages;
 std::vector<Command*> Chat::Commands;
 
 float Chat::BroadcastHelpInterval = 60.0f;
-float Chat::BroadcastHelpTimeLeft = 0.0f;
+float Chat::BroadcastHelpTimeElapsed = 0.0f;
 bool Chat::ShowHelpMessage = true;
 std::string Chat::HelpMessage = " Type !help for a list of commands";
 
@@ -54,6 +54,8 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandVoteKick());
 	RegisterCommand((Command*)new CommandSkip());
 	RegisterCommand((Command*)new CommandMultiSnowball());
+	RegisterCommand((Command*)new CommandWhitelist());
+	RegisterCommand((Command*)new CommandConfig());
 }
 
 void Chat::Update(float dt)
@@ -79,11 +81,11 @@ void Chat::ProcessBroadcastHelp(float dt)
 {
 	if (!ShowHelpMessage) return;
 
-	BroadcastHelpTimeLeft -= dt;
-	if (BroadcastHelpTimeLeft < 0)
+	BroadcastHelpTimeElapsed += dt;
+	if (BroadcastHelpTimeElapsed >= BroadcastHelpInterval)
 	{
-		BroadcastHelpTimeLeft = BroadcastHelpInterval;
-		Chat::SendServerMessage(" Type !help for a list of commands");
+		BroadcastHelpTimeElapsed = 0;
+		Chat::SendServerMessage(Chat::HelpMessage);
 	}
 }
 
@@ -151,10 +153,11 @@ void Chat::ProcessMessage(Message* message)
 		}
 	}
 
+	std::string newMessageContent = message->Content;
 
-	if (message->FromPlayer && !isOwnerMessage)
+	if (message->FromPlayer)
 	{
-		message->Content = message->FromPlayer->GetChatSuffix() + " " + message->Content;
+		newMessageContent = message->FromPlayer->GetChatSuffix() + " " + message->Content;
 	}
 
 	switch (message->SendType)
@@ -166,7 +169,7 @@ void Chat::ProcessMessage(Message* message)
 		//Mod::AppendLocalChatMessage(2, "[HIDDEN]", message->Content);
 		break;
 	default:
-		Mod::SendChatMessage(message->FromClientId, message->Content);
+		Mod::SendChatMessage(message->FromClientId, newMessageContent);
 
 		if (isOwnerMessage)
 		{

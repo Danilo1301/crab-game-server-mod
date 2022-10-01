@@ -80,3 +80,20 @@ void PermissionGroups::SaveConfig()
 		group->SaveToINIFile(id + ".ini");
 	}
 }
+
+void PermissionGroups::ReloadConfig()
+{
+	std::vector<std::string> keys;
+
+	for (auto pair : Groups)
+	{
+		keys.push_back(pair.first);
+	}
+
+	for (auto key : keys)
+	{
+		RemoveGroup(key);
+	}
+
+	LoadConfig();
+}
