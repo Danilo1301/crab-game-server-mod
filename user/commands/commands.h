@@ -1620,7 +1620,7 @@ public:
 	}
 };
 
-/*
+
 class CommandPunchDamage : public Command {
 public:
 	CommandPunchDamage()
@@ -1635,14 +1635,14 @@ public:
 	{
 		Command::Execute(message);
 
-		auto args = CommandArg::GetArgs(message->m_CmdArgs);
+		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1)
 		{
 			if (args[0].isNumber)
 			{
 				auto weaponId = args[0].AsInt();
-				auto weapon = Server::GetWeaponById(weaponId);
+				auto weapon = GetWeaponById(weaponId);
 
 				if (!weapon)
 				{
@@ -1650,7 +1650,7 @@ public:
 					return;
 				}
 
-				Server::m_PunchDamageId = weaponId;
+				Server::PunchDamageId = weaponId;
 				Chat::SendServerMessage("punch damage set to " + weapon->name + "'s base damage");
 				return;
 			}
@@ -1658,10 +1658,10 @@ public:
 
 		if (args.size() == 1)
 		{
-			if (toLower(message->m_CmdArgs).rfind("off") == 0)
+			if (toLower(message->CmdArgs).rfind("off") == 0)
 			{
 				Chat::SendServerMessage("off");
-				Server::m_PunchDamageId = -1;
+				Server::PunchDamageId = -1;
 				return;
 			}
 		}
@@ -1675,8 +1675,6 @@ public:
 		PrintSyntax("(0-12)");
 	}
 };
-
-*/
 
 
 class CommandLobbyOnly : public Command {

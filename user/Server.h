@@ -14,6 +14,8 @@ public:
 	static float AutoSaveTimeElapsed;
 	static float AutoSaveInterval;
 
+	static int PunchDamageId;
+
 	static void Init();
 
 	//From Template_GameManager_Update  or  Template_ChatBox_Update

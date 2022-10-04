@@ -195,8 +195,3 @@ void Config::ProcessVersionChange(std::string oldVersion)
 	}
 	*/
 }
-
-/*
-Version history
-3.0
-*/

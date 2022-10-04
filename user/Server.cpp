@@ -26,6 +26,8 @@ long long Server::LobbyId = 0;
 float Server::AutoSaveTimeElapsed = 0.0f;
 float Server::AutoSaveInterval = 20.0f;
 
+int Server::PunchDamageId = -1;
+
 void Server::Init()
 {
 	std::cout << "[Server] Init" << std::endl;

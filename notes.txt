@@ -34,14 +34,19 @@
 [X] whitelist
 [X] config command
 [X] config reload
-[ ] ISSUE: interval bug when reloading
+[X] ISSUE: interval bug when reloading
 [X] ISSUE: bug in custom help message
+
+[3.1.1]
+[X] ISSUE: remove the (if true) when checking punch damage BRUH
+[X] add punchdamage command again
 
 [ ] save whitelist in ini file
 
 [ ] rework the way config loads (its a mess)
 [ ] freeze command
 [ ] auto spec
+[ ] auto respawn
 
 [ ] custom language support
 [ ] fix skip during TAG, BOMB mode / also set timer to 1 to skip faster
@@ -54,19 +59,13 @@
 
 ---------------- RELEASE
 
-Edit Mod::m_Version
-Edit Debug Mode
-
-Push commit
+Edit Mod::Version
+Edit patches at Config
+Edit version.json
+PUSH
 
 Edit dll name
-
 Create release on github
-
-Edit version at
-https://studio.youtube.com/video/RYJ-X5zeroM/edit
-
-Edit version.json
 
 Pull
 

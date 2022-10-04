@@ -56,6 +56,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandMultiSnowball());
 	RegisterCommand((Command*)new CommandWhitelist());
 	RegisterCommand((Command*)new CommandConfig());
+	RegisterCommand((Command*)new CommandPunchDamage());
 }
 
 void Chat::Update(float dt)
