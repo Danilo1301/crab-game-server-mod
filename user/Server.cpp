@@ -534,7 +534,7 @@ void Server::RespawnActivePlayerAtPos(long long clientId, Vector3 position)
 		auto player = Server::GetPlayer(clientId);
 		player->IsAlive = true;
 
-		std::cout << "[Server] RespawnActivePlayerAtPos " << player->GetDisplayNameExtra() << std::endl;
+		//std::cout << "[Server] RespawnActivePlayerAtPos " << player->GetDisplayNameExtra() << std::endl;
 	}
 
 	//std::cout << "[Mod] RespawnPlayer clientId=" << clientId << formatVector3_full(position) << std::endl;

@@ -40,6 +40,7 @@
 [3.1.1]
 [X] ISSUE: remove the (if true) when checking punch damage BRUH
 [X] add punchdamage command again
+[X] remove RespawnActivePlayerAtPos
 
 [ ] save whitelist in ini file
 
