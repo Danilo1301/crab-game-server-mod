@@ -7,6 +7,8 @@
 Download at [Releases](https://github.com/Danilo1301/crab-game-server-mod/releases) page
 <br>
 <br>
+(inject on MENU only)
+<br>
 Can be injected using Cheat Engine or Extreme Injector through DLL Injection
 
 <br>
