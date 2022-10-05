@@ -29,17 +29,17 @@ Can be injected using Cheat Engine or Extreme Injector through DLL Injection
 
 ### perm
 * !perm add [group] [perms] - add perms to a group
-    - ex: !perm add default spawn,god,tp
-    - ex: !perm add default spawn
+    - ex: !perm add default respawn,god,tp
+    - ex: !perm add default respawn
 * !perm del [group] [perms] - remove perms from a group
-* !perm setgroup [player] [group] - remove perms from a group
+* !perm setgroup [player] [group] - set players's group
 * !perm list [group] *(page)* - show permissions for a group
-* !perm groups - list all perm groups
+* !perm groups - list all groups
 * !perm creategroup [name]
 * !perm removegroup [name]
 
 <br>
-You can change permissions and inheritance in (Crab Game/server/permissions) <br>
+You can change permissions and inheritance in (Crab Game/server/permissions/) <br>
 Can also be reloaded using !config reload <br>
 Default perm groups: default, mod, admin
 'admin' group has the * permission, which means it has all permissions <br>
@@ -67,7 +67,7 @@ Equip a weapon in your hand (only visible for others)
 
 ### respawn
 Respawn at any time of the game<br>
-BUG: If you type !respawn as the host, the players that already spawned won't be visible for you
+BUG: If you type !respawn as a host and spec (since game start, not died-spec case), the players that already spawned won't be visible for you
 * !respawn
 * !respawn [player]<br>
 
@@ -91,7 +91,7 @@ If someone tries to punch you, they will also be punched
 
 ### punchdamage
 Changes punch base damage<br>
-Set to BOMB during lobby
+Set to BOMB(5) during lobby
 * !punchdamage [weaponId]
 
 ### lobbyonly
@@ -125,8 +125,9 @@ It wont check if player is tagged or not(for example), so it will have bugs in B
 * !skip
 
 ### config
-* !reload - reload config
+Auto saves every 20 seconds (set in config.ini)<br>
 config.ini is located at (Crab Game/server/) folder<br>
+* !reload - reload config
 
 ### mute
 
