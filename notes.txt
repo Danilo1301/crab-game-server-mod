@@ -44,6 +44,7 @@
 
 [3.1.2]
 [X] test if punchdamage changes in lobby (it doesnt do damage since its in lobby)
+[ ] remove punchdamage from lobby, and from README
 [ ] add current damage to !punchdamage command
 
 [ ] save whitelist in ini file
@@ -66,13 +67,15 @@
 
 Edit Mod::Version
 Edit patches at Config
-Edit version.json
+
 PUSH
 
 Edit dll name
 Create release on github
 
-Pull
+Edit version.json on github
+
+PULL
 
 ---------------- INJECTOR
 
