@@ -137,6 +137,8 @@ config.ini is located at (Crab Game/server/) folder<br>
 
 ### ban
 
+### unban
+
 ### multisnowball
 
 ### whitelist

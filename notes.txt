@@ -71,17 +71,20 @@
 
 ---------------- RELEASE
 
+[1]
 Edit Mod::Version
 Edit patches at Config
-
 PUSH
 
+[2]
 Edit dll name
 Create release on github
 
-Edit version.json on github
-
-PULL
+[3]
+Edit version.json
+Edit version notes
+Edit readme if necessary
+PUSH
 
 ---------------- INJECTOR
 
