@@ -92,7 +92,7 @@ If someone tries to punch you, they will also be punched
 ### punchdamage
 Changes punch base damage<br>
 Set to BOMB during lobby
-* !forcefield
+* !punchdamage [weaponId]
 
 ### lobbyonly
 Makes the command work only during lobby
