@@ -1672,7 +1672,7 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("off");
-		PrintSyntax("(0-12)");
+		PrintSyntax("(0-13)");
 
 		auto weaponId = Server::PunchDamageId;
 		if(weaponId == -1)

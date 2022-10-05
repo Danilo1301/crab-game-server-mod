@@ -93,7 +93,7 @@ If someone tries to punch you, they will also be punched
 
 ### punchdamage
 Changes punch base damage<br>
-Set to BOMB(5) during lobby
+Doesn't do damage in lobby<br>
 * !punchdamage [weaponId]
 
 ### lobbyonly
