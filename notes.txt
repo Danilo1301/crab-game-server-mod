@@ -42,6 +42,10 @@
 [X] add punchdamage command again
 [X] remove RespawnActivePlayerAtPos
 
+[3.1.2]
+[X] test if punchdamage changes in lobby (it doesnt do damage since its in lobby)
+[ ] add current damage to !punchdamage command
+
 [ ] save whitelist in ini file
 
 [ ] rework the way config loads (its a mess)

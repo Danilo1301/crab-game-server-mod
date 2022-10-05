@@ -1673,6 +1673,16 @@ public:
 	{
 		PrintSyntax("off");
 		PrintSyntax("(0-12)");
+
+		auto weaponId = Server::PunchDamageId;
+		if(weaponId == -1)
+		{
+			Chat::SendServerMessage("current damage: DEFAULT(-1)");
+		}
+		else {
+			auto weapon = GetWeaponById(weaponId);
+			Chat::SendServerMessage("current damage: " + weapon->name + "(" + std::to_string(weapon->id) + ")");
+		}
 	}
 };
 

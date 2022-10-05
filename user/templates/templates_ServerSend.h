@@ -258,7 +258,8 @@ static void Template_ServerSend_PunchPlayer(uint64_t playerId, uint64_t punchedP
 	}
 
 	//punchdamage
-	auto punchDamageId = Server::IsAtLobby() ? 4 : Server::PunchDamageId;
+	//auto punchDamageId = Server::IsAtLobby() ? 4 : Server::PunchDamageId;
+	auto punchDamageId = Server::PunchDamageId;
 
 	ServerSend_PlayerDamage(playerId, punchedPlayerId, 0, Vector3({ -dir.x, -dir.y, -dir.z }), punchDamageId, NULL);
 
