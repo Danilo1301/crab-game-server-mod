@@ -58,7 +58,6 @@
     <ClCompile Include="user\Config.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\SocketServer.cpp" />
     <ClCompile Include="user\systems\AutoStart.cpp">
       <Filter>user\systems</Filter>
     </ClCompile>
@@ -85,6 +84,9 @@
     </ClCompile>
     <ClCompile Include="user\systems\Whitelist.cpp">
       <Filter>user\systems</Filter>
+    </ClCompile>
+    <ClCompile Include="user\SocketServer.cpp">
+      <Filter>user</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -193,7 +195,6 @@
     <ClInclude Include="user\Config.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\SocketServer.h" />
     <ClInclude Include="user\systems\AutoStart.h">
       <Filter>user\systems</Filter>
     </ClInclude>
@@ -220,6 +221,9 @@
     </ClInclude>
     <ClInclude Include="user\systems\Whitelist.h">
       <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\SocketServer.h">
+      <Filter>user</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -249,6 +253,8 @@
     <None Include="include\json_valueiterator.inl">
       <Filter>json</Filter>
     </None>
+    <None Include="README.md" />
+    <None Include="version.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="notes.txt" />
