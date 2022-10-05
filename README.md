@@ -1,5 +1,7 @@
 # crab-game-server-mod
 
+<br>
+
 ## Download
 
 Download at [Releases](https://github.com/Danilo1301/crab-game-server-mod/releases) page
@@ -7,12 +9,18 @@ Download at [Releases](https://github.com/Danilo1301/crab-game-server-mod/releas
 <br>
 Can be injected using Cheat Engine or Extreme Injector through DLL Injection
 
+<br>
+<br>
+
 ## Commands:
 
 ### [player]
 * by name: Testname123 or test
 * by id: #3 or 3
 * by steamId: 79561199219991380 (don't need to be online)
+* \* - all
+* *a - alive
+* *d - dead
 
 ### help
 * !help - show all commands that you have permission
@@ -117,7 +125,8 @@ It wont check if player is tagged or not(for example), so it will have bugs in B
 * !skip
 
 ### config
-!reload - reload config
+* !reload - reload config
+config.ini is located at (Crab Game/server/) folder<br>
 
 ### mute
 
