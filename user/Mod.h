@@ -31,7 +31,7 @@ public:
 	static bool IsInAnyLobby();
 	static bool IsLobbyOwner();
 
-	static void BanPlayer(long long clientId);
+	static void ModBanPlayer(long long clientId);
 	static void KickPlayer(long long clientId);
 	static void SendWinner(long long clientId, long long money);
 	static void SendLocalInteract(int itemid);

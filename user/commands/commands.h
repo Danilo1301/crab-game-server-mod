@@ -1157,8 +1157,14 @@ public:
 			{
 				if (player->IsLobbyOwner()) continue;
 
-				Mod::BanPlayer(player->ClientId);
-				Chat::SendServerMessage(player->GetDisplayName() + " was banned");
+				if (Server::IsPlayerBanned(player->ClientId))
+				{
+					Chat::SendServerMessage(player->GetDisplayName() + " was already banned");
+					return;
+				}
+
+				Server::BanPlayer(player->ClientId);
+				Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned");
 			}
 
 			return;
@@ -1173,6 +1179,50 @@ public:
 	}
 };
 
+
+class CommandUnban : public Command {
+public:
+	CommandUnban()
+	{
+		Command::Command();
+
+		SetCmd("unban");
+		AddRequiredPermission("unban");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1)
+		{
+			if (args[0].isNumber)
+			{
+				auto steamId = args[0].AsULong();
+
+				if (!Server::IsPlayerBanned(steamId))
+				{
+					Chat::SendServerMessage(std::to_string(steamId) + " is not banned");
+					return;
+				}
+
+				Server::UnbanPlayer(steamId);
+				Chat::SendServerMessage(std::to_string(steamId) + " is now unbanned");
+
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(steamId)");
+	}
+};
 
 class CommandGod : public Command {
 public:

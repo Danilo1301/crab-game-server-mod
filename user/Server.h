@@ -7,6 +7,7 @@
 class Server {
 public:
 	static std::map<long long, Player*> Players;
+	static std::vector<long long> BannedPlayers;
 	static int MapId;
 	static int MapModeId;
 	static long long LobbyId;
@@ -86,5 +87,9 @@ public:
 
 	//From Template_ServerSend_UseItemAll
 	static bool OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int objectId, MethodInfo* method);
+
+	static void BanPlayer(long long steamId);
+	static bool IsPlayerBanned(long long steamId);
+	static void UnbanPlayer(long long steamId);
 
 };

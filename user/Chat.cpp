@@ -36,6 +36,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandMute());
 	RegisterCommand((Command*)new CommandKick());
 	RegisterCommand((Command*)new CommandBan());
+	RegisterCommand((Command*)new CommandUnban());
 	RegisterCommand((Command*)new CommandGod());
 	RegisterCommand((Command*)new CommandVanish());
 	RegisterCommand((Command*)new CommandDownload());

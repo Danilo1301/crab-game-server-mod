@@ -7,7 +7,7 @@
 
 #include "Test.h"
 
-std::string Mod::Version = "3.1.1";
+std::string Mod::Version = "3.2";
 bool Mod::ConsoleMode = false;
 int Mod::UniqueObjectId = 100;
 bool Mod::LoadAllTemplates = false;
@@ -132,9 +132,9 @@ bool Mod::IsLobbyOwner()
 	return GetCurrentLobbyOwnerId() == GetMySteamId();
 }
 
-void Mod::BanPlayer(long long clientId)
+void Mod::ModBanPlayer(long long clientId)
 {
-	std::cout << "[Mod] BanPlayer clientId=" << clientId << std::endl;
+	std::cout << "[Mod] ModBanPlayer clientId=" << clientId << std::endl;
 
 	auto lobbyManager = (*LobbyManager__TypeInfo)->static_fields->Instance;
 

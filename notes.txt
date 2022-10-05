@@ -47,6 +47,12 @@
 [X] remove punchdamage from lobby, and from README
 [X] add current damage to !punchdamage command
 
+[3.2]
+[X] unban
+
+[ ] ban by time
+[ ] save ban data
+
 [ ] save whitelist in ini file
 
 [ ] rework the way config loads (its a mess)

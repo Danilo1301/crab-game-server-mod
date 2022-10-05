@@ -18,6 +18,7 @@
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
+std::vector<long long> Server::BannedPlayers;
 
 int Server::MapId = -1;
 int Server::MapModeId = -1;
@@ -139,6 +140,13 @@ void Server::Update(float dt)
 	Chat::Update(dt);
 
 	ProcessAutoSave(dt);
+
+	//banned players is handled on LobbyManager_OnPlayerJoinLeaveUpdate
+	auto bannedPlayers = (*LobbyManager__TypeInfo)->static_fields->bannedPlayers;
+	if (bannedPlayers)
+	{
+		List_1_System_UInt64__Clear(bannedPlayers, NULL);
+	}
 }
 
 void Server::UpdatePlayersPosition()
@@ -742,4 +750,25 @@ bool Server::OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int obj
 	if (!player) return true;
 
 	return true;
+}
+
+void Server::BanPlayer(long long steamId)
+{
+	if (IsPlayerBanned(steamId)) return;
+
+	BannedPlayers.push_back(steamId);
+
+	Mod::ModBanPlayer(steamId);
+}
+
+bool Server::IsPlayerBanned(long long steamId)
+{
+	return std::find(Server::BannedPlayers.begin(), Server::BannedPlayers.end(), steamId) != Server::BannedPlayers.end();
+}
+
+void Server::UnbanPlayer(long long steamId)
+{
+	if (!IsPlayerBanned(steamId)) return;
+
+	BannedPlayers.erase(std::find(Server::BannedPlayers.begin(), Server::BannedPlayers.end(), steamId));
 }

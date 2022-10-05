@@ -401,10 +401,18 @@ static void Template_LobbyManager_OnPlayerJoinLeaveUpdate(LobbyManager* a, CStea
 
 	long long clientId = b.m_SteamID;
 
+	if (Server::IsPlayerBanned(clientId))
+	{
+		Mod::ModBanPlayer(clientId);
+		return;
+	}
+
 	if (!Whitelist::CanIdJoin(clientId))
 	{
 		Mod::KickPlayer(clientId);
+		return;
 	}
+
 }
 
 static auto HF_LobbyManager_NewLobbySettings = new HookFunction<void, LobbyManager*, MethodInfo*>("LobbyManager::NewLobbySettings");
