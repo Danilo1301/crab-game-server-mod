@@ -85,7 +85,7 @@ static std::string formatStringVector(std::vector<std::string> vector, std::stri
 	for (size_t i = 0; i < vector.size(); i++)
 	{
 		auto s = vector[i];
-		result += s + separator;
+		result += s + (i != vector.size()-1 ? separator : "");
 	}
 
 	return result;

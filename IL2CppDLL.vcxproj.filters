@@ -88,7 +88,7 @@
     <ClCompile Include="user\SocketServer.cpp">
       <Filter>user</Filter>
     </ClCompile>
-    <ClCompile Include="user\systems\AutoMessage.cpp">
+    <ClCompile Include="user\systems\BanSystem.cpp">
       <Filter>user\systems</Filter>
     </ClCompile>
   </ItemGroup>
@@ -228,7 +228,7 @@
     <ClInclude Include="user\SocketServer.h">
       <Filter>user</Filter>
     </ClInclude>
-    <ClInclude Include="user\systems\AutoMessage.h">
+    <ClInclude Include="user\systems\BanSystem.h">
       <Filter>user\systems</Filter>
     </ClInclude>
   </ItemGroup>

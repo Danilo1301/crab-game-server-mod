@@ -5,6 +5,7 @@
 #include "Server.h"
 #include "Mod.h"
 #include "Chat.h"
+#include "systems/BanSystem.h"
 #include "INIRead.h"
 
 std::string Config::PATH_SERVER_FOLDER = "/server/";
@@ -90,13 +91,16 @@ void Config::Load()
 {
 	std::cout << "[Config] Load" << std::endl;
 
-	ProcessV2toV3ConfigLoad();
-
 	if (!Exists(GetPath(PATH_SERVER_FOLDER)))
 	{
 		std::cout << "[Config] Config not found" << std::endl;
+
+		CreateFirstConfig();
+
 		return;
 	}
+
+	ProcessV2toV3ConfigLoad();
 
 	//version
 	std::string versionLine;
@@ -113,6 +117,13 @@ void Config::Load()
 	
 	//permissions
 	PermissionGroups::LoadConfig();
+}
+
+void Config::CreateFirstConfig()
+{
+	PermissionGroups::CheckDefaultGroups();
+
+	Save();
 }
 
 void Config::Reload()
@@ -135,7 +146,7 @@ void Config::ProcessAutoSave(float dt)
 
 void Config::SaveConfigFile()
 {
-	std::cout << "[Config] Saving " << PATH_CONFIG_FILE << std::endl;
+	std::cout << "[Config] Saving config.ini" << std::endl;
 
 	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
 	INIWrite::AddLine("[Server]");
@@ -152,7 +163,7 @@ void Config::SaveConfigFile()
 
 void Config::LoadConfigFile()
 {
-	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
+	std::cout << "[Config] Loading config.ini" << std::endl;
 
 	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
 	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
@@ -167,7 +178,7 @@ void Config::LoadConfigFile()
 
 void Config::SavePlayers()
 {
-	std::cout << "[Config] Saving " << PATH_PLAYERS_FILE << std::endl;
+	std::cout << "[Config] Saving players.json" << std::endl;
 
 	Json::Value playersValue = Json::objectValue;
 	for (auto pair : Server::Players)
@@ -179,6 +190,15 @@ void Config::SavePlayers()
 		playerValue["username"] = player->Username;
 		playerValue["group"] = player->PermissionGroupId;
 
+		if (BanSystem::IsPlayerBanned(player->ClientId))
+		{
+			auto banInfo = BanSystem::BannedPlayers[player->ClientId];
+
+			playerValue["banInfo"] = Json::objectValue;
+			playerValue["banInfo"]["reason"] = banInfo.reason;
+			playerValue["banInfo"]["unban_at"] = (int)banInfo.unbanTime;
+		}
+
 		playersValue[std::to_string(key)] = playerValue;
 	}
 
@@ -187,7 +207,7 @@ void Config::SavePlayers()
 
 void Config::LoadPlayers()
 {
-	std::cout << "[Config] Loading " << PATH_PLAYERS_FILE << std::endl;
+	std::cout << "[Config] Loading players.json" << std::endl;
 
 	Json::Value usersValue = ReadFile(GetPath(PATH_PLAYERS_FILE));
 	for (auto key : usersValue.getMemberNames())
@@ -200,6 +220,14 @@ void Config::LoadPlayers()
 
 		player->Username = playerValue["username"].asString();
 		player->PermissionGroupId = playerValue["group"].asString();
+
+		if (!playerValue["banInfo"].isNull())
+		{
+			std::string reason = playerValue["banInfo"]["reason"].asString();
+			int time = playerValue["banInfo"]["time"].asInt();
+
+			BanSystem::BannedPlayers[clientId] = { reason, time };
+		}
 
 		if (!Server::HasPlayer(clientId)) Server::AddPlayer(player);
 	}

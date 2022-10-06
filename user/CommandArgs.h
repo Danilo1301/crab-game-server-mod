@@ -65,4 +65,31 @@ public:
 		}
 		return cmdArgs;
 	}
+
+	static std::string GetArgText(std::vector<CommandArg> args, int startIndex)
+	{
+		std::vector<std::string> strings;
+		int i = 0;
+		for (auto a : args)
+		{
+			if (i >= startIndex)
+			{
+				strings.push_back(a.AsString());
+			}
+			i++;
+		}
+		return formatStringVector(strings, " ");
+	}
 };
+
+
+/*
+class CommandArgGroup {
+	std::vector<std::> Args;
+
+	CommandArgGroup(std::vector<CommandArg> args)
+	{
+
+	}
+};
+*/

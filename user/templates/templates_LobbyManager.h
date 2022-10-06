@@ -4,6 +4,7 @@
 #include "Injector.h"
 #include "Server.h"
 #include "systems/Whitelist.h"
+#include "systems/BanSystem.h"
 
 /*
 INPUT
@@ -393,15 +394,22 @@ static void Template_LobbyManager_SetLobby(LobbyManager* a, CSteamID b, MethodIn
 static auto HF_LobbyManager_OnPlayerJoinLeaveUpdate = new HookFunction<void, LobbyManager*, CSteamID, bool, MethodInfo*>("LobbyManager::OnPlayerJoinLeaveUpdate");
 static void Template_LobbyManager_OnPlayerJoinLeaveUpdate(LobbyManager* a, CSteamID b, bool c, MethodInfo* method)
 {
-	std::cout << "LobbyManager::OnPlayerJoinLeaveUpdate" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
+	//std::cout << "LobbyManager::OnPlayerJoinLeaveUpdate" << " a=" << a << ", " << " b=" << b << ", " << " c=" << c << ", " << std::endl;
 
 	HF_LobbyManager_OnPlayerJoinLeaveUpdate->original(a, b, c, method);
 
-	if (!c) return;
-
 	long long clientId = b.m_SteamID;
 
-	if (Server::IsPlayerBanned(clientId))
+	if (c)
+	{
+		std::cout << "[LobbyManager] Player join: " << c << std::endl;
+	}
+	else {
+		std::cout << "[LobbyManager] Player leave: " << c << std::endl;
+		return;
+	}
+
+	if (BanSystem::IsPlayerBanned(clientId))
 	{
 		Mod::ModBanPlayer(clientId);
 		return;

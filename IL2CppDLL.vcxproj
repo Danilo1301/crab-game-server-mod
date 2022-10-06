@@ -68,8 +68,8 @@
     <ClCompile Include="user\Player.cpp" />
     <ClCompile Include="user\Server.cpp" />
     <ClCompile Include="user\SocketServer.cpp" />
-    <ClCompile Include="user\systems\AutoMessage.cpp" />
     <ClCompile Include="user\systems\AutoStart.cpp" />
+    <ClCompile Include="user\systems\BanSystem.cpp" />
     <ClCompile Include="user\systems\EquipItem.cpp" />
     <ClCompile Include="user\systems\Fly.cpp" />
     <ClCompile Include="user\systems\Hover.cpp" />
@@ -108,8 +108,8 @@
     <ClInclude Include="user\Player.h" />
     <ClInclude Include="user\Server.h" />
     <ClInclude Include="user\SocketServer.h" />
-    <ClInclude Include="user\systems\AutoMessage.h" />
     <ClInclude Include="user\systems\AutoStart.h" />
+    <ClInclude Include="user\systems\BanSystem.h" />
     <ClInclude Include="user\systems\EquipItem.h" />
     <ClInclude Include="user\systems\Fly.h" />
     <ClInclude Include="user\systems\Hover.h" />

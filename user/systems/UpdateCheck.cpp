@@ -12,6 +12,11 @@ bool sentUpdateCheck = false;
 
 bool UpdateCheck::Check()
 {
+	if (Mod::ConsoleMode)
+	{
+		return true;
+	}
+
 	if (!HasCheckedUpdates) {
 		if (!SocketServer::m_Connected && !SocketServer::m_Connecting) {
 

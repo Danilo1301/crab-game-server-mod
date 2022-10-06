@@ -13,6 +13,7 @@
 #include "systems/AutoStart.h"
 #include "systems/ModeDeathMatch.h"
 #include "systems/VoteSystem.h"
+#include "systems/BanSystem.h"
 #include "systems/MapSkip.h"
 #include "systems/Whitelist.h"
 
@@ -945,6 +946,12 @@ public:
 					"IsAlive=" + (player->IsAlive ? "TRUE" : "FALSE") + ", " +
 					"Position=" + player->Position.format_3()
 				);
+
+				if (BanSystem::IsPlayerBanned(player->ClientId))
+				{
+					auto banInfo = BanSystem::BannedPlayers[player->ClientId];
+					Chat::SendServerMessage("BanReason=" + banInfo.reason + ", UnbanTime=" + std::to_string((int)BanSystem::GetUnbanTime(player->ClientId)) + "s");
+				}
 			}
 			return;
 		}
@@ -1143,31 +1150,35 @@ public:
 
 		auto args = CommandArg::GetArgs(message->CmdArgs);
 
-		if (args.size() == 1)
+		if (args.size() >= 3)
 		{
-			auto players = Server::FindPlayers(args[0].str);
-
-			if (players.size() == 0)
+			if (args[1].isNumber)
 			{
-				PlayerNotFound();
-				return;
-			}
+				auto players = Server::FindPlayers(args[0].str);
 
-			for (auto player : players)
-			{
-				if (player->IsLobbyOwner()) continue;
-
-				if (Server::IsPlayerBanned(player->ClientId))
+				if (players.size() == 0)
 				{
-					Chat::SendServerMessage(player->GetDisplayName() + " was already banned");
+					PlayerNotFound();
 					return;
 				}
 
-				Server::BanPlayer(player->ClientId);
-				Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned");
-			}
+				auto hours = args[1].AsFloat();
+				auto reason = CommandArg::GetArgText(args, 2);
 
-			return;
+				for (auto player : players)
+				{
+					if (player->IsLobbyOwner())
+					{
+						std::cout << "Ignoring player owner" << std::endl;
+						continue;
+					}
+
+					BanSystem::BanPlayer(player->ClientId, reason, hours);
+					Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned. Reason: " + reason);
+				}
+
+				return;
+			}
 		}
 
 		WrongSyntax();
@@ -1175,7 +1186,7 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("(player)");
+		PrintSyntax("(player) (hours) (reason)");
 	}
 };
 
@@ -1202,13 +1213,13 @@ public:
 			{
 				auto steamId = args[0].AsULong();
 
-				if (!Server::IsPlayerBanned(steamId))
+				if (!BanSystem::IsPlayerBanned(steamId))
 				{
 					Chat::SendServerMessage(std::to_string(steamId) + " is not banned");
 					return;
 				}
 
-				Server::UnbanPlayer(steamId);
+				BanSystem::UnbanPlayer(steamId);
 				Chat::SendServerMessage(std::to_string(steamId) + " is now unbanned");
 
 				return;

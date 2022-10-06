@@ -16,11 +16,7 @@ void Mod::Init()
 {
 	std::cout << "[Mod] Init v" << Version << std::endl;
 
-	if (ConsoleMode)
-	{
-		InitConsole();
-	}
-	else
+	if (!ConsoleMode)
 	{
 		Injector::Init();
 		Inject_Templates();
@@ -31,6 +27,8 @@ void Mod::Init()
 	}
 
 	Server::Init();
+
+	if(ConsoleMode) InitConsole();
 }
 
 void Mod::InitConsole()
@@ -52,7 +50,7 @@ void Mod::InitConsole()
 
 void Mod::AppendLocalChatMessage(long long fromClient, std::string username, std::string content)
 {
-	if (!*ChatBox__TypeInfo) return;
+	if (ConsoleMode) return;
 
 	auto chatBox = (*ChatBox__TypeInfo)->static_fields->Instance;
 
@@ -103,6 +101,8 @@ void Mod::SetCurrentGameModeTime(float time)
 
 long long Mod::GetMySteamId()
 {
+	if (Mod::ConsoleMode) return 123456789;
+
 	auto steamManager_c = (*u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__TypeInfo);
 	return steamManager_c->static_fields->Instance->fields._u109Du109Au10A3u10A6u10A0u10A8u1099u109Au109Du10A7u1099_k__BackingField.m_SteamID;
 }
@@ -114,6 +114,8 @@ and .originalLobbyOwnerId returns 256  ??
 */
 long long Mod::GetCurrentLobbyOwnerId()
 {
+	if (Mod::ConsoleMode) return Mod::GetMySteamId();
+
 	auto steamManager_c = (*u10A0u10A4u10A8u10A1u10A8u109Au10A8u10A1u109Eu1099u109F__TypeInfo);
 
 	if (!steamManager_c) return 0;

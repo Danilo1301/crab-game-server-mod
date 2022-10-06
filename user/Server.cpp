@@ -18,7 +18,6 @@
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
-std::vector<long long> Server::BannedPlayers;
 
 int Server::MapId = -1;
 int Server::MapModeId = -1;
@@ -31,8 +30,6 @@ void Server::Init()
 	std::cout << "[Server] Init" << std::endl;
 
 	Config::Load();
-	PermissionGroups::CheckDefaultGroups();
-	Config::Save();
 
 	Chat::Init();
 }
@@ -55,6 +52,7 @@ void Server::Update(float dt)
 	AutoStart::Update(dt);
 	Fly::Update(dt);
 	Hover::Update(dt);
+	BanSystem::Update(dt);
 
 	//ProcessSpawnRequest
 	for (auto pair : Players)
@@ -88,9 +86,9 @@ void Server::Update(float dt)
 	Config::ProcessAutoSave(dt);
 
 	//banned players is handled on LobbyManager_OnPlayerJoinLeaveUpdate
-	auto bannedPlayers = (*LobbyManager__TypeInfo)->static_fields->bannedPlayers;
-	if (bannedPlayers)
+	if (!Mod::ConsoleMode)
 	{
+		auto bannedPlayers = (*LobbyManager__TypeInfo)->static_fields->bannedPlayers;
 		List_1_System_UInt64__Clear(bannedPlayers, NULL);
 	}
 }
@@ -105,7 +103,8 @@ void Server::UpdatePlayersPosition()
 	}
 	*/
 
-	if (!*GameManager__TypeInfo) return;
+	if (Mod::ConsoleMode) return;
+	//if (!*GameManager__TypeInfo) return;
 
 	auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
 
@@ -475,6 +474,7 @@ void Server::RespawnActivePlayerAtPos(long long clientId, Vector3 position)
 
 		auto player = Server::GetPlayer(clientId);
 		player->IsAlive = true;
+		player->Position = position;
 
 		//std::cout << "[Server] RespawnActivePlayerAtPos " << player->GetDisplayNameExtra() << std::endl;
 	}
@@ -671,7 +671,7 @@ bool Server::IsAtLobby()
 
 Player* Server::GetLobbyOwner()
 {
-	for (auto player : GetOnlinePlayers())
+	for (auto player : GetPlayers())
 	{
 		if (player->Id == 1) return player;
 	}
@@ -684,25 +684,4 @@ bool Server::OnTryUseUseItemAll(Player* player, int itemId, Vector3 dir, int obj
 	if (!player) return true;
 
 	return true;
-}
-
-void Server::BanPlayer(long long steamId)
-{
-	if (IsPlayerBanned(steamId)) return;
-
-	BannedPlayers.push_back(steamId);
-
-	Mod::ModBanPlayer(steamId);
-}
-
-bool Server::IsPlayerBanned(long long steamId)
-{
-	return std::find(Server::BannedPlayers.begin(), Server::BannedPlayers.end(), steamId) != Server::BannedPlayers.end();
-}
-
-void Server::UnbanPlayer(long long steamId)
-{
-	if (!IsPlayerBanned(steamId)) return;
-
-	BannedPlayers.erase(std::find(Server::BannedPlayers.begin(), Server::BannedPlayers.end(), steamId));
 }

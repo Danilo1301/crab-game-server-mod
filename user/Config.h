@@ -25,6 +25,7 @@ public:
 
 	static void Save();
 	static void Load();
+	static void CreateFirstConfig();
 	static void Reload();
 	static void ProcessAutoSave(float dt);
 	static void SaveConfigFile();
