@@ -50,12 +50,18 @@
 [3.2]
 [X] unban
 
+[3.3]
 [ ] ban by time
 [ ] save ban data
-
 [ ] save whitelist in ini file
+[ ] custom messages (multi line support)
+[ ] replace help message with custom messages
+[X] data folder
+[ ] add patches
 
-[ ] rework the way config loads (its a mess)
+[ ] change join/leave event to onlobbyjoinleaveupdate
+
+[ ] make a better reload / save / rework the way config loads (its a mess)
 [ ] freeze command
 [ ] auto spec
 [ ] auto respawn

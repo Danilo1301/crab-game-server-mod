@@ -8,12 +8,16 @@
 #include "INIRead.h"
 
 std::string Config::PATH_SERVER_FOLDER = "/server/";
+std::string Config::PATH_DATA_FOLDER = PATH_SERVER_FOLDER + "/data/";
 std::string Config::PATH_PERMISSIONS_FOLDER = PATH_SERVER_FOLDER + "/permissions/";
 std::string Config::PATH_PERMISSION_GROUPS_FOLDER = PATH_PERMISSIONS_FOLDER + "/groups/";
 
 std::string Config::PATH_CONFIG_FILE = PATH_SERVER_FOLDER + "config.ini";
-std::string Config::PATH_PLAYERS_FILE = PATH_SERVER_FOLDER + "players.json";
+std::string Config::PATH_PLAYERS_FILE = PATH_DATA_FOLDER + "players.json";
 std::string Config::PATH_VERSION_FILE = PATH_SERVER_FOLDER + "version";
+
+float Config::AutoSaveTimeElapsed = 0.0f;
+float Config::AutoSaveInterval = 20.0f;
 
 bool Config::Exists(std::string path)
 {
@@ -65,9 +69,7 @@ void Config::Save()
 {
 	std::cout << "[Config] Save" << std::endl;
 
-	CreatePath(GetPath(PATH_SERVER_FOLDER));
-	CreatePath(GetPath(PATH_PERMISSIONS_FOLDER));
-	CreatePath(GetPath(PATH_PERMISSION_GROUPS_FOLDER));
+	Config::CreatePaths();
 
 	//version
 	std::ofstream versionFile(GetPath(PATH_VERSION_FILE));
@@ -75,37 +77,10 @@ void Config::Save()
 	versionFile.close();
 
 	//config.ini
-	std::cout << "[Config] Saving " << PATH_CONFIG_FILE << std::endl;
+	SaveConfigFile();
 
-	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
-	INIWrite::AddLine("[Server]");
-	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
-	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
-	INIWrite::AddBool("help_message_show", Chat::ShowHelpMessage);
-	INIWrite::AddString("help_message", Chat::HelpMessage);
-	INIWrite::AddFloat("help_message_interval", Chat::BroadcastHelpInterval);
-	INIWrite::AddBool("command_show_help_on_invalid_syntax", Command::AutoShowHelp);
-	INIWrite::AddFloat("auto_save_interval", Server::AutoSaveInterval);
-
-	INIWrite::CloseINIFile();
-
-	//players.json
-	std::cout << "[Config] Saving " << PATH_PLAYERS_FILE << std::endl;
-
-	Json::Value playersValue = Json::objectValue;
-	for (auto pair : Server::Players)
-	{
-		auto key = pair.first;
-		auto player = pair.second;
-
-		Json::Value playerValue;
-		playerValue["username"] = player->Username;
-		playerValue["group"] = player->PermissionGroupId;
-
-		playersValue[std::to_string(key)] = playerValue;
-	}
-
-	WriteToFile(GetPath(PATH_PLAYERS_FILE), playersValue);
+	//players
+	SavePlayers();
 
 	//permissions
 	PermissionGroups::SaveConfig();
@@ -133,7 +108,85 @@ void Config::Load()
 	//config.ini
 	LoadConfigFile();
 
-	//users.json
+	//players
+	LoadPlayers();
+	
+	//permissions
+	PermissionGroups::LoadConfig();
+}
+
+void Config::Reload()
+{
+	LoadConfigFile();
+	LoadPlayers();
+	PermissionGroups::ReloadConfig();
+}
+
+void Config::ProcessAutoSave(float dt)
+{
+	AutoSaveTimeElapsed += dt;
+	if (AutoSaveTimeElapsed >= AutoSaveInterval)
+	{
+		AutoSaveTimeElapsed = 0;
+		
+		SavePlayers();
+	}
+}
+
+void Config::SaveConfigFile()
+{
+	std::cout << "[Config] Saving " << PATH_CONFIG_FILE << std::endl;
+
+	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
+	INIWrite::AddLine("[Server]");
+	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
+	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
+	INIWrite::AddBool("help_message_show", Chat::ShowHelpMessage);
+	INIWrite::AddString("help_message", Chat::HelpMessage);
+	INIWrite::AddFloat("help_message_interval", Chat::BroadcastHelpInterval);
+	INIWrite::AddBool("command_show_help_on_invalid_syntax", Command::AutoShowHelp);
+	INIWrite::AddFloat("auto_save_interval", Config::AutoSaveInterval);
+
+	INIWrite::CloseINIFile();
+}
+
+void Config::LoadConfigFile()
+{
+	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
+
+	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
+	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
+	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
+	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
+	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
+	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
+	Config::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
+
+	std::cout << "[Config] AutoSaveInterval= " << Config::AutoSaveInterval << std::endl;
+}
+
+void Config::SavePlayers()
+{
+	std::cout << "[Config] Saving " << PATH_PLAYERS_FILE << std::endl;
+
+	Json::Value playersValue = Json::objectValue;
+	for (auto pair : Server::Players)
+	{
+		auto key = pair.first;
+		auto player = pair.second;
+
+		Json::Value playerValue;
+		playerValue["username"] = player->Username;
+		playerValue["group"] = player->PermissionGroupId;
+
+		playersValue[std::to_string(key)] = playerValue;
+	}
+
+	WriteToFile(GetPath(PATH_PLAYERS_FILE), playersValue);
+}
+
+void Config::LoadPlayers()
+{
 	std::cout << "[Config] Loading " << PATH_PLAYERS_FILE << std::endl;
 
 	Json::Value usersValue = ReadFile(GetPath(PATH_PLAYERS_FILE));
@@ -150,24 +203,6 @@ void Config::Load()
 
 		if (!Server::HasPlayer(clientId)) Server::AddPlayer(player);
 	}
-
-	//permissions
-	PermissionGroups::LoadConfig();
-}
-
-void Config::LoadConfigFile()
-{
-	std::cout << "[Config] Loading " << PATH_CONFIG_FILE << std::endl;
-
-	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
-	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
-	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
-	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
-	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
-	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
-	Server::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
-
-	std::cout << "[Config] AutoSaveInterval= " << Server::AutoSaveInterval << std::endl;
 }
 
 void Config::ProcessV2toV3ConfigLoad()
@@ -185,6 +220,22 @@ void Config::ProcessVersionChange(std::string oldVersion)
 {
 	std::cout << "[Config] Updating from " << oldVersion << " to " << Mod::Version << std::endl;
 
+	if (oldVersion == "3.2")
+	{
+		std::cout << "Applying patch 3.3" << std::endl;
+
+		CreatePaths();
+
+		std::cout << "Moving players" << std::endl;
+
+		std::experimental::filesystem::rename(
+			GetPath(PATH_SERVER_FOLDER + "players.json"),
+			GetPath(PATH_SERVER_FOLDER + "data/players.json")
+		);
+
+		oldVersion = "3.3";
+	}
+
 	/*
 	* EXAMPLE PATCH
 	* 
@@ -193,5 +244,40 @@ void Config::ProcessVersionChange(std::string oldVersion)
 		std::cout << "Applying test patch 3.1" << std::endl;
 		oldVersion = "3.1";
 	}
+
+	test patch
+	and test from fresh install
 	*/
+}
+
+/*
+void Config::CreateBroadcastMessagesFile()
+{
+	auto path = GetPath(Config::PATH_SERVER_FOLDER) + "broadcast_messages.ini";
+
+	if (Exists(path)) return;
+
+	std::cout << "[Config] CreateBroadcastMessagesFile" << std::endl;
+
+	INIWrite::CreateINIFile(path);
+	INIWrite::AddLine("[Messages]");
+	INIWrite::AddLine("Type help for a list of commands");
+	INIWrite::AddLine("");
+	INIWrite::AddLine("[Config]");
+	INIWrite::AddLine("send_messages_interval = 60");
+	INIWrite::AddLine("");
+	INIWrite::AddLine("#");
+	INIWrite::AddLine("# Use | to add a new line. Example:");
+	INIWrite::AddLine("# First line|Second line|Third line");
+	INIWrite::AddLine("#");
+	INIWrite::CloseINIFile();
+}
+*/
+
+void Config::CreatePaths()
+{
+	CreatePath(GetPath(PATH_SERVER_FOLDER));
+	CreatePath(GetPath(PATH_DATA_FOLDER));
+	CreatePath(GetPath(PATH_PERMISSIONS_FOLDER));
+	CreatePath(GetPath(PATH_PERMISSION_GROUPS_FOLDER));
 }

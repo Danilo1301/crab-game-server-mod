@@ -279,8 +279,8 @@ public:
 		if (test.compare("timer") == 0)
 		{
 			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeElapsed));
-			Chat::SendServerMessage("save: " + std::to_string(Server::AutoSaveTimeElapsed));
-			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart));
+			Chat::SendServerMessage("save: " + std::to_string(Config::AutoSaveTimeElapsed));
+			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart - 0.001));
 			return;
 		}
 
@@ -2227,14 +2227,8 @@ public:
 
 			if (cmd.compare("reload") == 0)
 			{
-				Chat::SendServerMessage("reloading config...");
-
-				Config::LoadConfigFile();
-
-				Chat::SendServerMessage("reloading permissions...");
-
-				PermissionGroups::ReloadConfig();
-
+				Config::Reload();
+				Chat::SendServerMessage("config reloaded");
 				return;
 			}
 		}
@@ -2245,6 +2239,6 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("reload");
-		Chat::SendServerMessage("* Auto saves every " + std::to_string((int)Server::AutoSaveInterval) + " seconds");
+		Chat::SendServerMessage("* Auto saves every " + std::to_string((int)Config::AutoSaveInterval) + " seconds");
 	}
 };

@@ -18,4 +18,6 @@ public:
 	static void LoadConfig();
 	static void SaveConfig();
 	static void ReloadConfig();
+
+	static void CheckDefaultGroups();
 };

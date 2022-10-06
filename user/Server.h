@@ -12,9 +12,6 @@ public:
 	static int MapModeId;
 	static long long LobbyId;
 
-	static float AutoSaveTimeElapsed;
-	static float AutoSaveInterval;
-
 	static int PunchDamageId;
 
 	static void Init();
@@ -23,7 +20,6 @@ public:
 	static void Update(float dt); 
 
 	static void UpdatePlayersPosition();
-	static void ProcessAutoSave(float dt); 
 
 	static bool HasPlayer(long long clientId);
 	static Player* GetPlayer(long long clientId);

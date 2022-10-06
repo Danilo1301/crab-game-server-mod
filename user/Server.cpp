@@ -24,9 +24,6 @@ int Server::MapId = -1;
 int Server::MapModeId = -1;
 long long Server::LobbyId = 0;
 
-float Server::AutoSaveTimeElapsed = 0.0f;
-float Server::AutoSaveInterval = 20.0f;
-
 int Server::PunchDamageId = -1;
 
 void Server::Init()
@@ -34,58 +31,7 @@ void Server::Init()
 	std::cout << "[Server] Init" << std::endl;
 
 	Config::Load();
-
-	if (!PermissionGroups::HasGroup("default"))
-	{
-		auto permissionGroup = PermissionGroups::AddGroup("default");
-		permissionGroup->Name = "Default";
-		permissionGroup->AddPermission("help");
-		permissionGroup->AddPermission("ahelp");
-		permissionGroup->AddPermission("w");
-		permissionGroup->AddPermission("playerinfo");
-		permissionGroup->AddPermission("tp");
-		permissionGroup->AddPermission("kill");
-		permissionGroup->AddPermission("respawn");
-		permissionGroup->AddPermission("autorespawn");
-		permissionGroup->AddPermission("hover");
-		permissionGroup->AddPermission("jumppunch");
-		permissionGroup->AddPermission("superpunch");
-		permissionGroup->AddPermission("forcefield");
-		permissionGroup->AddPermission("snowball2");
-		permissionGroup->AddPermission("vote");
-		permissionGroup->AddPermission("votekick");
-		permissionGroup->AddPermission("skip");
-		for (auto weapon : WeaponList) permissionGroup->AddPermission(toLower(weapon.name));
-	}
-
-	if (!PermissionGroups::HasGroup("mod"))
-	{
-		auto permissionGroup = PermissionGroups::AddGroup("mod");
-		permissionGroup->Name = "Mod";
-		permissionGroup->InheritsFromGroup = "default";
-		permissionGroup->AddPermission("kick");
-		permissionGroup->AddPermission("ban");
-		permissionGroup->AddPermission("bc");
-		permissionGroup->AddPermission("w.others");
-		permissionGroup->AddPermission("respawn.others");
-		permissionGroup->AddPermission("tp.others");
-		permissionGroup->AddPermission("tp.others");
-		permissionGroup->AddPermission("god");
-		permissionGroup->AddPermission("god.others");
-		permissionGroup->AddPermission("time");
-		permissionGroup->AddPermission("r");
-		permissionGroup->AddPermission("mute");
-		permissionGroup->AddPermission("lobbyonly");
-		permissionGroup->AddPermission("start");
-	}
-
-	if (!PermissionGroups::HasGroup("admin"))
-	{
-		auto permissionGroup = PermissionGroups::AddGroup("admin");
-		permissionGroup->Name = "Admin";
-		permissionGroup->AddPermission("*");
-	}
-
+	PermissionGroups::CheckDefaultGroups();
 	Config::Save();
 
 	Chat::Init();
@@ -139,7 +85,7 @@ void Server::Update(float dt)
 
 	Chat::Update(dt);
 
-	ProcessAutoSave(dt);
+	Config::ProcessAutoSave(dt);
 
 	//banned players is handled on LobbyManager_OnPlayerJoinLeaveUpdate
 	auto bannedPlayers = (*LobbyManager__TypeInfo)->static_fields->bannedPlayers;
@@ -241,18 +187,6 @@ void Server::UpdatePlayersPosition()
 	}
 }
 
-void Server::ProcessAutoSave(float dt)
-{
-	//std::cout << "[Server] autosave " << AutoSaveTimeLeft << std::endl;
-
-	AutoSaveTimeElapsed += dt;
-	if (AutoSaveTimeElapsed >= AutoSaveInterval)
-	{
-		AutoSaveTimeElapsed = 0;
-		Config::Save();
-	}
-}
-
 bool Server::HasPlayer(long long clientId)
 {
 	return Players.find(clientId) != Players.end();
@@ -342,7 +276,7 @@ void Server::OnPlayerFirstJoin(Player* player)
 	//if (player->IsLobbyOwner()) player->PermissionGroupId = "admin";
 	//lobby owner hasnt been updated yet :/
 
-	Config::Save();
+	Config::SavePlayers();
 }
 
 void Server::OnPlayerJoin(Player* player)

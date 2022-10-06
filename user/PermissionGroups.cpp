@@ -2,6 +2,7 @@
 #include "PermissionGroups.h"
 
 #include "Config.h"
+#include "Weapon.h"
 
 std::map<std::string, PermissionGroup*> PermissionGroups::Groups;
 
@@ -96,4 +97,57 @@ void PermissionGroups::ReloadConfig()
 	}
 
 	LoadConfig();
+}
+
+void PermissionGroups::CheckDefaultGroups()
+{
+	if (!HasGroup("default"))
+	{
+		auto permissionGroup = AddGroup("default");
+		permissionGroup->Name = "Default";
+		permissionGroup->AddPermission("help");
+		permissionGroup->AddPermission("ahelp");
+		permissionGroup->AddPermission("w");
+		permissionGroup->AddPermission("playerinfo");
+		permissionGroup->AddPermission("tp");
+		permissionGroup->AddPermission("kill");
+		permissionGroup->AddPermission("respawn");
+		permissionGroup->AddPermission("autorespawn");
+		permissionGroup->AddPermission("hover");
+		permissionGroup->AddPermission("jumppunch");
+		permissionGroup->AddPermission("superpunch");
+		permissionGroup->AddPermission("forcefield");
+		permissionGroup->AddPermission("snowball2");
+		permissionGroup->AddPermission("vote");
+		permissionGroup->AddPermission("votekick");
+		for (auto weapon : WeaponList) permissionGroup->AddPermission(toLower(weapon.name));
+	}
+
+	if (!HasGroup("mod"))
+	{
+		auto permissionGroup = AddGroup("mod");
+		permissionGroup->Name = "Mod";
+		permissionGroup->InheritsFromGroup = "default";
+		permissionGroup->AddPermission("kick");
+		permissionGroup->AddPermission("ban");
+		permissionGroup->AddPermission("bc");
+		permissionGroup->AddPermission("w.others");
+		permissionGroup->AddPermission("respawn.others");
+		permissionGroup->AddPermission("tp.others");
+		permissionGroup->AddPermission("tp.others");
+		permissionGroup->AddPermission("god");
+		permissionGroup->AddPermission("god.others");
+		permissionGroup->AddPermission("time");
+		permissionGroup->AddPermission("r");
+		permissionGroup->AddPermission("mute");
+		permissionGroup->AddPermission("lobbyonly");
+		permissionGroup->AddPermission("start");
+	}
+
+	if (!HasGroup("admin"))
+	{
+		auto permissionGroup = AddGroup("admin");
+		permissionGroup->Name = "Admin";
+		permissionGroup->AddPermission("*");
+	}
 }
