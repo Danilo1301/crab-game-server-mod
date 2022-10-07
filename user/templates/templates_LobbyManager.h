@@ -402,10 +402,10 @@ static void Template_LobbyManager_OnPlayerJoinLeaveUpdate(LobbyManager* a, CStea
 
 	if (c)
 	{
-		std::cout << "[LobbyManager] Player join: " << c << std::endl;
+		std::cout << "[LobbyManager] Player join: " << clientId << std::endl;
 	}
 	else {
-		std::cout << "[LobbyManager] Player leave: " << c << std::endl;
+		std::cout << "[LobbyManager] Player leave: " << clientId << std::endl;
 		return;
 	}
 
