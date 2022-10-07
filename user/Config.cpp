@@ -5,8 +5,9 @@
 #include "Server.h"
 #include "Mod.h"
 #include "Chat.h"
-#include "systems/BanSystem.h"
 #include "INIRead.h"
+#include "systems/BanSystem.h"
+#include "systems/AutoMessages.h"
 
 std::string Config::PATH_SERVER_FOLDER = "/server/";
 std::string Config::PATH_DATA_FOLDER = PATH_SERVER_FOLDER + "/data/";
@@ -70,8 +71,6 @@ void Config::Save()
 {
 	std::cout << "[Config] Save" << std::endl;
 
-	Config::CreatePaths();
-
 	//version
 	std::ofstream versionFile(GetPath(PATH_VERSION_FILE));
 	versionFile << Mod::Version << std::endl;
@@ -91,39 +90,43 @@ void Config::Load()
 {
 	std::cout << "[Config] Load" << std::endl;
 
-	if (!Exists(GetPath(PATH_SERVER_FOLDER)))
-	{
-		std::cout << "[Config] Config not found" << std::endl;
-
-		CreateFirstConfig();
-
-		return;
-	}
-
+	//will exit() if theres no 'version' inside /server/
 	ProcessV2toV3ConfigLoad();
 
+	//bool serverFolderExists = Exists(GetPath(PATH_SERVER_FOLDER));
+	bool versionChanged = false;
+
+	//create /server/etc
+	CreatePaths();
+
 	//version
-	std::string versionLine;
-	std::ifstream versionFile(GetPath(PATH_VERSION_FILE));
-	std::getline(versionFile, versionLine);
-	versionFile.close();
-	ProcessVersionChange(versionLine);
+	if (Exists(GetPath(PATH_VERSION_FILE)))
+	{
+		std::string versionLine;
+		std::ifstream versionFile(GetPath(PATH_VERSION_FILE));
+		std::getline(versionFile, versionLine);
+		versionFile.close();
+
+		if (ProcessVersionChange(versionLine)) versionChanged = true;
+	}
 
 	//config.ini
 	LoadConfigFile();
 
-	//players
-	LoadPlayers();
-	
+	//broadcast_messages.ini
+	AutoMessages::LoadConfig();
+
 	//permissions
 	PermissionGroups::LoadConfig();
-}
 
-void Config::CreateFirstConfig()
-{
-	PermissionGroups::CheckDefaultGroups();
+	//players
+	LoadPlayers();
 
-	Save();
+	if (versionChanged)
+	{
+		std::cout << "[Config] * Version changed! Saving..." << std::endl;
+		Save();
+	}
 }
 
 void Config::Reload()
@@ -131,6 +134,7 @@ void Config::Reload()
 	LoadConfigFile();
 	LoadPlayers();
 	PermissionGroups::ReloadConfig();
+	AutoMessages::ReloadConfig();
 }
 
 void Config::ProcessAutoSave(float dt)
@@ -152,9 +156,6 @@ void Config::SaveConfigFile()
 	INIWrite::AddLine("[Server]");
 	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
 	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
-	INIWrite::AddBool("help_message_show", Chat::ShowHelpMessage);
-	INIWrite::AddString("help_message", Chat::HelpMessage);
-	INIWrite::AddFloat("help_message_interval", Chat::BroadcastHelpInterval);
 	INIWrite::AddBool("command_show_help_on_invalid_syntax", Command::AutoShowHelp);
 	INIWrite::AddFloat("auto_save_interval", Config::AutoSaveInterval);
 
@@ -165,11 +166,16 @@ void Config::LoadConfigFile()
 {
 	std::cout << "[Config] Loading config.ini" << std::endl;
 
+	auto path = GetPath(PATH_CONFIG_FILE);
+
+	if (!Exists(path))
+	{
+		SaveConfigFile();
+		return;
+	}
+
 	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
 	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
-	Chat::ShowHelpMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "help_message_show");
-	Chat::HelpMessage = INIRead::GetString(GetPath(PATH_CONFIG_FILE), "Server", "help_message");
-	Chat::BroadcastHelpInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "help_message_interval");
 	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
 	Config::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
 
@@ -244,16 +250,15 @@ void Config::ProcessV2toV3ConfigLoad()
 	}
 }
 
-void Config::ProcessVersionChange(std::string oldVersion)
+bool Config::ProcessVersionChange(std::string oldVersion)
 {
 	std::cout << "[Config] Updating from " << oldVersion << " to " << Mod::Version << std::endl;
+
+	bool versionChanged = oldVersion.compare(Mod::Version) != 0;
 
 	if (oldVersion == "3.2")
 	{
 		std::cout << "Applying patch 3.3" << std::endl;
-
-		CreatePaths();
-
 		std::cout << "Moving players" << std::endl;
 
 		std::experimental::filesystem::rename(
@@ -276,31 +281,9 @@ void Config::ProcessVersionChange(std::string oldVersion)
 	test patch
 	and test from fresh install
 	*/
+
+	return versionChanged;
 }
-
-/*
-void Config::CreateBroadcastMessagesFile()
-{
-	auto path = GetPath(Config::PATH_SERVER_FOLDER) + "broadcast_messages.ini";
-
-	if (Exists(path)) return;
-
-	std::cout << "[Config] CreateBroadcastMessagesFile" << std::endl;
-
-	INIWrite::CreateINIFile(path);
-	INIWrite::AddLine("[Messages]");
-	INIWrite::AddLine("Type help for a list of commands");
-	INIWrite::AddLine("");
-	INIWrite::AddLine("[Config]");
-	INIWrite::AddLine("send_messages_interval = 60");
-	INIWrite::AddLine("");
-	INIWrite::AddLine("#");
-	INIWrite::AddLine("# Use | to add a new line. Example:");
-	INIWrite::AddLine("# First line|Second line|Third line");
-	INIWrite::AddLine("#");
-	INIWrite::CloseINIFile();
-}
-*/
 
 void Config::CreatePaths()
 {

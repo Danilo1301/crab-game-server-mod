@@ -15,6 +15,7 @@
 #include "systems/Hover.h"
 #include "systems/MapSkip.h"
 #include "systems/Whitelist.h"
+#include "systems/AutoMessages.h"
 #include "templates/templates.h"
 
 std::map<long long, Player*> Server::Players;
@@ -46,6 +47,7 @@ void Server::Update(float dt)
 
 	UpdatePlayersPosition();
 
+	AutoMessages::Update(dt);
 	VoteSystem::Update(dt);
 	UpdateCheck::Check();
 	ModeDeathMatch::Update(dt);

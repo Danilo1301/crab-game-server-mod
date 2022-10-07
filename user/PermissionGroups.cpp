@@ -48,6 +48,16 @@ void PermissionGroups::LoadConfig()
 {
 	std::cout << "[PermissionGroups] LoadConfig" << std::endl;
 
+	auto path = GetPermissionGroupsDirectory();
+
+	if (!Config::Exists(path))
+	{
+		std::cout << "[PermissionGroups] permissions folder not found" << std::endl;
+		CreateDefaultGroups();
+		SaveConfig();
+		return;
+	}
+
 	for (const auto& entry : std::experimental::filesystem::directory_iterator(GetPermissionGroupsDirectory()))
 	{
 		auto id = entry.path().filename().replace_extension().string();
@@ -99,7 +109,7 @@ void PermissionGroups::ReloadConfig()
 	LoadConfig();
 }
 
-void PermissionGroups::CheckDefaultGroups()
+void PermissionGroups::CreateDefaultGroups()
 {
 	if (!HasGroup("default"))
 	{

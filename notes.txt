@@ -54,18 +54,19 @@
 [X] data folder
 [X] change command args
 [~] change join/leave event to onlobbyjoinleaveupdate (id doset get called when host joins)
-[ ] TEST v2 to v3 again
+[X] TEST v2 to v3 again
 [X] ban by time & reason
 [X] update !pinfo (add ban info)
 [X] save ban data
-[ ] custom messages (multi line support)
-[ ] replace help message with custom messages
+[X] custom messages (multi line support)
+[X] replace help message with custom messages
 [X] add patches
 [X] make a better reload / save / rework the way config loads (its a mess)
+[X] changed the way config loads and saves for almost everything inside Config::Load()
 
 [ ] save whitelist in ini file
 [ ] [time] as 1d 1h 1s, to ban mute or anything else
-[ ] fix id bugs and other stuff in console mode
+[ ] fix id bugs and other stuff in console mode (dont forget Mod::GetMySteamId() returns 123456789)
 [ ] freeze command
 [ ] auto spec
 [ ] auto respawn
@@ -82,6 +83,7 @@
 [1]
 Edit Mod::Version
 Edit patches at Config
+Edit readme if necessary
 PUSH
 
 [2]
@@ -90,8 +92,7 @@ Create release on github
 
 [3]
 Edit version.json
-Edit version notes
-Edit readme if necessary
+Edit version at notes.txt
 PUSH
 
 ---------------- INJECTOR

@@ -62,7 +62,7 @@ std::vector<std::string> INIRead::GetMultipleStrings(std::string path, std::stri
 
 		if (canAdd)
 		{
-			if (line.empty() || line.front() == '[' || line.front() == ' ') break;
+			if (line.empty() || line.front() == '[') break; //line.front() == ' '
 			
 			lines.push_back(line);
 		}

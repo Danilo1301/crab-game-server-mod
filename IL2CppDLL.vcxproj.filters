@@ -91,6 +91,9 @@
     <ClCompile Include="user\systems\BanSystem.cpp">
       <Filter>user\systems</Filter>
     </ClCompile>
+    <ClCompile Include="user\systems\AutoMessages.cpp">
+      <Filter>user\systems</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="user\main.h">
@@ -229,6 +232,9 @@
       <Filter>user</Filter>
     </ClInclude>
     <ClInclude Include="user\systems\BanSystem.h">
+      <Filter>user\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="user\systems\AutoMessages.h">
       <Filter>user\systems</Filter>
     </ClInclude>
   </ItemGroup>

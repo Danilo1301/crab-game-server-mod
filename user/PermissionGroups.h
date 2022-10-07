@@ -19,5 +19,5 @@ public:
 	static void SaveConfig();
 	static void ReloadConfig();
 
-	static void CheckDefaultGroups();
+	static void CreateDefaultGroups();
 };

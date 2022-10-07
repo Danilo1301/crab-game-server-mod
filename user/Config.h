@@ -25,7 +25,6 @@ public:
 
 	static void Save();
 	static void Load();
-	static void CreateFirstConfig();
 	static void Reload();
 	static void ProcessAutoSave(float dt);
 	static void SaveConfigFile();
@@ -35,8 +34,7 @@ public:
 
 private:
 	static void ProcessV2toV3ConfigLoad();
-	static void ProcessVersionChange(std::string oldVersion);
+	static bool ProcessVersionChange(std::string oldVersion);
 
-	//static void CreateBroadcastMessagesFile();
 	static void CreatePaths();
 };

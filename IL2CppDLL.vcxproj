@@ -68,6 +68,7 @@
     <ClCompile Include="user\Player.cpp" />
     <ClCompile Include="user\Server.cpp" />
     <ClCompile Include="user\SocketServer.cpp" />
+    <ClCompile Include="user\systems\AutoMessages.cpp" />
     <ClCompile Include="user\systems\AutoStart.cpp" />
     <ClCompile Include="user\systems\BanSystem.cpp" />
     <ClCompile Include="user\systems\EquipItem.cpp" />
@@ -108,6 +109,7 @@
     <ClInclude Include="user\Player.h" />
     <ClInclude Include="user\Server.h" />
     <ClInclude Include="user\SocketServer.h" />
+    <ClInclude Include="user\systems\AutoMessages.h" />
     <ClInclude Include="user\systems\AutoStart.h" />
     <ClInclude Include="user\systems\BanSystem.h" />
     <ClInclude Include="user\systems\EquipItem.h" />

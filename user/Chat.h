@@ -10,11 +10,6 @@ public:
 	static std::vector<Message*> Messages;
 	static std::vector<Command*> Commands;
 
-	static float BroadcastHelpInterval;
-	static float BroadcastHelpTimeElapsed;
-	static bool ShowHelpMessage;
-	static std::string HelpMessage;
-
 	static bool ShowPlayerIdsAfterName;
 	static bool ShowDeathStateAfterName;
 
@@ -22,7 +17,6 @@ public:
 	static void Update(float dt);
 
 	static void ProcessMute(float dt);
-	static void ProcessBroadcastHelp(float dt);
 
 	static void RegisterCommand(Command* command);
 

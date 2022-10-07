@@ -16,6 +16,7 @@
 #include "systems/BanSystem.h"
 #include "systems/MapSkip.h"
 #include "systems/Whitelist.h"
+#include "systems/AutoMessages.h"
 
 
 class CommandHelp : public Command {
@@ -279,8 +280,8 @@ public:
 
 		if (test.compare("timer") == 0)
 		{
-			Chat::SendServerMessage("help: " + std::to_string(Chat::BroadcastHelpTimeElapsed));
 			Chat::SendServerMessage("save: " + std::to_string(Config::AutoSaveTimeElapsed));
+			Chat::SendServerMessage("automessage: " + std::to_string(AutoMessages::SendTimeElapsed));
 			Chat::SendServerMessage("autostart: " + std::to_string(AutoStart::TimeUntilAutoStart - 0.001));
 			return;
 		}

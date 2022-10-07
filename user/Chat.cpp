@@ -7,11 +7,6 @@
 std::vector<Message*> Chat::Messages;
 std::vector<Command*> Chat::Commands;
 
-float Chat::BroadcastHelpInterval = 60.0f;
-float Chat::BroadcastHelpTimeElapsed = 0.0f;
-bool Chat::ShowHelpMessage = true;
-std::string Chat::HelpMessage = " Type !help for a list of commands";
-
 bool Chat::ShowPlayerIdsAfterName = true;
 bool Chat::ShowDeathStateAfterName = false;
 
@@ -63,7 +58,6 @@ void Chat::Init()
 void Chat::Update(float dt)
 {
 	ProcessMute(dt);
-	ProcessBroadcastHelp(dt);
 }
 
 void Chat::ProcessMute(float dt)
@@ -76,18 +70,6 @@ void Chat::ProcessMute(float dt)
 			player->MuteTime -= dt;
 			if (player->MuteTime < 0) player->MuteTime = 0;
 		}
-	}
-}
-
-void Chat::ProcessBroadcastHelp(float dt)
-{
-	if (!ShowHelpMessage) return;
-
-	BroadcastHelpTimeElapsed += dt;
-	if (BroadcastHelpTimeElapsed >= BroadcastHelpInterval)
-	{
-		BroadcastHelpTimeElapsed = 0;
-		Chat::SendServerMessage(Chat::HelpMessage);
 	}
 }
 
