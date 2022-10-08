@@ -50,13 +50,7 @@ void PermissionGroups::LoadConfig()
 
 	auto path = GetPermissionGroupsDirectory();
 
-	if (!Config::Exists(path))
-	{
-		std::cout << "[PermissionGroups] permissions folder not found" << std::endl;
-		CreateDefaultGroups();
-		SaveConfig();
-		return;
-	}
+	int totalGroups = 0;
 
 	for (const auto& entry : std::experimental::filesystem::directory_iterator(GetPermissionGroupsDirectory()))
 	{
@@ -68,7 +62,17 @@ void PermissionGroups::LoadConfig()
 		auto permissionGroup = PermissionGroups::AddGroup(id);
 		permissionGroup->LoadFromINIFile(fileName);
 
-		std::cout << "[PermissionGroups] - permissions: " << formatStringVector(permissionGroup->GetPermissions(), ", ") << std::endl;
+		std::cout << "					- permissions: " << formatStringVector(permissionGroup->GetPermissions(), ", ") << std::endl;
+
+		totalGroups++;
+	}
+
+	if (totalGroups == 0)
+	{
+		std::cout << "[PermissionGroups] permission groups not found" << std::endl;
+		CreateDefaultGroups();
+		SaveConfig();
+		return;
 	}
 }
 

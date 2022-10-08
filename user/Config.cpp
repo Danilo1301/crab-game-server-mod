@@ -164,12 +164,13 @@ void Config::SaveConfigFile()
 
 void Config::LoadConfigFile()
 {
-	std::cout << "[Config] Loading config.ini" << std::endl;
+	std::cout << "[Config] config.ini not found" << std::endl;
 
 	auto path = GetPath(PATH_CONFIG_FILE);
 
 	if (!Exists(path))
 	{
+		std::cout << "[Config] Loading config.ini" << std::endl;
 		SaveConfigFile();
 		return;
 	}
@@ -213,7 +214,15 @@ void Config::SavePlayers()
 
 void Config::LoadPlayers()
 {
-	std::cout << "[Config] Loading players.json" << std::endl;
+	std::cout << "[Config] players.json not found" << std::endl;
+
+	auto path = GetPath(PATH_PLAYERS_FILE);
+
+	if (!Exists(path))
+	{
+		std::cout << "[Config] Loading players.json" << std::endl;
+		return;
+	}
 
 	Json::Value usersValue = ReadFile(GetPath(PATH_PLAYERS_FILE));
 	for (auto key : usersValue.getMemberNames())

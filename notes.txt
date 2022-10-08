@@ -64,6 +64,9 @@
 [X] make a better reload / save / rework the way config loads (its a mess)
 [X] changed the way config loads and saves for almost everything inside Config::Load()
 
+[3.4]
+[X] ISSUE: crash on first inject
+
 [ ] save whitelist in ini file
 [ ] [time] as 1d 1h 1s, to ban mute or anything else
 [ ] fix id bugs and other stuff in console mode (dont forget Mod::GetMySteamId() returns 123456789)
@@ -79,6 +82,9 @@
 [ ] change DeathStatus too
 
 ---------------- RELEASE
+
+Test: first run
+Test: patch from previous version
 
 [1]
 Edit Mod::Version
