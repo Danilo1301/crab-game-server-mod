@@ -62,7 +62,7 @@ void PermissionGroups::LoadConfig()
 		auto permissionGroup = PermissionGroups::AddGroup(id);
 		permissionGroup->LoadFromINIFile(fileName);
 
-		std::cout << "					- permissions: " << formatStringVector(permissionGroup->GetPermissions(), ", ") << std::endl;
+		std::cout << "                   - permissions: " << formatStringVector(permissionGroup->GetPermissions(), ", ") << std::endl;
 
 		totalGroups++;
 	}
@@ -126,7 +126,7 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->AddPermission("tp");
 		permissionGroup->AddPermission("kill");
 		permissionGroup->AddPermission("respawn");
-		permissionGroup->AddPermission("autorespawn");
+		//permissionGroup->AddPermission("autorespawn");
 		permissionGroup->AddPermission("hover");
 		permissionGroup->AddPermission("jumppunch");
 		permissionGroup->AddPermission("superpunch");
@@ -134,6 +134,7 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->AddPermission("snowball2");
 		permissionGroup->AddPermission("vote");
 		permissionGroup->AddPermission("votekick");
+		permissionGroup->AddPermission("hand");
 		for (auto weapon : WeaponList) permissionGroup->AddPermission(toLower(weapon.name));
 	}
 
@@ -144,10 +145,11 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->InheritsFromGroup = "default";
 		permissionGroup->AddPermission("kick");
 		permissionGroup->AddPermission("ban");
+		permissionGroup->AddPermission("unban");
 		permissionGroup->AddPermission("bc");
-		permissionGroup->AddPermission("w.others");
+		permissionGroup->AddPermission("givew");
 		permissionGroup->AddPermission("respawn.others");
-		permissionGroup->AddPermission("tp.others");
+		permissionGroup->AddPermission("kill.others");
 		permissionGroup->AddPermission("tp.others");
 		permissionGroup->AddPermission("god");
 		permissionGroup->AddPermission("god.others");
@@ -156,8 +158,14 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->AddPermission("mute");
 		permissionGroup->AddPermission("lobbyonly");
 		permissionGroup->AddPermission("start");
+		permissionGroup->AddPermission("win");
+		permissionGroup->AddPermission("dm");
+		permissionGroup->AddPermission("fly");
+		permissionGroup->AddPermission("autostart");
+		permissionGroup->AddPermission("punchdamage");
+		permissionGroup->AddPermission("whitelist");
 	}
-
+	
 	if (!HasGroup("admin"))
 	{
 		auto permissionGroup = AddGroup("admin");

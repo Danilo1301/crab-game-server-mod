@@ -109,6 +109,9 @@ void Config::Load()
 
 		if (ProcessVersionChange(versionLine)) versionChanged = true;
 	}
+	else {
+		versionChanged = true;
+	}
 
 	//config.ini
 	LoadConfigFile();

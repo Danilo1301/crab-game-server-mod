@@ -64,8 +64,32 @@
 [X] make a better reload / save / rework the way config loads (its a mess)
 [X] changed the way config loads and saves for almost everything inside Config::Load()
 
+[3.3 r2]
+[X] CRASH: on first run
+
 [3.4]
-[X] ISSUE: crash on first inject
+[X] CRASH: now on second run LMAO
+[X] ISSUE ?: !mute not working
+[X] ISSUE: can kick/ban/mute yourself
+[X] ISSUE: !ban for too many hours results in insta unban (banned for 1e+10 hours)
+[X] ISSUE: even if users didnt have permission for !glock, for example, any user could just give a glock using !w #id 1
+[X] CHANGE: make [reason] and [time] optional for ban
+[X] ADD: permanent option for ban
+[X] ADD: [ammo] argument for !w
+[X] ADD: !givew
+[X] INFO: w.others got replaced by givew
+[X] INFO: README for !w and !givew
+[X] CHANGE: mute now accepts [time] instead of seconds only
+[X] CHANGE: mute doest require strings anymore (for ids, ex 3, it would throw an error)
+[X] INFO: README for mute
+
+[next]
+[ ] CHANGE: people with ban perm should not be able to ban others that also have ban perm
+[ ] ADD: pinfo with no parameters should show your own info
+[ ] ADD: multiple weapons/commands at once (!dual 10, !ak 50)
+[ ] ADD: option to hide no permission and unknown command messages
+[ ] CHAGE: change CommandArg/CommandArgGroup etc
+
 
 [ ] save whitelist in ini file
 [ ] [time] as 1d 1h 1s, to ban mute or anything else
@@ -85,6 +109,8 @@
 
 Test: first run
 Test: patch from previous version
+
+git diff --staged --color > diff.txt
 
 [1]
 Edit Mod::Version

@@ -18,7 +18,6 @@
 #include "systems/Whitelist.h"
 #include "systems/AutoMessages.h"
 
-
 class CommandHelp : public Command {
 public:
 	CommandHelp()
@@ -496,34 +495,76 @@ public:
 			if (args[0].isNumber)
 			{
 				auto weaponId = args[0].AsInt();
-
 				auto weapon = GetWeaponById(weaponId);
 
-				//Chat::SendServerMessage("weapon self");
-				//Chat::SendServerMessage(std::to_string(weapon->id) + ", " + weapon->name);
-
-				if (!message->FromPlayer->GetPermissionGroup()->HasPermission(toLower(weapon->name)))
-				{
-					NoPermission();
-					return;
-				}
-
-				Server::DropWeapon(message->FromPlayer, weaponId, 30);
-
+				TryGiveWeapon(message->FromPlayer, weaponId, 30);
 				return;
 			}
 		}
 
 		if (args.size() == 2)
 		{
+			if (args[0].isNumber && args[1].isNumber)
+			{
+				auto weaponId = args[0].AsInt();
+				auto ammo = args[1].AsInt();
+
+				TryGiveWeapon(message->FromPlayer, weaponId, ammo);
+				return;
+			}
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("(weaponId)");
+		PrintSyntax("(weaponid) (ammo)");
+		PrintSyntax("givew", "");
+	}
+
+	static void TryGiveWeapon(Player* player, int weaponId, int ammo)
+	{
+		auto weapon = GetWeaponById(weaponId);
+
+		if (!weapon)
+		{
+			Chat::SendServerMessage("invalid weapon id");
+			return;
+		}
+
+		if (!player->GetPermissionGroup()->HasPermission(toLower(weapon->name)))
+		{
+			NoPermission();
+			return;
+		}
+
+		Server::DropWeapon(player, weaponId, ammo);
+	}
+};
+
+
+class CommandGiveWeapon : public Command {
+public:
+	CommandGiveWeapon()
+	{
+		Command::Command();
+
+		SetCmd("givew");
+		AddRequiredPermission("givew");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 2)
+		{
 			if (args[1].isNumber)
 			{
-				if (!message->FromPlayer->GetPermissionGroup()->HasPermission("w.others"))
-				{
-					NoPermission();
-					return;
-				}
-
 				auto selector = args[0].str;
 				auto weaponId = args[1].AsInt();
 
@@ -539,7 +580,30 @@ public:
 				{
 					Server::GiveWeapon(player, weaponId);
 				}
+				return;
+			}
+		}
 
+		if (args.size() == 3)
+		{
+			if (args[1].isNumber && args[2].isNumber)
+			{
+				auto selector = args[0].str;
+				auto weaponId = args[1].AsInt();
+				auto ammo = args[2].AsInt();
+
+				auto players = Server::FindPlayers(selector);
+
+				if (players.size() == 0)
+				{
+					PlayerNotFound();
+					return;
+				}
+
+				for (auto player : players)
+				{
+					Server::DropWeapon(player, weaponId, ammo);
+				}
 				return;
 			}
 		}
@@ -549,8 +613,8 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("(weaponId)");
-		PrintSyntax("(player) (weaponId)");
+		PrintSyntax("(toplayer) (weaponId)");
+		PrintSyntax("(toplayer) (weaponId) (ammo)");
 	}
 };
 
@@ -1054,13 +1118,24 @@ public:
 
 		if (args.size() == 2)
 		{
-			if (args[0].isString && args[1].isNumber)
+			std::string selector = args[0].str;
+
+			int seconds = 0;
+			bool isTimeString = ConvertTimeStringToSeconds(args[1].str, &seconds);
+
+			if (isTimeString)
 			{
 				auto players = Server::FindPlayers(args[0].str);
 
 				if (players.size() == 0)
 				{
 					PlayerNotFound();
+					return;
+				}
+
+				if (seconds < 0)
+				{
+					Chat::SendServerMessage("invalid time");
 					return;
 				}
 
@@ -1071,9 +1146,17 @@ public:
 						Chat::SendServerMessage("can't mute this player");
 						continue;
 					}
-					player->MuteTime = args[1].AsFloat();
-					Chat::SendServerMessage(player->GetDisplayName() + " was muted for " + args[1].str + " seconds");
+
+					if (player == message->FromPlayer)
+					{
+						Chat::SendServerMessage("can't mute yourself");
+						continue;
+					}
+
+					player->MuteTime = (float)seconds;
+					Chat::SendServerMessage(player->GetDisplayName() + " was muted for " + std::to_string(seconds) + " seconds");
 				}
+
 				return;
 			}
 		}
@@ -1083,7 +1166,7 @@ public:
 
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("(player) (seconds)");
+		PrintSyntax("(player) (time) - time: 1d / 2h / 3s");
 	}
 };
 
@@ -1116,7 +1199,17 @@ public:
 
 			for (auto player : players)
 			{
-				if (player->IsLobbyOwner()) continue;
+				if (player->IsLobbyOwner())
+				{
+					Chat::SendServerMessage("can't kick owner");
+					continue;
+				}
+
+				if (player == message->FromPlayer)
+				{
+					Chat::SendServerMessage("can't kick yourself");
+					continue;
+				}
 
 				Mod::KickPlayer(player->ClientId);
 				Chat::SendServerMessage(player->GetDisplayName() + " was kicked");
@@ -1151,43 +1244,88 @@ public:
 
 		auto args = CommandArg::GetArgs(message->CmdArgs);
 
-		if (args.size() >= 3)
+		if (args.size() >= 1)
 		{
-			if (args[1].isNumber)
-			{
-				auto players = Server::FindPlayers(args[0].str);
+			auto selector = args[0].str;
 
-				if (players.size() == 0)
+			int seconds = 0;
+			auto banStr = args.size() >= 2 ? args[1].str : "";
+			bool isTimeString = ConvertTimeStringToSeconds(banStr, &seconds);
+
+			if (!isTimeString)
+			{
+				std::string reason = "None";
+
+				if (args.size() >= 2) reason = CommandArg::GetArgText(args, 1);
+
+				TryBan(selector, message->FromPlayer, reason, "", -1);
+				return;
+			}
+			else {
+				std::string reason = "None";
+
+				if (seconds < 0)
 				{
-					PlayerNotFound();
+					Chat::SendServerMessage("invalid time");
 					return;
 				}
 
-				auto hours = args[1].AsFloat();
-				auto reason = CommandArg::GetArgText(args, 2);
+				if (args.size() >= 3) reason = CommandArg::GetArgText(args, 2);
 
-				for (auto player : players)
-				{
-					if (player->IsLobbyOwner())
-					{
-						std::cout << "Ignoring player owner" << std::endl;
-						continue;
-					}
-
-					BanSystem::BanPlayer(player->ClientId, reason, hours);
-					Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned. Reason: " + reason);
-				}
-
+				TryBan(selector, message->FromPlayer, reason, banStr, seconds);
 				return;
 			}
+			
+			return;
 		}
 
 		WrongSyntax();
 	}
 
+	void TryBan(std::string selector, Player* byPlayer, std::string reason, std::string timeStr, int seconds)
+	{
+		std::cout << "TryBan " << selector << ", for " << reason << ", time=" << seconds << "(" << timeStr << ")" << std::endl;
+
+		auto players = Server::FindPlayers(selector);
+
+		if (players.size() == 0)
+		{
+			PlayerNotFound();
+			return;
+		}
+
+		for (auto player : players)
+		{
+			if (player->IsLobbyOwner())
+			{
+				Chat::SendServerMessage("can't ban owner");
+				continue;
+			}
+
+			if (player == byPlayer)
+			{
+				Chat::SendServerMessage("can't ban yourself");
+				continue;
+			}
+
+			std::cout << "BanPlayear" << std::endl;
+
+			BanSystem::BanPlayer(player->ClientId, reason, seconds);
+
+			if (seconds == -1)
+			{
+				Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned. Reason: " + reason);
+			}
+			else {
+				Chat::SendServerMessage(player->GetDisplayNameExtra() + " was banned for " + timeStr + ". Reason: " + reason);
+			}
+		}
+	}
+
 	virtual void PrintSyntaxes()
 	{
-		PrintSyntax("(player) (hours) (reason)");
+		PrintSyntax("(player) [reason] - permanent ban");
+		PrintSyntax("(player) (time) [reason] - time: 1d / 2h / 3s");
 	}
 };
 
@@ -2031,7 +2169,7 @@ public:
 
 			if (targetPlayer->IsLobbyOwner())
 			{
-				Chat::SendServerMessage("cant kick this player");
+				Chat::SendServerMessage("you cant kick owner");
 				return;
 			}
 

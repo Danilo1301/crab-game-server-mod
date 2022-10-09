@@ -22,6 +22,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandRestart());
 	RegisterCommand((Command*)new CommandTime());
 	RegisterCommand((Command*)new CommandWeapon());
+	RegisterCommand((Command*)new CommandGiveWeapon());
 	RegisterCommand((Command*)new CommandHand());
 	RegisterCommand((Command*)new CommandRespawn());
 	RegisterCommand((Command*)new CommandMap());
@@ -113,7 +114,7 @@ void Chat::ProcessMessage(Message* message)
 	{
 		if (message->FromPlayer->MuteTime > 0)
 		{
-			std::cout << "[Chat] Message removed: Muted" << std::endl;
+			std::cout << "[Chat] Message removed. Muted for " << message->FromPlayer->MuteTime << " seconds" << std::endl;
 			RemoveMessage(message);
 			return;
 		}

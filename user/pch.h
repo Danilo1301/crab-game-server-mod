@@ -157,3 +157,61 @@ static InteropHelp_UTF8StringHandle* stringToUTF8StringHandle(std::string str)
 	InteropHelp_UTF8StringHandle__ctor(h, (String*)il2cpp_string_new(str.c_str()), NULL);
 	return h;
 }
+
+static bool ends_with(std::string const& value, std::string const& ending)
+{
+	if (ending.size() > value.size()) return false;
+	return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
+static bool starts_with(std::string const& value, std::string const& starting)
+{
+	if (starting.size() > value.size()) return false;
+	return std::equal(starting.rend(), starting.rbegin(), value.rbegin());
+}
+
+static bool ConvertTimeStringToSeconds(std::string str, int* outSeconds)
+{
+	//std::cout << "ConvertStringTimeToSeconds (" << str << ")" << std::endl;
+
+	if (str.length() <= 1) return false;
+
+	//std::cout << ">1" << std::endl;
+
+	bool endsWithTimeKey = ends_with(str, "d") ||
+		ends_with(str, "h") ||
+		ends_with(str, "m") ||
+		ends_with(str, "s");
+
+	if (!endsWithTimeKey) return false;
+
+	//std::cout << "endsWithTimeKey" << std::endl;
+
+
+	std::string timeStr = str.substr(0, str.size() - 1);
+
+	//std::cout << "timeStr=" << timeStr << std::endl;
+
+	if (!is_number(timeStr)) return false;
+
+	//std::cout << "timeStr is number" << std::endl;
+
+	int val = (int)floor(std::stof(str));
+	if (val <= 0 && !starts_with(str, "0"))
+	{
+		*outSeconds = -1;
+		return true;
+	}
+
+	//std::cout << "default val is" << val << std::endl;
+	//std::cout << "comparing with " << str << std::endl;
+
+	*outSeconds = val;
+	if (ends_with(str, "m")) *outSeconds = val * 60;
+	if (ends_with(str, "h")) *outSeconds = val * 60 * 60;
+	if (ends_with(str, "d")) *outSeconds = val * 60 * 60 * 24;
+
+	//std::cout << *outSeconds << std::endl;
+
+	return true;
+}

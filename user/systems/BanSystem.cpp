@@ -14,7 +14,9 @@ void BanSystem::Update(float dt)
 	for (auto pair : BannedPlayers)
 	{
 		auto steamId = pair.first;
-		//auto banInfo = pair.second;
+		auto banInfo = pair.second;
+
+		if (banInfo.unbanTime == -1) continue;
 
 		auto diff = GetUnbanTime(steamId);
 
@@ -30,15 +32,17 @@ void BanSystem::Update(float dt)
 	}
 }
 
-void BanSystem::BanPlayer(long long steamId, std::string reason, float hours)
+void BanSystem::BanPlayer(long long steamId, std::string reason, int seconds)
 {
-	std::cout << "[BanSystem] BanPlayer " << steamId << " for " << hours << " hours, reason: (" << reason << ")" << std::endl;
+	std::cout << "[BanSystem] BanPlayer " << steamId << " for " << seconds << " seconds, reason: (" << reason << ")" << std::endl;
 
 	time_t now;
 	time(&now);
 
-	int addTime = (int)std::round(hours * 60.0f * 60.0f);
+	int addTime = seconds;
 	time_t unbanTime = now + addTime;
+
+	if (seconds == -1) unbanTime = -1;
 
 	BanInfo banInfo = { reason, unbanTime };
 	BannedPlayers[steamId] = banInfo;
@@ -73,10 +77,17 @@ void BanSystem::UnbanPlayer(long long steamId)
 
 double BanSystem::GetUnbanTime(long long steamId)
 {
+	auto unbanTime = BannedPlayers[steamId].unbanTime;
+
+	if (unbanTime == -1)
+	{
+		return -1;
+	}
+
 	time_t now;
 	time(&now);
 
-	return difftime(BannedPlayers[steamId].unbanTime, now);
+	return difftime(unbanTime, now);
 }
 
 /*

@@ -53,9 +53,13 @@ Default perm groups: default, mod, admin
 Hide host messages in chat
 * !v - toggle 
 
-### weapon
+### w
 * !w [weaponId] - spawns a weapon below you
-* !w [player] [weaponId]  - spawns a weapon below another player (need w.others perm)
+* !w [weaponId] [ammo]  - spawns a weapon below you with a specific amount of ammo
+
+### givew
+* !givew [toPlayer] [weaponId] - gives weapon to a player
+* !givew [toPlayer] [weaponId] (ammo) - spawns a weapon below another player with a specific amount of ammo
 
 ### god
 Toggle god mode
@@ -132,12 +136,21 @@ config.ini is located at (Crab Game/server/) folder<br>
 * !reload - reload config
 
 ### mute
-
+Mute a player<br>
+Time can be 7s (7 seconds), 7m (7 minutes), 7h (7 hours), or 7d (7 days)<br>
+* !ban (player) (time) - permanent ban (reason is optional)
+* !ban [playar] [hours] *(reason)*
 ### kick
 
 ### ban
+Ban a player<br>
+Reason is optional<br>
+Time can be 7s (7 seconds), 7m (7 minutes), 7h (7 hours), or 7d (7 days)<br>
+* !ban [player] *(reason)* - permanent ban (reason is optional)
+* !ban [playar] [time] *(reason)*
 
 ### unban
+* !unban [steamId] - unban player
 
 ### multisnowball
 

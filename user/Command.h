@@ -50,9 +50,10 @@ public:
 	virtual void PrintSyntaxes();
 
 	void WrongSyntax();
-	void PlayerNotFound();
+	static void PlayerNotFound();
 	void PrintSyntax(std::string syntax);
-	void NoPermission();
+	void PrintSyntax(std::string command, std::string syntax);
+	static void NoPermission();
 
 	bool CheckOwnerIsTarget(Player* target);
 };

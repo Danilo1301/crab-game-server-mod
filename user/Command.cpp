@@ -111,7 +111,12 @@ void Command::PlayerNotFound()
 
 void Command::PrintSyntax(std::string syntax)
 {
-	Chat::SendServerMessage("* !" + Cmd + " " + syntax);
+	PrintSyntax(Cmd, syntax);
+}
+
+void Command::PrintSyntax(std::string command, std::string syntax)
+{
+	Chat::SendServerMessage("* !" + command + " " + syntax);
 }
 
 void Command::NoPermission()

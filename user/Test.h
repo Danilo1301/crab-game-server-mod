@@ -36,7 +36,16 @@ static void TestArgText()
 
 static void Test()
 {
-	TestArgText();
+	int seconds = 0;
+
+	//BanSystem::ConvertStringTimeToSeconds("3m", &seconds);
+	//BanSystem::ConvertStringTimeToSeconds("3a", &seconds);
+	//BanSystem::ConvertStringTimeToSeconds("da", &seconds);
+	//BanSystem::ConvertStringTimeToSeconds("2m", &seconds);
+
+	std::cout << seconds << std::endl;
+
+	//TestArgText();
 	//TestChat();
 	//TestChatPerms();
 }
