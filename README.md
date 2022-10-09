@@ -138,8 +138,8 @@ config.ini is located at (Crab Game/server/) folder<br>
 ### mute
 Mute a player<br>
 Time can be 7s (7 seconds), 7m (7 minutes), 7h (7 hours), or 7d (7 days)<br>
-* !ban (player) (time) - permanent ban (reason is optional)
-* !ban [playar] [hours] *(reason)*
+* !mute (player) (time)
+
 ### kick
 
 ### ban
