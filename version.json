@@ -1,5 +1,5 @@
 {
-    "version": "3.3",
+    "version": "3.4",
     "required": false,
-    "changelog": "Added autobroadcast messages, changed !ban"
+    "changelog": "Added !givew; Updated !ban and !mute"
 }
