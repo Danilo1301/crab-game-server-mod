@@ -1017,6 +1017,11 @@ public:
 					auto banInfo = BanSystem::BannedPlayers[player->ClientId];
 					Chat::SendServerMessage("BanReason=" + banInfo.reason + ", UnbanTime=" + std::to_string((int)BanSystem::GetUnbanTime(player->ClientId)) + "s");
 				}
+
+				if (player->MuteTime > 0)
+				{
+					Chat::SendServerMessage("Mute=" + std::to_string((int)player->MuteTime) + "s");
+				}
 			}
 			return;
 		}
@@ -1641,6 +1646,64 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("");
+	}
+};
+
+
+class CommandReady : public Command {
+public:
+	CommandReady()
+	{
+		Command::Command();
+
+		SetCmd("ready");
+		AddRequiredPermission("ready");
+	}
+
+	virtual void Execute(Message* message)
+	{
+		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 0)
+		{
+			Mod::TogglePlayerReady(message->FromPlayer->ClientId);
+			return;
+		}
+
+		if (args.size() == 1)
+		{
+			if (!message->FromPlayer->GetPermissionGroup()->HasPermission("ready.others"))
+			{
+				NoPermission();
+				return;
+			}
+
+			auto players = Server::FindPlayers(args[0].str);
+
+			if (players.size() == 0)
+			{
+				PlayerNotFound();
+				return;
+			}
+
+			for (auto player : players)
+			{
+				Mod::TogglePlayerReady(player->ClientId, false);
+			}
+			Mod::SendReadyInteract();
+
+			return;
+		}
+
+		WrongSyntax();
+	}
+
+	virtual void PrintSyntaxes()
+	{
+		PrintSyntax("");
+		PrintSyntax("(player)");
 	}
 };
 

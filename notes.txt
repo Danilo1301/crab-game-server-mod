@@ -83,11 +83,19 @@
 [X] CHANGE: mute doest require strings anymore (for ids, ex 3, it would throw an error)
 [X] INFO: README for mute
 
+[3.5]
+[X] ADD: option to hide 'no permission'
+[X] ADD: option to hide 'unknown command'
+[X] ADD: host dies immidiately after game start (not in lobby)
+[X] ADD: option to make host automaticaly ready up in lobby
+[X] ADD: ready / undready spefific people not just all (!start)
+[X] INFO: README for ready and ready.others
+
 [next]
-[ ] CHANGE: people with ban perm should not be able to ban others that also have ban perm
 [ ] ADD: pinfo with no parameters should show your own info
+[ ] IUSSE: "unban_at" : -1765733391
+[ ] CHANGE: people with ban perm should not be able to ban others that also have ban perm
 [ ] ADD: multiple weapons/commands at once (!dual 10, !ak 50)
-[ ] ADD: option to hide no permission and unknown command messages
 [ ] CHAGE: change CommandArg/CommandArgGroup etc
 
 
@@ -116,7 +124,9 @@ git diff --staged --color > diff.txt
 Edit Mod::Version
 Edit patches at Config
 Edit readme if necessary
-PUSH
+Edit version at notes.txt
+> BUILD
+COMMIT & PUSH
 
 [2]
 Edit dll name
@@ -124,7 +134,6 @@ Create release on github
 
 [3]
 Edit version.json
-Edit version at notes.txt
 PUSH
 
 ---------------- INJECTOR

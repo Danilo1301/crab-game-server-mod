@@ -24,6 +24,9 @@ int Server::MapId = -1;
 int Server::MapModeId = -1;
 long long Server::LobbyId = 0;
 
+bool Server::AutoKillHostOnGameStart = false;
+bool Server::AutoReadyHostOnLobby = false;
+
 int Server::PunchDamageId = -1;
 
 void Server::Init()
@@ -33,6 +36,8 @@ void Server::Init()
 	Config::Load();
 
 	Chat::Init();
+
+	std::cout << "[Info] You can type '!config reload' to reload config.ini" << std::endl;
 }
 
 void Server::Update(float dt)
@@ -391,6 +396,27 @@ void Server::OnPlayerSpawn(Player* player, Vector3 position)
 		if (player->IsLobbyOwner()) player->PermissionGroupId = "admin";
 
 		//Chat::SendServerMessage(player->GetDisplayName() + " is new here :)");
+	}
+
+	if (player == Server::GetLobbyOwner())
+	{
+		if (Server::IsAtLobby())
+		{
+			if (Server::AutoReadyHostOnLobby)
+			{
+				Mod::SetPlayerReady(player->ClientId, true);
+				Mod::SendReadyInteract();
+			}
+		}
+		else {
+			if (Server::AutoKillHostOnGameStart)
+			{
+				Server::KillPlayer(player);
+				return;
+			}
+		}
+
+		
 	}
 
 	ModeDeathMatch::OnPlayerSpawn(player, position);

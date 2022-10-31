@@ -11,6 +11,9 @@ public:
 	static int MapModeId;
 	static long long LobbyId;
 
+	static bool AutoKillHostOnGameStart;
+	static bool AutoReadyHostOnLobby;
+
 	static int PunchDamageId;
 
 	static void Init();

@@ -8,6 +8,7 @@
 class Command {
 public:
 	static bool AutoShowHelp;
+	static bool ShowUnknownCommandMessage;
 
 	std::string Cmd;
 	std::vector<std::string> RequiredPermissions;
@@ -16,7 +17,6 @@ public:
 	bool ShowOnHelpPage = true;
 	bool LobbyOnly = false;
 	
-
 	Message* CurrentMessage = NULL;
 	std::vector<CommandArg> CurrentArgs;
 

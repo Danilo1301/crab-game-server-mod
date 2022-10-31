@@ -3,6 +3,7 @@
 #include "Chat.h"
 
 bool Command::AutoShowHelp = true;
+bool Command::ShowUnknownCommandMessage = true;
 
 Command::Command()
 {
@@ -121,7 +122,10 @@ void Command::PrintSyntax(std::string command, std::string syntax)
 
 void Command::NoPermission()
 {
-	Chat::SendServerMessage("no permission");
+	if (Chat::ShowNoPermissionMessage)
+	{
+		Chat::SendServerMessage("no permission");
+	}
 }
 
 bool Command::CheckOwnerIsTarget(Player* target)

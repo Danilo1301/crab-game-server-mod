@@ -35,6 +35,9 @@ public:
 	static void KickPlayer(long long clientId);
 	static void SendWinner(long long clientId, long long money);
 	static void SendLocalInteract(int itemid);
+	static void SetPlayerReady(long long clientId, bool ready, bool sendInteract = true);
+	static void TogglePlayerReady(long long clientId, bool sendInteract = true);
 	static void SetAllPlayersReady();
+	static void SendReadyInteract();
 	static void UseItemAll(long long clientId, int objectId, int itemId, Vector3 pos);
 };

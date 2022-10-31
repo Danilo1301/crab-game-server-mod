@@ -33,10 +33,13 @@ float INIRead::GetFloat(std::string path, std::string app, std::string key)
 	return (float)std::atof(GetString(path, app, key).c_str());
 }
 
-bool INIRead::GetBool(std::string path, std::string app, std::string key)
+bool INIRead::GetBool(std::string path, std::string app, std::string key, bool defaultValue)
 {
-	auto state = toLower(GetString(path, app, key));
-	return state.compare("true") == 0;
+	auto valueStr = toLower(GetString(path, app, key));
+
+	if (valueStr.empty()) return defaultValue;
+
+	return valueStr.compare("true") == 0;
 }
 
 std::vector<std::string> INIRead::GetMultipleStrings(std::string path, std::string app)

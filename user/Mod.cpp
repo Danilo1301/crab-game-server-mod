@@ -7,7 +7,7 @@
 
 #include "Test.h"
 
-std::string Mod::Version = "3.4";
+std::string Mod::Version = "3.5";
 bool Mod::ConsoleMode = false;
 int Mod::UniqueObjectId = 100;
 bool Mod::LoadAllTemplates = false;
@@ -162,6 +162,36 @@ void Mod::SendLocalInteract(int itemid)
 	ClientSend_TryInteract(itemid, NULL);
 }
 
+void Mod::TogglePlayerReady(long long clientId, bool sendInteract)
+{
+	if (!Server::HasPlayer(clientId)) return;
+
+	auto player = Server::GetPlayer(clientId);
+
+	if (!player->PlayerManager) return;
+
+	SetPlayerReady(player->ClientId, !player->PlayerManager->fields.waitingReady, sendInteract);
+}
+
+void Mod::SetPlayerReady(long long clientId, bool ready, bool sendInteract)
+{
+	if (!Server::HasPlayer(clientId)) return;
+
+	auto player = Server::GetPlayer(clientId);
+
+	if (!player->PlayerManager) return;
+
+	player->PlayerManager->fields.waitingReady = ready;
+
+	if (sendInteract) SendReadyInteract();
+}
+
+void Mod::SendReadyInteract()
+{
+	Mod::SendLocalInteract(4);
+	Mod::SendLocalInteract(4);
+}
+
 void Mod::SetAllPlayersReady()
 {
 	auto gameManager = (*GameManager__TypeInfo)->static_fields->Instance;
@@ -177,8 +207,7 @@ void Mod::SetAllPlayersReady()
 		playerManager->fields.waitingReady = true;
 	}
 
-	Mod::SendLocalInteract(4);
-	Mod::SendLocalInteract(4);
+	Mod::SendReadyInteract();
 }
 
 void Mod::UseItemAll(long long clientId, int objectId, int itemId, Vector3 pos)

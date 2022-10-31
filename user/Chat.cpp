@@ -9,6 +9,7 @@ std::vector<Command*> Chat::Commands;
 
 bool Chat::ShowPlayerIdsAfterName = true;
 bool Chat::ShowDeathStateAfterName = false;
+bool Chat::ShowNoPermissionMessage = true;
 
 void Chat::Init()
 {
@@ -38,6 +39,7 @@ void Chat::Init()
 	RegisterCommand((Command*)new CommandDownload());
 	RegisterCommand((Command*)new CommandWin());
 	RegisterCommand((Command*)new CommandStart());
+	RegisterCommand((Command*)new CommandReady());
 	RegisterCommand((Command*)new CommandBroadcast());
 	RegisterCommand((Command*)new CommandJumpPunch());
 	RegisterCommand((Command*)new CommandSuperPunch());
@@ -194,7 +196,10 @@ void Chat::ProcessCommandMessage(Message* message)
 
 	if (!command)
 	{
-		SendServerMessage("unknown command '" + message->Cmd + "'");
+		if (Command::ShowUnknownCommandMessage)
+		{
+			SendServerMessage("unknown command '" + message->Cmd + "'");
+		}
 		return;
 	}
 

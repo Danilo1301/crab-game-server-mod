@@ -152,6 +152,12 @@ Time can be 7s (7 seconds), 7m (7 minutes), 7h (7 hours), or 7d (7 days)<br>
 ### unban
 * !unban [steamId] - unban player
 
+### ready
+Set ready by command<br>
+* !ready
+* !ready [player]
+
+
 ### multisnowball
 
 ### whitelist
@@ -163,6 +169,7 @@ Time can be 7s (7 seconds), 7m (7 minutes), 7h (7 hours), or 7d (7 days)<br>
 ### win
 
 ### start
+
 
 ### broadcast
 

@@ -159,29 +159,39 @@ void Config::SaveConfigFile()
 	INIWrite::AddLine("[Server]");
 	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
 	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
+	INIWrite::AddBool("show_no_permission_message", Chat::ShowNoPermissionMessage);
+	INIWrite::AddBool("show_unknown_command_messages", Command::ShowUnknownCommandMessage);
 	INIWrite::AddBool("command_show_help_on_invalid_syntax", Command::AutoShowHelp);
 	INIWrite::AddFloat("auto_save_interval", Config::AutoSaveInterval);
+	INIWrite::AddBool("auto_kill_host_on_game_start", Server::AutoKillHostOnGameStart);
+	INIWrite::AddBool("auto_ready_host_on_lobby", Server::AutoReadyHostOnLobby);
 
 	INIWrite::CloseINIFile();
 }
 
 void Config::LoadConfigFile()
 {
-	std::cout << "[Config] config.ini not found" << std::endl;
+	std::cout << "[Config] Loading config.ini" << std::endl;
 
 	auto path = GetPath(PATH_CONFIG_FILE);
 
 	if (!Exists(path))
 	{
-		std::cout << "[Config] Loading config.ini" << std::endl;
+		std::cout << "[Config] config.ini not found" << std::endl;
 		SaveConfigFile();
 		return;
 	}
 
-	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids");
-	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name");
-	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax");
+	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids", Chat::ShowPlayerIdsAfterName);
+	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name", Chat::ShowDeathStateAfterName);
+	Chat::ShowNoPermissionMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_no_permission_message", Chat::ShowNoPermissionMessage);
+	Command::ShowUnknownCommandMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_unknown_command_messages", Command::ShowUnknownCommandMessage);
+	Command::AutoShowHelp = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "command_show_help_on_invalid_syntax", Command::AutoShowHelp);
 	Config::AutoSaveInterval = INIRead::GetFloat(GetPath(PATH_CONFIG_FILE), "Server", "auto_save_interval");
+	Server::AutoKillHostOnGameStart = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "auto_kill_host_on_game_start", Server::AutoKillHostOnGameStart);
+	Server::AutoReadyHostOnLobby = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "auto_ready_host_on_lobby", Server::AutoReadyHostOnLobby);
+
+	SaveConfigFile();
 
 	std::cout << "[Config] AutoSaveInterval= " << Config::AutoSaveInterval << std::endl;
 }

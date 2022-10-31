@@ -158,6 +158,7 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->AddPermission("mute");
 		permissionGroup->AddPermission("lobbyonly");
 		permissionGroup->AddPermission("start");
+		permissionGroup->AddPermission("ready");
 		permissionGroup->AddPermission("win");
 		permissionGroup->AddPermission("dm");
 		permissionGroup->AddPermission("fly");
