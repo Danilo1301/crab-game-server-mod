@@ -5,8 +5,8 @@
 class INIRead {
 public:
 	static std::string GetString(std::string path, std::string app, std::string key);
-	static int GetInt(std::string path, std::string app, std::string key);
-	static float GetFloat(std::string path, std::string app, std::string key);
+	static int GetInt(std::string path, std::string app, std::string key, int defaultValue);
+	static float GetFloat(std::string path, std::string app, std::string key, float defaultValue);
 	static bool GetBool(std::string path, std::string app, std::string key, bool defaultValue);
 
 	static std::vector<std::string> GetMultipleStrings(std::string path, std::string app);

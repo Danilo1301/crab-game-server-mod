@@ -23,14 +23,22 @@ std::string INIRead::GetString(std::string path, std::string app, std::string ke
 	return std::string(valueRead);
 }
 
-int INIRead::GetInt(std::string path, std::string app, std::string key)
+int INIRead::GetInt(std::string path, std::string app, std::string key, int defaultValue)
 {
-	return std::atoi(GetString(path, app, key).c_str());
+	auto valueStr = GetString(path, app, key);
+
+	if (valueStr.empty()) return defaultValue;
+
+	return std::atoi(valueStr.c_str());
 }
 
-float INIRead::GetFloat(std::string path, std::string app, std::string key)
+float INIRead::GetFloat(std::string path, std::string app, std::string key, float defaultValue)
 {
-	return (float)std::atof(GetString(path, app, key).c_str());
+	auto valueStr = GetString(path, app, key);
+
+	if (valueStr.empty()) return defaultValue;
+
+	return (float)std::atof(valueStr.c_str());
 }
 
 bool INIRead::GetBool(std::string path, std::string app, std::string key, bool defaultValue)

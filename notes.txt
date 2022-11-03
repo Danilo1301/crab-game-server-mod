@@ -91,7 +91,12 @@
 [X] ADD: ready / undready spefific people not just all (!start)
 [X] INFO: README for ready and ready.others
 
+[3.6]
+[X] CHANGE: auto ready with min players (an option to automaticly start game after user set seconds and minimium players not including host)
+[X] turn off death messages for everyone
+
 [next]
+[ ] turn off join/leave
 [ ] ADD: pinfo with no parameters should show your own info
 [ ] IUSSE: "unban_at" : -1765733391
 [ ] CHANGE: people with ban perm should not be able to ban others that also have ban perm

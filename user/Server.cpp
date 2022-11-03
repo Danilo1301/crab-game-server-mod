@@ -434,16 +434,19 @@ bool Server::OnPlayerDied(Player* deadPlayer, Player* killerPlayer, Vector3 dama
 	deadPlayer->IsAlive = false;
 	deadPlayer->DiedThisRound = true;
 
-	if (deadPlayer->ClientId == killerPlayer->ClientId)
+	if (Chat::ShowDeathMessages)
 	{
-		Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
-		std::cout << "[Server] " << deadPlayer->GetDisplayNameExtra() << " died" << std::endl;
-	}
-	else
-	{
-		Chat::SendServerMessage("" + killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
-		std::cout << "[Server] " << killerPlayer->GetDisplayNameExtra() << " killed " << deadPlayer ->GetDisplayNameExtra() << std::endl;
+		if (deadPlayer->ClientId == killerPlayer->ClientId)
+		{
+			Chat::SendServerMessage("" + deadPlayer->GetDisplayName() + " died");
+			std::cout << "[Server] " << deadPlayer->GetDisplayNameExtra() << " died" << std::endl;
+		}
+		else
+		{
+			Chat::SendServerMessage("" + killerPlayer->GetDisplayName() + " killed " + deadPlayer->GetDisplayName());
+			std::cout << "[Server] " << killerPlayer->GetDisplayNameExtra() << " killed " << deadPlayer->GetDisplayNameExtra() << std::endl;
 
+		}
 	}
 
 	ModeDeathMatch::OnPlayerDied(deadPlayer, killerPlayer, damageDir);

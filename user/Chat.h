@@ -13,6 +13,7 @@ public:
 	static bool ShowPlayerIdsAfterName;
 	static bool ShowDeathStateAfterName;
 	static bool ShowNoPermissionMessage;
+	static bool ShowDeathMessages;
 
 	static void Init();
 	static void Update(float dt);

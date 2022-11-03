@@ -7,7 +7,7 @@
 
 #include "Test.h"
 
-std::string Mod::Version = "3.5";
+std::string Mod::Version = "3.6";
 bool Mod::ConsoleMode = false;
 int Mod::UniqueObjectId = 100;
 bool Mod::LoadAllTemplates = false;

@@ -10,6 +10,7 @@ std::vector<Command*> Chat::Commands;
 bool Chat::ShowPlayerIdsAfterName = true;
 bool Chat::ShowDeathStateAfterName = false;
 bool Chat::ShowNoPermissionMessage = true;
+bool Chat::ShowDeathMessages = true;
 
 void Chat::Init()
 {

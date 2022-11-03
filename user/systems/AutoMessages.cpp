@@ -91,7 +91,7 @@ void AutoMessages::LoadConfig()
 		return;
 	}
 
-	SendInterval = INIRead::GetFloat(path, "Config", "send_messages_interval");
+	SendInterval = INIRead::GetFloat(path, "Config", "send_messages_interval", SendInterval);
 
 	auto messages = INIRead::GetMultipleStrings(path, "Messages");
 	for (auto message : messages) AddMessage(message);
