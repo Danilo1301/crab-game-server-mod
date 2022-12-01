@@ -32,7 +32,7 @@ void BanSystem::Update(float dt)
 	}
 }
 
-void BanSystem::BanPlayer(long long steamId, std::string reason, int seconds)
+bool BanSystem::BanPlayer(long long steamId, std::string reason, int seconds)
 {
 	std::cout << "[BanSystem] BanPlayer " << steamId << " for " << seconds << " seconds, reason: (" << reason << ")" << std::endl;
 
@@ -47,15 +47,20 @@ void BanSystem::BanPlayer(long long steamId, std::string reason, int seconds)
 	BanInfo banInfo = { reason, unbanTime };
 	BannedPlayers[steamId] = banInfo;
 
+	std::cout << "[BanSystem] Unban at: " << unbanTime << ", diff: " << GetUnbanTime(steamId) << std::endl;
+
 	if (Server::HasPlayer(steamId))
 	{
 		if (Server::GetPlayer(steamId)->IsOnline)
 		{
 			Mod::ModBanPlayer(steamId);
+
+			Config::SavePlayers();
+			return true;
 		}
 	}
 
-	Config::SavePlayers();
+	return false;
 }
 
 bool BanSystem::IsPlayerBanned(long long steamId)
@@ -63,9 +68,9 @@ bool BanSystem::IsPlayerBanned(long long steamId)
 	return BannedPlayers.find(steamId) != BannedPlayers.end();
 }
 
-void BanSystem::UnbanPlayer(long long steamId)
+bool BanSystem::UnbanPlayer(long long steamId)
 {
-	if (!IsPlayerBanned(steamId)) return;
+	if (!IsPlayerBanned(steamId)) return false;
 
 	auto banInfo = BannedPlayers[steamId];
 	std::cout << "[BanSystem] UnbanPlayer " << steamId << " was unbanned (banned for: " << banInfo.reason << ")" << std::endl;
@@ -73,6 +78,8 @@ void BanSystem::UnbanPlayer(long long steamId)
 	BannedPlayers.erase(steamId);
 
 	Config::SavePlayers();
+
+	return true;
 }
 
 double BanSystem::GetUnbanTime(long long steamId)

@@ -458,6 +458,12 @@ void Server::KillPlayer(Player* player)
 {
 	std::cout << "[Server] KillPlayer " << player->GetDisplayNameExtra() << std::endl;
 
+	if (MapModeId == 4 || MapModeId == 5 || MapModeId == 6)
+	{
+		RespawnActivePlayerAtPos(player->ClientId, Vector3(0, -1000, 0));
+		return;
+	}
+
 	GameServer_PlayerDied(player->ClientId, player->ClientId, Vector3({ 0, 1, 0 }), NULL);
 	//ServerSend_PlayerDied(clientId, clientId, Vector3({ 0, 1, 0 }), NULL);
 }

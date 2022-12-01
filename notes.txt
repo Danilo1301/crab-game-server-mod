@@ -103,6 +103,17 @@
 [ ] ADD: multiple weapons/commands at once (!dual 10, !ak 50)
 [ ] CHAGE: change CommandArg/CommandArgGroup etc
 
+[ ] disable the death system (no explosion)
+
+[ ] randomly unbans everyone
+
+[ ]
+send a configureable (as always) message in discord via webhook when the server is in lobby
+that would be awesome
+and whenever a new lobby is made with the mod could also send via webhook (preferrably different from other) the new lobby id
+
+[ ] option to disabale snowballs
+
 
 [ ] save whitelist in ini file
 [ ] [time] as 1d 1h 1s, to ban mute or anything else

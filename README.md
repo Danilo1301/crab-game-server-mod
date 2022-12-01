@@ -194,76 +194,68 @@ Set ready by command<br>
 * 13 - GRENADE
 
 ### Maps:
-* 0 - menu
-* 1 - win screen
-* 2 - dorm
-* 3 - desert
-* 4 - slippery slope
-* 5 - glass jump
-* 6 - ???
-* 7 - blueline
-* 8 - ???
-* 9 - sunny saloon
-* 10 - ???
-* 11 - sussy slope
-* 12 - funky field
-* 13 - ???
-* 14 - bitter beach
-* 15 - ???
-* 16 - ???
-* 17 - ???
-* 18 - cocky containers
-* 19 - cheecky chamber
-* 20 - macaroni mountain
-* 21 - icy crack
-* 22 - small saloon
-* 23 - ???
-* 24 - playground
-* 25 - ???
-* 26 - tiny town 2
-* 27 - ???
-* 28 - ???
-* 29 - ???
-* 30 - ???
-* 31 - ???
-* 32 - peaceful platform
-* 33 - ???
-* 34 - snowtop
-* 35 - ???
-* 36 - karlson
-* 37 - milk mountain
-* 38 - ???
-* 39 - ???
-* 40 - skybox
-* 41 - splot
-* 42 - mini monke
-* 43 - saucy stage
-* 44 - return to monke
-* 45 - small glass jump
-* 46 - ???
-* 47 - lava climb
-* 48 - sussy sandcastle
-* 49 - ???
-* 50 - ???
-* 51 - ???
-* 52 - ???
-* 53 - ???
-* 54 - ???
-* 55 - ???
-* 56 - small beach
-* 57 - playground2
-* 58 - sandstorm
-* 59 - nasty hill
-* 60 - small color climb
-* 61 - small hill
-* 62 - lanky lava
-* 63 - twisted towers
-* 64 - ???
-* 65 - ???
-* 66 - ???
-* 67 - ???
-* 68 - tiny town
-* 69 - small playground
+* 0 - Bitter Beach
+* 1 - Blueline
+* 2 - Cocky Containers
+* 3 - Color Climb
+* 4 - Crusty Rocks
+* 5 - Desert
+* 6 - Dorm
+* 7 - Funky Field
+* 8 - Glass Jump
+* 9 - Hasty Hill
+* 10 - Icy Crack
+* 11 - Icy Islands
+* 12 - Icy Rocks
+* 13 - Islands
+* 14 - Karlson
+* 15 - Lanky Lava
+* 16 - Lava Lake
+* 17 - Plains
+* 18 - Playground
+* 19 - Playground 2
+* 20 - Return to Monke
+* 21 - Sandstorm
+* 22 - Slippery Slope
+* 23 - (S) Color Climb
+* 24 - (S) Glass Jump
+* 25 - (S) Hill
+* 26 - (S) Icy Islands
+* 27 - (S) Islands
+* 28 - (S) Playground
+* 29 - Snowtop
+* 30 - Splat
+* 31 - Splot
+* 32 - Sunny Saloon
+* 33 - Toxic Train
+* 34 - Twisted Towers
+* 35 - Mini Monke
+* 36 - (S) Beach
+* 37 - (S) Saloon
+* 38 - (S) Containers
+* 39 - Tiny Town 2
+* 40 - Tiny Town
+* 41 - Dodgy Fields
+* 42 - Dodgy Ice
+* 43 - Dodgy Snow
+* 44 - Dodgy Streets
+* 45 - Sandy Islands
+* 46 - (S) Sandy Islands
+* 47 - Cheeky Chamber
+* 48 - Lava Drop
+* 49 - Lava Dump
+* 50 - Peaceful Platform
+* 51 - Salty Island
+* 52 - Skybox
+* 53 - Saucy Stage
+* 54 - Lava Climb
+* 55 - Macaroni Mountain
+* 56 - Sussy Sandcastle
+* 57 - Sussy Slope
+* 58 - Sandy Stones
+* 59 - Crabfields
+* 60 - Crabheat
+* 61 - Crabland
 
 ### Modes:
 * 0 - waiting
