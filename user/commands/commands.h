@@ -234,6 +234,7 @@ public:
 		Command::Command();
 
 		SetCmd("test");
+        AddRequiredPermission("test");
 	}
 
 	virtual void Execute(Message* message)
@@ -1571,6 +1572,7 @@ public:
 		Command::Command();
 
 		SetCmd("download");
+        AddRequiredPermission("download");
 	}
 
 	virtual void Execute(Message* message)
