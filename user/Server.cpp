@@ -26,6 +26,7 @@ long long Server::LobbyId = 0;
 
 bool Server::AutoKillHostOnGameStart = false;
 bool Server::AutoReadyHostOnLobby = false;
+bool Server::ShowJoinLeaveMessages = false;
 
 int Server::PunchDamageId = -1;
 
@@ -275,7 +276,8 @@ void Server::OnRemovePlayerFromLobby(long long clientId)
 
 void Server::OnPlayerFirstJoin(Player* player)
 {
-	std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined for the first time" << std::endl;
+	if (Server::ShowJoinLeaveMessages)
+		std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined for the first time" << std::endl;
 
 	player->FirstEverSpawn = true;
 
@@ -287,7 +289,8 @@ void Server::OnPlayerFirstJoin(Player* player)
 
 void Server::OnPlayerJoin(Player* player)
 {
-	std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined" << std::endl;
+	if (Server::ShowJoinLeaveMessages)
+		std::cout << "[Server] " << player->GetDisplayNameExtra() << " joined" << std::endl;
 
 	player->IsOnline = true;
 	player->SpawnedThisRound = false; //alreay added at OnLeave
@@ -299,12 +302,12 @@ void Server::OnPlayerJoin(Player* player)
 	player->IsAlive = false;
 
 	ModeDeathMatch::OnPlayerJoin(player);
-	
 }
 
 void Server::OnPlayerLeave(Player* player)
 {
-	std::cout << "[Server] " << player->GetDisplayNameExtra() << " left" << std::endl;
+	if (Server::ShowJoinLeaveMessages)
+		std::cout << "[Server] " << player->GetDisplayNameExtra() << " left" << std::endl;
 
 	player->Client = NULL;
 	player->PlayerManager = NULL;

@@ -159,6 +159,7 @@ void Config::SaveConfigFile()
 	INIWrite::CreateINIFile(GetPath(PATH_CONFIG_FILE));
 	INIWrite::AddLine("[Server]");
 	INIWrite::AddBool("show_player_ids", Chat::ShowPlayerIdsAfterName);
+	INIWrite::AddBool("show_join_leave_messages", Server::ShowJoinLeaveMessages);
 	INIWrite::AddBool("show_death_status_after_name", Chat::ShowDeathStateAfterName);
 	INIWrite::AddBool("show_no_permission_message", Chat::ShowNoPermissionMessage);
 	INIWrite::AddBool("show_death_messages", Chat::ShowDeathMessages);
@@ -189,6 +190,7 @@ void Config::LoadConfigFile()
 	}
 
 	Chat::ShowPlayerIdsAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_player_ids", Chat::ShowPlayerIdsAfterName);
+	Server::ShowJoinLeaveMessages = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_join_leave_messages", Server::ShowJoinLeaveMessages);
 	Chat::ShowDeathStateAfterName = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_status_after_name", Chat::ShowDeathStateAfterName);
 	Chat::ShowNoPermissionMessage = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_no_permission_message", Chat::ShowNoPermissionMessage);
 	Chat::ShowDeathMessages = INIRead::GetBool(GetPath(PATH_CONFIG_FILE), "Server", "show_death_messages", Chat::ShowDeathMessages);

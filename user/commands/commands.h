@@ -1571,6 +1571,7 @@ public:
 		Command::Command();
 
 		SetCmd("download");
+		AddRequiredPermission("download");
 	}
 
 	virtual void Execute(Message* message)
@@ -2055,6 +2056,12 @@ public:
 	virtual void Execute(Message* message)
 	{
 		Command::Execute(message);
+
+		auto args = CommandArg::GetArgs(message->CmdArgs);
+
+		if (args.size() == 1) {
+			ModeDeathMatch::WeaponID = args.at(0).AsInt();
+		}
 
 		ModeDeathMatch::Enabled = !ModeDeathMatch::Enabled;
 

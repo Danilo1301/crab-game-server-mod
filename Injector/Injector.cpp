@@ -29,7 +29,7 @@ bool injected = false;
 
 int main()
 {
-	std::filesystem::path cwd = std::filesystem::current_path() / "CrabGameServerMod.dll";
+	filesystem::path cwd = std::filesystem::current_path() / "CrabGameServerMod.dll";
 
 	while (true)
 	{
