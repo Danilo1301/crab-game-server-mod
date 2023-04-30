@@ -2060,7 +2060,25 @@ public:
 		auto args = CommandArg::GetArgs(message->CmdArgs);
 
 		if (args.size() == 1) {
-			ModeDeathMatch::WeaponID = args.at(0).AsInt();
+
+			if (args[0].isNumber)
+			{
+				auto weaponId = args.at(0).AsInt();
+				auto weapon = GetWeaponById(weaponId);
+
+				if (!weapon)
+				{
+					Chat::SendServerMessage("invalid weapon ID " + std::to_string(weaponId));
+					return;
+				}
+
+				ModeDeathMatch::WeaponID = weapon->id;
+				Chat::SendServerMessage("DM weapon set to " + weapon->name + " (ID " + std::to_string(weapon->id) + ")");
+
+				return;
+			}
+
+			return;
 		}
 
 		ModeDeathMatch::Enabled = !ModeDeathMatch::Enabled;
@@ -2072,6 +2090,7 @@ public:
 	virtual void PrintSyntaxes()
 	{
 		PrintSyntax("");
+		PrintSyntax("(weaponID)");
 	}
 };
 

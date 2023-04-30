@@ -19,7 +19,7 @@ void ModeDeathMatch::OnPlayerSpawn(Player* player, Vector3 position)
 {
     if (!Enabled) return;
 
-    Server::GiveWeapon(player, ModeDeathMatch::WeaponID );
+    Server::GiveWeapon(player, ModeDeathMatch::WeaponID);
 }
 
 void ModeDeathMatch::OnPlayerJoin(Player* player)

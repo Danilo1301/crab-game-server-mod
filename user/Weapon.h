@@ -51,3 +51,9 @@ static Weapon* GetWeaponById(int weaponId)
 	}
 	return NULL;
 }
+
+
+static bool WeaponIdExists(int weaponId)
+{
+	return GetWeaponById(weaponId) != NULL;
+}
