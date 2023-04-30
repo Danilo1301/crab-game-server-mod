@@ -13,6 +13,7 @@ public:
 
 	static bool AutoKillHostOnGameStart;
 	static bool AutoReadyHostOnLobby;
+	static bool ShowJoinLeaveMessages;
 
 	static int PunchDamageId;
 

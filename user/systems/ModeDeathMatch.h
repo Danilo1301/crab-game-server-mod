@@ -6,6 +6,7 @@
 class ModeDeathMatch {
 public:
 	static bool Enabled;
+	static int WeaponID;
 
 	static void Update(float dt);
 	static void OnPlayerSpawn(Player* player, Vector3 position);

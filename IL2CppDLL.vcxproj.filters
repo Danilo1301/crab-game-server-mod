@@ -260,6 +260,9 @@
     <Filter Include="user\systems">
       <UniqueIdentifier>{3eaa328c-6a3f-4516-90ff-e22321c5ccd6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lib">
+      <UniqueIdentifier>{4df3e879-b3fb-4f0a-b3ce-e25c54bb34ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="include\json_valueiterator.inl">
@@ -270,5 +273,19 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="notes.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libcrypto.lib">
+      <Filter>lib</Filter>
+    </Library>
+    <Library Include="lib\libMinHook.x64.lib">
+      <Filter>lib</Filter>
+    </Library>
+    <Library Include="lib\libssl.lib">
+      <Filter>lib</Filter>
+    </Library>
+    <Library Include="lib\sioclient.lib">
+      <Filter>lib</Filter>
+    </Library>
   </ItemGroup>
 </Project>

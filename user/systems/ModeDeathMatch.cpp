@@ -4,8 +4,11 @@
 #include "Weapon.h"
 #include "Mod.h"
 #include "Server.h"
+#include "Chat.h"
+#include <string>
 
 bool ModeDeathMatch::Enabled = false;
+int ModeDeathMatch::WeaponID = 1;
 
 void ModeDeathMatch::Update(float dt)
 {
@@ -16,7 +19,7 @@ void ModeDeathMatch::OnPlayerSpawn(Player* player, Vector3 position)
 {
     if (!Enabled) return;
 
-    Server::GiveWeapon(player, 1);
+    Server::GiveWeapon(player, ModeDeathMatch::WeaponID );
 }
 
 void ModeDeathMatch::OnPlayerJoin(Player* player)
