@@ -34,7 +34,9 @@ public:
 
 private:
 	static void ProcessV2toV3ConfigLoad();
-	static bool ProcessVersionChange(std::string oldVersion);
+	//static bool ProcessVersionChange(std::string oldVersion);
+	static void ApplyVersionChangePrePatch(std::string prevVersion, std::string currentVersion);
+	static void ApplyVersionChangePostPatch(std::string prevVersion, std::string currentVersion);
 
 	static void CreatePaths();
 };

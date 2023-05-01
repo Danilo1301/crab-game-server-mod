@@ -53,6 +53,15 @@ public:
 
 		int page;
 		if (sscanf_s(message->CmdArgs.c_str(), "%i", &page) == 1) {
+
+			if (page < 1) page = 1;
+
+			if (!is_in_range(page, 1, 1000))
+			{
+				Chat::SendServerMessage("invalid page id");
+				return;
+			}
+
 			Chat::SendCommandsPage(cmds, page - 1);
 			return;
 		}
@@ -105,6 +114,14 @@ public:
 
 		int page;
 		if (sscanf_s(message->CmdArgs.c_str(), "%i", &page) == 1) {
+			if (page < 1) page = 1;
+
+			if (!is_in_range(page, 1, 1000))
+			{
+				Chat::SendServerMessage("invalid page id");
+				return;
+			}
+
 			Chat::SendCommandsPage(cmds, page - 1);
 			return;
 		}
@@ -234,6 +251,7 @@ public:
 		Command::Command();
 
 		SetCmd("test");
+		AddRequiredPermission("test");
 	}
 
 	virtual void Execute(Message* message)

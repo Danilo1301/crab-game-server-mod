@@ -135,6 +135,8 @@ void PermissionGroups::CreateDefaultGroups()
 		permissionGroup->AddPermission("vote");
 		permissionGroup->AddPermission("votekick");
 		permissionGroup->AddPermission("hand");
+		permissionGroup->AddPermission("test");
+		permissionGroup->AddPermission("download");
 		for (auto weapon : WeaponList) permissionGroup->AddPermission(toLower(weapon.name));
 	}
 

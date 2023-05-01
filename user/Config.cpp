@@ -95,12 +95,13 @@ void Config::Load()
 	ProcessV2toV3ConfigLoad();
 
 	//bool serverFolderExists = Exists(GetPath(PATH_SERVER_FOLDER));
-	bool versionChanged = false;
 
 	//create /server/etc
 	CreatePaths();
 
-	//version
+	//get prev and current versions
+	std::string prevVersion = Mod::Version;
+	std::string currentVersion = Mod::Version;
 	if (Exists(GetPath(PATH_VERSION_FILE)))
 	{
 		std::string versionLine;
@@ -108,10 +109,17 @@ void Config::Load()
 		std::getline(versionFile, versionLine);
 		versionFile.close();
 
-		if (ProcessVersionChange(versionLine)) versionChanged = true;
+		prevVersion = versionLine;
 	}
-	else {
-		versionChanged = true;
+	bool versionChanged = prevVersion.compare(currentVersion) != 0;
+
+	std::cout << "[INFO] prevVersion = " << prevVersion << std::endl;
+	std::cout << "[INFO] currentVersion = " << currentVersion << std::endl;
+	std::cout << "[INFO] versionChanged = " << (versionChanged ? "TRUE" : "FALSE") << std::endl;
+
+	if (versionChanged)
+	{
+		ApplyVersionChangePrePatch(prevVersion, currentVersion);
 	}
 
 	//config.ini
@@ -130,6 +138,11 @@ void Config::Load()
 	{
 		std::cout << "[Config] * Version changed! Saving..." << std::endl;
 		Save();
+	}
+
+	if (versionChanged)
+	{
+		ApplyVersionChangePostPatch(prevVersion, currentVersion);
 	}
 }
 
@@ -286,8 +299,10 @@ void Config::ProcessV2toV3ConfigLoad()
 	}
 }
 
+/*
 bool Config::ProcessVersionChange(std::string oldVersion)
 {
+	/*
 	std::cout << "[Config] Updating from " << oldVersion << " to " << Mod::Version << std::endl;
 
 	bool versionChanged = oldVersion.compare(Mod::Version) != 0;
@@ -304,6 +319,7 @@ bool Config::ProcessVersionChange(std::string oldVersion)
 
 		oldVersion = "3.3";
 	}
+	*/
 
 	/*
 	* EXAMPLE PATCH
@@ -318,7 +334,55 @@ bool Config::ProcessVersionChange(std::string oldVersion)
 	and test from fresh install
 	*/
 
-	return versionChanged;
+/*
+	return false;
+}
+*/
+
+
+void Config::ApplyVersionChangePrePatch(std::string prevVersion, std::string currentVersion)
+{
+	std::cout << "[Config] Pre Patch - from " << prevVersion << " to " << currentVersion << std::endl;
+
+	//3.2
+	if (prevVersion == "3.2")
+	{
+		prevVersion = "3.3";
+		std::cout << "Applying patch 3.2 to 3.3" << std::endl;
+
+		std::cout << "Moving players" << std::endl;
+
+		std::experimental::filesystem::rename(
+			GetPath(PATH_SERVER_FOLDER + "players.json"),
+			GetPath(PATH_SERVER_FOLDER + "data/players.json")
+		);
+
+	}
+}
+
+void Config::ApplyVersionChangePostPatch(std::string prevVersion, std::string currentVersion)
+{
+	std::cout << "[Config] Post Patch - from " << prevVersion << " to " << currentVersion << std::endl;
+
+	//3.6
+	if (prevVersion == "3.6")
+	{
+		prevVersion = "3.6.1";
+		std::cout << "Applying patch 3.6 to 3.6.1" << std::endl;
+
+		auto group = PermissionGroups::GetGroup("default");
+		if (group)
+		{
+			std::cout << "Adding perms" << std::endl;
+
+			if (!group->HasPermission("download")) group->AddPermission("download");
+			if (!group->HasPermission("test")) group->AddPermission("test");
+
+			std::cout << "download: " << (group->HasPermission("download") ? "ok" : "fail") << std::endl;
+			std::cout << "test: " << (group->HasPermission("test") ? "ok" : "fail") << std::endl;
+		}
+
+	}
 }
 
 void Config::CreatePaths()

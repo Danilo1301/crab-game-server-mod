@@ -170,6 +170,11 @@ static bool starts_with(std::string const& value, std::string const& starting)
 	return std::equal(starting.rend(), starting.rbegin(), value.rbegin());
 }
 
+static bool is_in_range(int number, int min, int max)
+{
+	return number >= min && number <= max;
+}
+
 static bool ConvertTimeStringToSeconds(std::string str, int* outSeconds)
 {
 	//std::cout << "ConvertStringTimeToSeconds (" << str << ")" << std::endl;

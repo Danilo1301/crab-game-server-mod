@@ -95,6 +95,10 @@
 [X] CHANGE: auto ready with min players (an option to automaticly start game after user set seconds and minimium players not including host)
 [X] turn off death messages for everyone
 
+[3.6.1]
+[X] CHANGE: dm / custom dm weapon id (thanks to Decoder0007)
+[X] FIX: crash on !help 0
+
 [next]
 [ ] turn off join/leave
 [ ] ADD: pinfo with no parameters should show your own info
